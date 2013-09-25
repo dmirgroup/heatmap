@@ -6,10 +6,14 @@
 			http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
+
+	<name>Heatmap Framework - Core</name>
+	<inceptionYear>2013</inceptionYear>
+
 	<groupId>de.uniwue.dmir.heatmap</groupId>
 	<artifactId>heatmap-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<inceptionYear>2013</inceptionYear>
+
 
 	<repositories>
 		<!-- Local repository. -->
@@ -127,8 +131,14 @@
 						<year>${project.inceptionYear}</year>
 						<owner>Martin Becker</owner>
 						<email>becker@informatik.uni-wuerzburg.de</email>
+						<description>${project.name}</description>
 					</properties>
 					<excludes>
+						<exclude>pom.xml</exclude>
+						<exclude>LICENSE</exclude>
+						<exclude>src/main/resources/**</exclude>
+						<exclude>src/test/resources/**</exclude>
+						<exclude>src/license/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
