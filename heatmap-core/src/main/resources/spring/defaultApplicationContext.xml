@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<import resource="applicationContext.xml"/>
+
+	<bean id="heatmapDimensions"
+		class="de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions" />
+		
+	<bean id="projection" 
+			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection">
+		<constructor-arg name="dimensions" ref="heatmapDimensions" />
+	</bean>
+	
+	<bean id="coordinateMapper"
+			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper" />
+		
+	<bean id="externalDataMapper"
+			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper" />
+	
+	<bean id="tileDatasource"
+			class="de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource" >
+			
+		<constructor-arg name="geoDataSource" ref="dataSource"/>
+		<constructor-arg name="projection" ref="projection" />
+		<constructor-arg name="externalDataMapper" ref="externalDataMapper" />
+		<constructor-arg name="coordinateMapper" ref="coordinateMapper" />
+	</bean>
+	
+	<bean id="internalMapper"
+			class="de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumAndSizeMapper" />
+			
+	<bean id="adder"
+			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeAdder" />
+			
+	<bean id="multiplier"
+			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeScalarMultiplier" />
+	
+	<bean id="image" 
+			class="java.io.File">
+		<constructor-arg name="pathname" value="src/main/resources/filter/dot13_black.png"/>
+	</bean>
+	
+	<bean id="filter"
+			class="de.uniwue.dmir.heatmap.impl.core.filter.ImageFilter">
+	
+		<constructor-arg name="internalMapper" ref="internalMapper" />
+		<constructor-arg name="adder" ref="adder" />
+		<constructor-arg name="multiplier" ref="multiplier" />
+		<constructor-arg name="file" ref="image" />
+	</bean>
+	
+	<bean id="zoomLevelRange"
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
+		<constructor-arg name="min" value="0" />
+		<constructor-arg name="max" value="10" />
+	</bean>
+	
+	<bean id="colorScheme" 
+			class="java.io.File">
+		<constructor-arg name="pathname" value="src/main/resources/color-schemes/classic_alpha70.png" />
+	</bean>
+	
+	<bean id="visualizer"
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.SumAndSizeAlphaVisualizer">
+		<constructor-arg name="colorScheme" ref="colorScheme" />
+		<constructor-arg name="min" value="0" />
+		<constructor-arg name="max" value="1000" />
+		
+		<property name="forceAlphaValue" value="true" />
+		<property name="alphaValue" value="0.2f" />
+	</bean>
+	
+	<bean id="fileStrategy"
+			class="de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy">
+		<constructor-arg name="folder" value="out/tiles" />
+	</bean>
+	
+	<bean id="writer"
+			class="de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter">
+		<constructor-arg name="visualizer" ref="visualizer" />
+		<constructor-arg name="fileStrategy" ref="fileStrategy" />
+		<constructor-arg name="imageFormat" value="png" />
+	</bean>
+	
+	<bean id="iterator"
+			class="de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator">
+		<constructor-arg name="dataClass" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize" />		
+	</bean>
+	
+</beans>

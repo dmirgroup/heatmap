@@ -21,6 +21,10 @@
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,7 +41,7 @@ import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 public class ImageFilter<T extends IExternalData, P> 
 implements IFilter<T, P>{
 
-	private IMapper<T, P> mapper;
+	private IMapper<T, P> internalMapper;
 	private IAdder<P> adder;
 	private IScalarMultiplier<P> multiplier;
 	
@@ -47,18 +51,46 @@ implements IFilter<T, P>{
 	private int centerX;
 	private int centerY;
 	
-	Double[] array;
+	private Double[] array;
 
 	public ImageFilter(
-			IMapper<T, P> mapper,
+			IMapper<T, P> internalMapper,
+			IAdder<P> adder,
+			IScalarMultiplier<P> multiplier,
+			File file) {
+		
+		this(internalMapper, adder, multiplier);
+		BufferedImage bufferedImage;
+		try {
+			bufferedImage = ImageIO.read(file);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
+		}
+		initialize(bufferedImage);
+		
+	}
+	
+	public ImageFilter(
+			IMapper<T, P> internalMapper,
 			IAdder<P> adder,
 			IScalarMultiplier<P> multiplier,
 			BufferedImage image) {
 		
-		this.mapper = mapper;
+		this(internalMapper, adder, multiplier);
+		initialize(image);
+	}
+	
+	private ImageFilter(
+			IMapper<T, P> internalMapper,
+			IAdder<P> adder,
+			IScalarMultiplier<P> multiplier) {
+		
+		this.internalMapper = internalMapper;
 		this.adder = adder;
 		this.multiplier = multiplier;
-		
+	}
+
+	private void initialize(BufferedImage image) {
 		if (image.getType() != BufferedImage.TYPE_BYTE_GRAY) {
 			throw new IllegalArgumentException(
 					"Image must be a gray scale image.");
@@ -116,7 +148,7 @@ implements IFilter<T, P>{
 					continue;
 				}
 				
-				P addable = this.mapper.map(dataPoint);
+				P addable = this.internalMapper.map(dataPoint);
 				
 				double multiplicator = 
 						Arrays2d.get(i, j, this.array, this.width, this.height);

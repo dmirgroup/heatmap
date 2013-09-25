@@ -48,11 +48,11 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 public class GeoTileDataSource<S, T extends IExternalData> 
 implements IExternalDataSource<T> {
 
-	private IGeoDataSource<S> dataSource;
+	private IGeoDataSource<S> geoDataSource;
 	private IMapProjection projection;
 	
 	private IToGeoCoordinatesMapper<S> coordinateMapper;
-	private IToInternalDataMapper<S, T> dataMapper;
+	private IToInternalDataMapper<S, T> externalDataMapper;
 	
 	public List<T> getData(
 			TileCoordinates tileCoordinates,
@@ -63,7 +63,7 @@ implements IExternalDataSource<T> {
 						tileCoordinates, 
 						filter);
 		
-		List<S> sourceData = this.dataSource.getData(
+		List<S> sourceData = this.geoDataSource.getData(
 				geoBoundingBox.getNorthWest().getLongitude(), 
 				geoBoundingBox.getNorthWest().getLatitude(), 
 				geoBoundingBox.getSouthEast().getLongitude(), 
@@ -78,7 +78,7 @@ implements IExternalDataSource<T> {
 			int zoomStop,
 			IFilter<?, ?> filter) {
 		
-		List<S> sourceData = this.dataSource.getData(
+		List<S> sourceData = this.geoDataSource.getData(
 				-180,
 				  90,
 				 180,
@@ -128,7 +128,7 @@ implements IExternalDataSource<T> {
 							tileCoordinates);
 			
 			T convertedObject = 
-					this.dataMapper.map(object, relativeCoordinates);
+					this.externalDataMapper.map(object, relativeCoordinates);
 			
 			converted.add(convertedObject);
 		}

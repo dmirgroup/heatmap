@@ -41,7 +41,7 @@ import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointCoordinateMapper;
+import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
@@ -74,9 +74,8 @@ public class SpringTest2 {
 				new GeoTileDataSource<GeoPoint, ValuePixel>(
 						dataSource,
 						new MercatorMapProjection(dimensions), 
-						new GeoPointCoordinateMapper(), 
+						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
-		
 		
 		IFilter<ValuePixel, SumAndSize> filter = 
 				new ImageFilter<ValuePixel, SumAndSize>(

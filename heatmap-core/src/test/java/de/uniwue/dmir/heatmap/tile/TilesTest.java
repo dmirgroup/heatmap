@@ -37,7 +37,7 @@ import de.uniwue.dmir.heatmap.core.tile.Tile;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointCoordinateMapper;
+import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
@@ -62,7 +62,7 @@ public class TilesTest {
 								",",
 								false), 
 						new MercatorMapProjection(dimensions), 
-						new GeoPointCoordinateMapper(), 
+						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
 		IFilter<ValuePixel, SumAndSize> filter = 

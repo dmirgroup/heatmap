@@ -41,7 +41,7 @@ import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrat
 import de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointCoordinateMapper;
+import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
@@ -66,7 +66,7 @@ public class HeatmapTest {
 								",",
 								false), 
 						new MercatorMapProjection(dimensions), 
-						new GeoPointCoordinateMapper(), 
+						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
 		
