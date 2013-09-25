@@ -67,7 +67,7 @@
 		<property name="password"			value="${db.core.password}" />
 	</bean>
 	
-	<bean id="geoDatasource"
+	<bean id="geoDataSource"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.DatabaseGeoDataSource">
 		<constructor-arg name="request">
 			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo">

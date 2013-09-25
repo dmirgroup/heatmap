@@ -20,7 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.core.processing.ITileIterator;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
@@ -30,8 +30,8 @@ public class EntryPoint {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 		
-		ClassPathXmlApplicationContext appContext = 
-				new ClassPathXmlApplicationContext("settings.xml");
+		FileSystemXmlApplicationContext appContext = 
+				new FileSystemXmlApplicationContext("settings.xml");
 		
 		IHeatmap heatmap = 
 				appContext.getBean(IHeatmap.class);

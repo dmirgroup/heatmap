@@ -34,7 +34,7 @@
 	<bean id="tileDatasource"
 			class="de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource" >
 			
-		<constructor-arg name="geoDataSource" ref="dataSource"/>
+		<constructor-arg name="geoDataSource" ref="geoDataSource"/>
 		<constructor-arg name="projection" ref="projection" />
 		<constructor-arg name="externalDataMapper" ref="externalDataMapper" />
 		<constructor-arg name="coordinateMapper" ref="coordinateMapper" />
@@ -69,6 +69,14 @@
 		<constructor-arg name="max" value="10" />
 	</bean>
 	
+	<bean id="heatmap"
+			class="de.uniwue.dmir.heatmap.core.Heatmap">
+
+		<constructor-arg name="dataSource" ref="tileDatasource" />
+		<constructor-arg name="filter" ref="filter" />
+		<constructor-arg name="zoomLevelRange" ref="zoomLevelRange" />
+	</bean>
+	
 	<bean id="colorScheme" 
 			class="java.io.File">
 		<constructor-arg name="pathname" value="src/main/resources/color-schemes/classic_alpha70.png" />
@@ -76,7 +84,7 @@
 	
 	<bean id="visualizer"
 			class="de.uniwue.dmir.heatmap.impl.core.visualizer.SumAndSizeAlphaVisualizer">
-		<constructor-arg name="colorScheme" ref="colorScheme" />
+		<constructor-arg name="file" ref="colorScheme" />
 		<constructor-arg name="min" value="0" />
 		<constructor-arg name="max" value="1000" />
 		
