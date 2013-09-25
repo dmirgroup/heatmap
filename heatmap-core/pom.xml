@@ -1,7 +1,5 @@
-<project 
-		xmlns="http://maven.apache.org/POM/4.0.0" 
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
 			http://maven.apache.org/POM/4.0.0 
 			http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
@@ -77,7 +75,7 @@
 			<artifactId>mybatis</artifactId>
 			<version>3.2.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
@@ -101,7 +99,7 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>3.2.1.RELEASE</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.newbrightidea.util</groupId>
 			<artifactId>util-core</artifactId>
@@ -120,13 +118,13 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<header>src/license/default/LICENSE-HEADER.template</header>
+					<header>src/etc/license/LICENSE-HEADER.template</header>
 					<properties>
 						<year>${project.inceptionYear}</year>
 						<owner>Martin Becker</owner>
@@ -149,7 +147,63 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<outputDirectory>${project.build.directory}/special</outputDirectory>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addClasspath>true</addClasspath>
+							<mainClass>de.uniwue.dmir.heatmap.core.EntryPoint</mainClass>
+							<classpathPrefix>./lib/</classpathPrefix>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
+
+
 
 </project>
