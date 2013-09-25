@@ -36,7 +36,8 @@ import de.uniwue.dmir.heatmap.core.processing.ExhaustiveTileIterator.IAdditional
 import de.uniwue.dmir.heatmap.core.tile.ITile;
 
 @AllArgsConstructor
-public class NonEmptyTileIterator<E extends IExternalData, I> {
+public class NonEmptyTileIterator<E extends IExternalData, I> 
+implements ITileIterator<E, I>  {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	

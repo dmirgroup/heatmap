@@ -26,28 +26,26 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.core.IHeatmap;
+import de.uniwue.dmir.heatmap.core.processing.ITileIterator;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
-import de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator;
-import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
 
 public class SpringTest3 {
 
 	@Test
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testHeatmap() throws IOException {
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
 						"spring/defaultApplicationContext.xml");
 		
-		IHeatmap<ValuePixel, SumAndSize> heatmap = 
+		IHeatmap heatmap = 
 				appContext.getBean(IHeatmap.class);
 		
-		NonEmptyTileIterator<ValuePixel, SumAndSize> tileIterator =
-				appContext.getBean(NonEmptyTileIterator.class);
+		ITileIterator tileIterator =
+				appContext.getBean(ITileIterator.class);
 
-		ITileProcessor<ValuePixel, SumAndSize> tileProcessor =
+		ITileProcessor tileProcessor =
 				appContext.getBean(ITileProcessor.class);
 		
 		tileIterator.iterate(heatmap, tileProcessor);

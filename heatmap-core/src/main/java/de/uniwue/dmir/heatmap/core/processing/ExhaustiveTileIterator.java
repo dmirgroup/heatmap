@@ -30,7 +30,8 @@ import de.uniwue.dmir.heatmap.core.tile.ITile;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 @AllArgsConstructor
-public class ExhaustiveTileIterator<E extends IExternalData, I> {
+public class ExhaustiveTileIterator<E extends IExternalData, I> 
+implements ITileIterator<E, I> {
 
 	private IAdditionalDataProvider<I> dataProvider;
 
