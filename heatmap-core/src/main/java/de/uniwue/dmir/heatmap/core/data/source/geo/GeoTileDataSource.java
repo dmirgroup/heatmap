@@ -1,0 +1,118 @@
+package de.uniwue.dmir.heatmap.core.data.source.geo;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
+import lombok.AllArgsConstructor;
+import de.uniwue.dmir.heatmap.core.IExternalDataSource;
+import de.uniwue.dmir.heatmap.core.IFilter;
+import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
+import de.uniwue.dmir.heatmap.core.data.type.IToInternalDataMapper;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+
+/**
+ * A {@link IExternalDataSource} which works on a {@link IGeoDataSource} and
+ * allows to specify the used map projection.
+ * 
+ * @author Martin Becker
+ *
+ * @param <S> souce data type
+ * @param <T> tile data type
+ */
+@AllArgsConstructor
+public class GeoTileDataSource<S, T extends IExternalData> 
+implements IExternalDataSource<T> {
+
+	private IGeoDataSource<S> dataSource;
+	private IMapProjection projection;
+	
+	private IToGeoCoordinatesMapper<S> coordinateMapper;
+	private IToInternalDataMapper<S, T> dataMapper;
+	
+	public List<T> getData(
+			TileCoordinates tileCoordinates,
+			IFilter<?, ?> filter) {
+		
+		GeoBoundingBox geoBoundingBox = 
+				this.projection.fromTileCoordinatesToGeoBoundingBox(
+						tileCoordinates, 
+						filter);
+		
+		List<S> sourceData = this.dataSource.getData(
+				geoBoundingBox.getNorthWest().getLongitude(), 
+				geoBoundingBox.getNorthWest().getLatitude(), 
+				geoBoundingBox.getSouthEast().getLongitude(), 
+				geoBoundingBox.getSouthEast().getLatitude());
+		
+		return convert(sourceData, tileCoordinates);
+	}
+	
+	@Override
+	public Map<Integer, Set<TileCoordinates>> getNonEmptyTiles(
+			int zoomStart,
+			int zoomStop,
+			IFilter<?, ?> filter) {
+		
+		List<S> sourceData = this.dataSource.getData(
+				-180,
+				  90,
+				 180,
+				 -90);
+		
+		Map<Integer, Set<TileCoordinates>> map = 
+				new TreeMap<Integer, Set<TileCoordinates>>();
+		
+		for (int zoom = zoomStart; zoom <= zoomStop; zoom++) {
+			
+			Set<TileCoordinates> coordinates = new HashSet<TileCoordinates>();
+			map.put(zoom, coordinates);
+			
+			for (S data : sourceData) {
+
+				GeoCoordinates geoCoordinates = this.coordinateMapper.map(data);
+				
+				List<TileCoordinates> tileCoordinates =
+						this.projection.overlappingTiles(geoCoordinates, zoom, filter);
+
+				coordinates.addAll(tileCoordinates);
+				
+			}
+		}
+		
+		return map;
+	}
+	
+	/**
+	 * @param sourceData source data
+	 * @param tileCoordinates the coordinates of the tile the data is associated with
+	 * @return tile data with pixel coordinates relative to the given tile
+	 */
+	private List<T> convert(
+			List<S> sourceData, 
+			TileCoordinates tileCoordinates) {
+		
+		List<T> converted = new ArrayList<T>(sourceData.size());
+		for (S object : sourceData) {
+			
+			GeoCoordinates geoCoordinates = 
+					this.coordinateMapper.map(object);
+			
+			RelativeCoordinates relativeCoordinates =
+					this.projection.fromGeoToRelativeCoordinates(
+							geoCoordinates, 
+							tileCoordinates);
+			
+			T convertedObject = 
+					this.dataMapper.map(object, relativeCoordinates);
+			
+			converted.add(convertedObject);
+		}
+		
+		return converted;
+	}
+}
