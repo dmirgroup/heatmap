@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>OpenLayers Example</title>
+<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
+<script src="http://openlayers.org/api/OpenLayers.js"></script>
+
+<style type="text/css">
+.olImageLoadError {
+	/* when OL encounters a 404, don't display the pink image */
+	display: none !important;
+}
+</style>
+</head>
+<body>
+	<div style="width: 500px; height: 500px" id="map"></div>
+	<div>Zoom level: <span id="zoomlevel"></span></div>
+	<script defer='defer' type='text/javascript'>
+
+	var map = new OpenLayers.Map({
+		div: "map",
+		projection: "EPSG:900913",
+		displayProjection: "EPSG:4326",
+		numZoomLevels: 18,
+		
+		// approximately match Google's zoom animation
+		zoomDuration: 10
+	});
+	
+	// google streets layer
+	
+	var gmap = new OpenLayers.Layer.Google(
+		"Google Streets", // the default
+		{numZoomLevels: 20}
+	);
+	map.addLayer(gmap);
+	
+	// zoom level info box
+	
+	map.events.register('zoomend', map, function() {
+		var zoomInfo = map.getZoom() + ' / ' + map.numZoomLevels;
+		document.getElementById('zoomlevel').innerHTML = zoomInfo;
+	});
+
+
+	// This is the layer that uses the locally stored tiles
+	var newLayer = new OpenLayers.Layer.XYZ(
+			"Custom Tiles", "../../../out/tiles/${z}/${x}/${y}.png", 
+			{
+					numZoomLevels: 19, 
+					alpha: true, 
+					isBaseLayer: false
+			});
+	map.addLayer(newLayer);
+
+
+/* 	
+
+	function get_my_url (bounds) {
+		var res = this.map.getResolution();
+		var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+		var y = Math.round ((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+		var z = this.map.getZoom();
+
+		var path = z + "/" + x + "/" + y + "." + this.type; 
+		var url = this.url;
+		if (url instanceof Array) {
+				url = this.selectUrl(path, url);
+		}
+		return url + path; 
+	}
+
+	var l = new OpenLayers.Layer.TMS("Name", "/", { 'type':'png', 'getURL':get_my_url });
+	map.addLayer(l); 
+
+*/
+
+	// layer switcher
+
+	var switcherControl = new OpenLayers.Control.LayerSwitcher();
+	map.addControl(switcherControl);
+	switcherControl.maximizeControl();
+
+	// zoom
+
+	map.zoomToMaxExtent();
+
+</script>
+</body>
+</html>

@@ -47,10 +47,10 @@ public class SpringTest3 {
 		NonEmptyTileIterator<ValuePixel, SumAndSize> tileIterator =
 				appContext.getBean(NonEmptyTileIterator.class);
 
-		ITileProcessor<ValuePixel, SumAndSize> heatmapFileWriter =
+		ITileProcessor<ValuePixel, SumAndSize> tileProcessor =
 				appContext.getBean(ITileProcessor.class);
 		
-		tileIterator.iterate(heatmap, heatmapFileWriter);
+		tileIterator.iterate(heatmap, tileProcessor);
 
 		appContext.close();
 	}
