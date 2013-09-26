@@ -23,10 +23,6 @@ package de.uniwue.dmir.heatmap.impl.core.visualizer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
@@ -56,21 +52,6 @@ public class SumAndSizeAlphaVisualizer implements IVisualizer<SumAndSize> {
 	private double[] ranges;
 	
 	private double scalingFactor = DEFAULT_SCALE_FACTOR;
-	
-	
-	public SumAndSizeAlphaVisualizer(
-			File file, 
-			double min,
-			double max) {
-
-		try {
-			this.colorScheme = ImageIO.read(file);
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		}
-		
-		this.ranges = ranges(min, max, this.colorScheme.getHeight());
-	}
 	
 	public SumAndSizeAlphaVisualizer(
 			BufferedImage colorScheme, 

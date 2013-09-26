@@ -21,10 +21,6 @@
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,23 +49,6 @@ implements IFilter<T, P>{
 	
 	private Double[] array;
 
-	public ImageFilter(
-			IMapper<T, P> internalMapper,
-			IAdder<P> adder,
-			IScalarMultiplier<P> multiplier,
-			File file) {
-		
-		this(internalMapper, adder, multiplier);
-		BufferedImage bufferedImage;
-		try {
-			bufferedImage = ImageIO.read(file);
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		}
-		initialize(bufferedImage);
-		
-	}
-	
 	public ImageFilter(
 			IMapper<T, P> internalMapper,
 			IAdder<P> adder,
