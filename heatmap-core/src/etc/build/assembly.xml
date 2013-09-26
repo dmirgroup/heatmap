@@ -10,5 +10,12 @@
 			<directory>target/release</directory>
 			<outputDirectory></outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>src/main/resources/spring/example</directory>
+			<excludes>
+				<exclude>datasource.properties</exclude>
+			</excludes>
+			<outputDirectory>example</outputDirectory>
+		</fileSet>
 	</fileSets>
 </assembly>

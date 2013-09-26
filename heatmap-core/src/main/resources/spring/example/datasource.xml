@@ -50,7 +50,7 @@
 	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>spring/datasource.properties</value>
+				<value>classpath:spring/example/datasource.properties</value>
 			</list>
 		</property>
 		<property name="order" value="150" />
