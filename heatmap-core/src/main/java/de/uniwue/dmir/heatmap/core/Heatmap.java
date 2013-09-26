@@ -25,11 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions;
 import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.GridDimensions;
 import de.uniwue.dmir.heatmap.core.ITileCoordinatesProjection.DefaultTileCoordinatesProjection;
@@ -49,6 +50,7 @@ implements IHeatmap<E, I>{
 	
 	@Getter
 	private ZoomLevelRange zoomLevelRange;
+	
 	@Getter
 	private IHeatmapDimensions dimensions;
 	
