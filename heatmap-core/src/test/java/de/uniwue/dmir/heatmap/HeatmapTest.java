@@ -32,9 +32,7 @@ import org.junit.Test;
 import de.uniwue.dmir.heatmap.core.Heatmap;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions;
+import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy;
@@ -57,15 +55,18 @@ public class HeatmapTest {
 	@Test
 	public void testHeatmap() throws IOException {
 		
-		IHeatmapDimensions dimensions = new DefaultHeatmapDimensions();
+		HeatmapSettings settings = new HeatmapSettings();
+		settings.getZoomLevelRange().setMax(7);
 		
 		GeoTileDataSource<GeoPoint, ValuePixel> dataSouce =
 				new GeoTileDataSource<GeoPoint, ValuePixel>(
 						new CsvGeoDataSource(
-								new File("src/test/resources/lonlat2.txt"),
+								new File("src/test/resources/lonlat1O.txt"),
 								",",
 								false), 
-						new MercatorMapProjection(dimensions), 
+						new MercatorMapProjection(
+								settings.getTileSize(),
+								settings.getZoomLevelMapper()), 
 						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
@@ -75,7 +76,8 @@ public class HeatmapTest {
 						new ValuePixelToSumAndSizeMapper(),
 						new SumAndSizeAdder(),
 						new SumAndSizeScalarMultiplier(),
-						ImageIO.read(new File("src/main/resources/filter/dot13_black.png")));
+						ImageIO.read(new File(
+								"src/main/resources/filter/dot13_black.png")));
 		
 //		System.out.println(dataSouce.getData(new TileCoordinates(6, 10, 5), filter));
 		
@@ -84,12 +86,11 @@ public class HeatmapTest {
 //						new ValuePixelToSumAndSizeMapper(),
 //						new SumAndSizeAdder(),
 //						42, 42, 21, 21);
-		ZoomLevelRange zoomLevelRange = new ZoomLevelRange(0, 10);
 		
 		IHeatmap<ValuePixel, SumAndSize> heatmap = new Heatmap<ValuePixel, SumAndSize>(
 				dataSouce, 
 				filter, 
-				zoomLevelRange);
+				settings);
 		
 		NonEmptyTileIterator<ValuePixel, SumAndSize> tileIterator =
 				new NonEmptyTileIterator<ValuePixel, SumAndSize>(SumAndSize.class);
@@ -103,7 +104,8 @@ public class HeatmapTest {
 		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeAlphaVisualizer(
 				colorScheme, ranges);
 		visualizer.setAlphaValue(0.5f);
-		visualizer.setBackgroundColor(new Color(colorScheme.getRGB(0, colorScheme.getHeight() - 1), true));
+		visualizer.setBackgroundColor(
+				new Color(colorScheme.getRGB(0, colorScheme.getHeight() - 1), true));
 //		visualizer.setForceAlphaValue(true);
 
 		HeatmapFileWriter<ValuePixel, SumAndSize> heatmapFileWriter =

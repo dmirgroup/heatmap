@@ -17,12 +17,13 @@
 
 	<import resource="datasource.xml"/>
 
-	<bean id="heatmapDimensions"
-		class="de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions" />
+	<bean id="heatmapSettings"
+		class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" />
 		
-	<bean id="projection" 
+	<bean id="projection"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection">
-		<constructor-arg name="dimensions" ref="heatmapDimensions" />
+		<constructor-arg name="tileSize" value="#{heatmapSettings.tileSize}" />
+		<constructor-arg name="zoomLevelMapper" value="#{heatmapSettings.zoomLevelMapper}" />
 	</bean>
 	
 	<bean id="coordinateMapper"
@@ -31,10 +32,17 @@
 	<bean id="externalDataMapper"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper" />
 	
+	<bean id="rtreeGeoDataSource"
+			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.RTreeGeoDataSource">
+			
+		<constructor-arg name="dataSource" ref="geoDataSource" />
+		<constructor-arg name="mapper" ref="coordinateMapper" />
+	</bean>
+	
 	<bean id="tileDatasource"
 			class="de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource" >
 			
-		<constructor-arg name="geoDataSource" ref="geoDataSource"/>
+		<constructor-arg name="geoDataSource" ref="rtreeGeoDataSource"/>
 		<constructor-arg name="projection" ref="projection" />
 		<constructor-arg name="externalDataMapper" ref="externalDataMapper" />
 		<constructor-arg name="coordinateMapper" ref="coordinateMapper" />

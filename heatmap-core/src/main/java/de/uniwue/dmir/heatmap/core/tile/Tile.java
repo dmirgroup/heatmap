@@ -24,14 +24,14 @@ import java.lang.reflect.Array;
 
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.TileDimensions;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 public class Tile<E extends IExternalData, I> implements ITile<E, I>{
 
 	@Getter
-	private TileDimensions dimensions;
+	private TileSize size;
 	
 	@Getter
 	private TileCoordinates coordinates;
@@ -42,12 +42,12 @@ public class Tile<E extends IExternalData, I> implements ITile<E, I>{
 	
 	@SuppressWarnings("unchecked")
 	public Tile(
-			TileDimensions tileDimensions,
+			TileSize tileSize,
 			TileCoordinates coordinates,
 			IFilter<E, I> filter, 
 			I[] initialData) {
 		
-		if (tileDimensions == null) {
+		if (tileSize == null) {
 			throw new IllegalArgumentException("Tile dimensions must not be null.");
 		}
 		
@@ -64,11 +64,11 @@ public class Tile<E extends IExternalData, I> implements ITile<E, I>{
 					"Initial data must not be null, but may be empty.");
 		}
 		
-		this.dimensions = tileDimensions;
+		this.size = tileSize;
 		this.coordinates = coordinates;
 		this.filter = filter;
 		
-		int length = this.dimensions.getWidth() * this.dimensions.getHeight();
+		int length = this.size.getWidth() * this.size.getHeight();
 		if (initialData.length != 0 && initialData.length != length) {
 			throw new IllegalArgumentException(
 					"Initial data must have a certain size: " + length);

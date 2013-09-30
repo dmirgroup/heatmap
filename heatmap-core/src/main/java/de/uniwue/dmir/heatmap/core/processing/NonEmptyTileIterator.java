@@ -20,7 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core.processing;
 
-import java.util.List;
+import java.util.Iterator;
 
 import lombok.AllArgsConstructor;
 
@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
 import de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.processing.ExhaustiveTileIterator.DefaultAdditionalDataProvider;
-import de.uniwue.dmir.heatmap.core.processing.ExhaustiveTileIterator.IAdditionalDataProvider;
+import de.uniwue.dmir.heatmap.core.processing.IAdditionalDataProvider.DefaultAdditionalDataProvider;
 import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 @AllArgsConstructor
 public class NonEmptyTileIterator<E extends IExternalData, I> 
@@ -51,7 +51,7 @@ implements ITileIterator<E, I>  {
 			IHeatmap<E, I> heatmap, 
 			ITileProcessor<E, I> processor) {
 		
-		ZoomLevelRange zoomLevelRange = heatmap.getZoomLevelRange();
+		ZoomLevelRange zoomLevelRange = heatmap.getSettings().getZoomLevelRange();
 		
 		StopWatch outerWatch = new StopWatch();
 		outerWatch.start();
@@ -61,22 +61,48 @@ implements ITileIterator<E, I>  {
 			StopWatch innerWatch = new StopWatch();
 			innerWatch.start();
 			
-			List<ITile<E, I>> tiles = 
-					heatmap.getTiles(z, this.dataProvider, true);
+			Iterator<TileCoordinates> tileCoordinates =
+					heatmap.getTileCoordinatesWithContent(z);
 			
 			innerWatch.stop();
-			this.logger.debug("getting tiles:    {}", innerWatch.toString());
+			this.logger.debug("getting tile coordinate iterator:    {}", innerWatch.toString());
 			
 			innerWatch.reset();
 			innerWatch.start();
 			
-			for (ITile<E, I> tile : tiles) {
+			StopWatch tileCoordinateStopWatch = new StopWatch();
+			StopWatch additionalDataStopWatch = new StopWatch();
+			StopWatch tileRetrievalStopWatch = new StopWatch();
+			StopWatch processingStopWatch = new StopWatch();
+			
+			int tileCount = 0;
+			while (tileCoordinates.hasNext()) {
+				
+				tileCoordinateStopWatch.start();
+				TileCoordinates coordinates = tileCoordinates.next();
+				tileCoordinateStopWatch.stop();
+				
+				additionalDataStopWatch.start();
+				I[] additionalData = this.dataProvider.getAdditionalData(coordinates);
+				additionalDataStopWatch.stop();
+				
+				tileRetrievalStopWatch.start();
+				ITile<E, I> tile = heatmap.getTile(coordinates, additionalData);
+				tileRetrievalStopWatch.stop();
+				
+				processingStopWatch.start();
 				processor.process(tile);
+				processingStopWatch.stop();
+				
+				tileCount ++;
 			}
 			
 			innerWatch.stop();
-			this.logger.debug("processing {} tiles: {}", tiles.size(), innerWatch.toString());
-			
+			this.logger.debug("processing {} tiles: {}", tileCount, innerWatch.toString());
+			this.logger.debug("- getting tile coordinates: {}", tileCoordinateStopWatch.toString());
+			this.logger.debug("- getting additional data:  {}", additionalDataStopWatch.toString());
+			this.logger.debug("- getting tiles:            {}", tileRetrievalStopWatch.toString());
+			this.logger.debug("- processing tiles:         {}", processingStopWatch.toString());
 		}
 		
 		outerWatch.stop();

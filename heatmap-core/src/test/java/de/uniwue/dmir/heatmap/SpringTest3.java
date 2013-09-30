@@ -37,7 +37,7 @@ public class SpringTest3 {
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
-						"spring/example/applicationContext.xml");
+						"spring/example/settings.xml");
 		
 		IHeatmap heatmap = 
 				appContext.getBean(IHeatmap.class);

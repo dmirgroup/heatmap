@@ -36,8 +36,8 @@ implements IVisualizer<SumAndSize> {
 
 	public BufferedImage visualize(ITile<?, SumAndSize> tile) {
 		
-		int width = tile.getDimensions().getWidth();
-		int height = tile.getDimensions().getHeight();
+		int width = tile.getSize().getWidth();
+		int height = tile.getSize().getHeight();
 
 		BufferedImage image = new BufferedImage(
 				width, 

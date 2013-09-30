@@ -32,9 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import de.uniwue.dmir.heatmap.core.Heatmap;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions;
+import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter;
@@ -59,7 +57,7 @@ public class SpringTest2 {
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
-						"spring/applicationContext.xml");
+						"spring/example/settings.xml");
 		
 		@SuppressWarnings("unchecked")
 		IGeoDataSource<GeoPoint> dataSource = 
@@ -68,12 +66,15 @@ public class SpringTest2 {
 //		RTreeGeoDataSource<GeoPoint> rTreeGeoDataSource = 
 //				new RTreeGeoDataSource<GeoPoint>(dataSource, new GeoPointCoordinateMapper());
 		
-		IHeatmapDimensions dimensions = new DefaultHeatmapDimensions();
+		HeatmapSettings settings = new HeatmapSettings();
+		settings.getZoomLevelRange().setMax(7);
 		
 		GeoTileDataSource<GeoPoint, ValuePixel> dataSouce =
 				new GeoTileDataSource<GeoPoint, ValuePixel>(
 						dataSource,
-						new MercatorMapProjection(dimensions), 
+						new MercatorMapProjection(
+								settings.getTileSize(),
+								settings.getZoomLevelMapper()), 
 						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
@@ -91,12 +92,11 @@ public class SpringTest2 {
 //						new ValuePixelToSumAndSizeMapper(),
 //						new SumAndSizeAdder(),
 //						42, 42, 21, 21);
-		ZoomLevelRange zoomLevelRange = new ZoomLevelRange(0, 10);
 		
 		IHeatmap<ValuePixel, SumAndSize> heatmap = new Heatmap<ValuePixel, SumAndSize>(
 				dataSouce, 
 				filter, 
-				zoomLevelRange);
+				settings);
 		
 		NonEmptyTileIterator<ValuePixel, SumAndSize> tileIterator =
 				new NonEmptyTileIterator<ValuePixel, SumAndSize>(SumAndSize.class);

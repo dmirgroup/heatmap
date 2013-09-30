@@ -26,8 +26,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.GridDimensions;
+import de.uniwue.dmir.heatmap.core.IHeatmap.IZoomLevelMapper;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelSize;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IMapProjection;
@@ -43,7 +44,8 @@ public class MercatorMapProjection implements IMapProjection {
 	public static final double MIN_LON = -180;
 	public static final double MAX_LON = +180;
 	
-	private IHeatmapDimensions dimensions;
+	private TileSize tileSize;
+	private IZoomLevelMapper zoomLevelMapper;
 	
 	@Override
 	public RelativeCoordinates fromGeoToRelativeCoordinates(
@@ -72,8 +74,8 @@ public class MercatorMapProjection implements IMapProjection {
 		PixelCoordinates topLeft = fromTileToPixelCoordinates(tileCoordinates);
 		
 		PixelCoordinates bottomRight = new PixelCoordinates(
-				topLeft.getX() + this.dimensions.getTileDimensions().getWidth(), 
-				topLeft.getY() + this.dimensions.getTileDimensions().getHeight());
+				topLeft.getX() + this.tileSize.getWidth(), 
+				topLeft.getY() + this.tileSize.getHeight());
 		
 		// padding
 		
@@ -118,7 +120,8 @@ public class MercatorMapProjection implements IMapProjection {
 				relativeCoordinates.overlappingTiles(
 						tileCoordinates, 
 						filter, 
-						this.dimensions);
+						this.tileSize,
+						this.zoomLevelMapper);
 		
 		coordinates.addAll(overlappingCoordinates);
 		
@@ -142,15 +145,15 @@ public class MercatorMapProjection implements IMapProjection {
 			int zoom) {
 		
 		return new TileCoordinates(
-				(int) (pixelCoordinates.getX() / this.dimensions.getTileDimensions().getWidth()), 
-				(int) (pixelCoordinates.getY() / this.dimensions.getTileDimensions().getHeight()),
+				(int) (pixelCoordinates.getX() / this.tileSize.getWidth()), 
+				(int) (pixelCoordinates.getY() / this.tileSize.getHeight()),
 				zoom);
 	}
 	
 	private PixelCoordinates fromTileToPixelCoordinates(TileCoordinates tileCoordinates) {
 		return new PixelCoordinates(
-				tileCoordinates.getX() * this.dimensions.getTileDimensions().getWidth(),
-				tileCoordinates.getY() * this.dimensions.getTileDimensions().getHeight());
+				tileCoordinates.getX() * this.tileSize.getWidth(),
+				tileCoordinates.getY() * this.tileSize.getHeight());
 	}
 	
 	private GeoCoordinates fromPixelToGeoCoordinates(
@@ -195,13 +198,11 @@ public class MercatorMapProjection implements IMapProjection {
 	 */
 	private PixelDimensions getPixelDimensions(int zoom) {
 		
-		GridDimensions gridDimensions = this.dimensions.getGridDimensions(zoom);
+		ZoomLevelSize zoomLevelSize = this.zoomLevelMapper.getSize(zoom);
 		
 		return new PixelDimensions(
-				gridDimensions.getWidth() 
-					* this.dimensions.getTileDimensions().getWidth(),
-				gridDimensions.getHeight() 
-					* this.dimensions.getTileDimensions().getHeight());
+				zoomLevelSize.getWidth() * this.tileSize.getWidth(),
+				zoomLevelSize.getHeight() * this.tileSize.getHeight());
 	}
 
 	/**
@@ -246,8 +247,8 @@ public class MercatorMapProjection implements IMapProjection {
 			PixelCoordinates pixelCoordinates,
 			TileCoordinates tileCoordinates) {
 		
-		int x = (int) (pixelCoordinates.getX() - (tileCoordinates.getX() * this.dimensions.getTileDimensions().getWidth()));
-		int y = (int) (pixelCoordinates.getY() - (tileCoordinates.getY() * this.dimensions.getTileDimensions().getHeight()));
+		int x = (int) (pixelCoordinates.getX() - (tileCoordinates.getX() * this.tileSize.getWidth()));
+		int y = (int) (pixelCoordinates.getY() - (tileCoordinates.getY() * this.tileSize.getHeight()));
 		
 		return new RelativeCoordinates(x, y);
 	}

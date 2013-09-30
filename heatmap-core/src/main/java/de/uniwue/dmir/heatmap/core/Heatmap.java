@@ -20,10 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import lombok.Getter;
 
@@ -31,11 +29,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.GridDimensions;
-import de.uniwue.dmir.heatmap.core.ITileCoordinatesProjection.DefaultTileCoordinatesProjection;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.processing.ExhaustiveTileIterator.IAdditionalDataProvider;
 import de.uniwue.dmir.heatmap.core.tile.ITile;
 import de.uniwue.dmir.heatmap.core.tile.Tile;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
@@ -49,38 +43,16 @@ implements IHeatmap<E, I>{
 	private IFilter<E, I> filter;
 	
 	@Getter
-	private ZoomLevelRange zoomLevelRange;
-	
-	@Getter
-	private IHeatmapDimensions dimensions;
-	
-	private ITileCoordinatesProjection projection;
+	private HeatmapSettings settings;
 	
 	public Heatmap(
 			IExternalDataSource<E> dataSource,
 			IFilter<E, I> filter,
-			ZoomLevelRange zoomLevelRange,
-			IHeatmapDimensions dimensions, 
-			ITileCoordinatesProjection projection) {
+			HeatmapSettings settings) {
 		
 		this.dataSource = dataSource;
 		this.filter = filter;
-		this.zoomLevelRange = zoomLevelRange;
-		this.dimensions = dimensions;
-		this.projection = projection;
-	}
-	
-	public Heatmap(
-			IExternalDataSource<E> dataSource,
-			IFilter<E, I> filter,
-			ZoomLevelRange zoomLevelRange) {
-
-		this(
-				dataSource, 
-				filter, 
-				zoomLevelRange, 
-				new DefaultHeatmapDimensions(), 
-				new DefaultTileCoordinatesProjection());
+		this.settings = settings;
 	}
 	
 	@Override
@@ -88,9 +60,9 @@ implements IHeatmap<E, I>{
 		
 		// tile coordinates to top-left reference system
 		TileCoordinates projectedCoordinates =
-				this.projection.fromCustomToTopLeft(
+				this.settings.getTileProjection().fromCustomToTopLeft(
 						coordinates, 
-						this.dimensions);
+						this.settings.getZoomLevelMapper());
 		
 		
 		// get data
@@ -115,7 +87,7 @@ implements IHeatmap<E, I>{
 		}
 		
 		Tile<E, I> tile = new Tile<E, I>(
-				this.dimensions.getTileDimensions(), 
+				this.settings.getTileSize(), 
 				projectedCoordinates, 
 				this.filter, 
 				additionalData);
@@ -135,72 +107,9 @@ implements IHeatmap<E, I>{
 			
 		return tile;
 	}
-	
-	@Override
-	public List<ITile<E, I>> getTiles(
-			int zoom,
-			IAdditionalDataProvider<I> additionalDataProvider,
-			boolean excludeEmptyTiles) {
-		
-		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-		
-		Map<Integer, Set<TileCoordinates>> tileCoordinates = 
-				this.dataSource.getNonEmptyTiles(zoom, zoom, filter);
-		
-		stopWatch.stop();
-		this.logger.debug(
-				"getting {} non-empty tile coordinates: {}", 
-				tileCoordinates.size(),
-				stopWatch.toString());
-		
-		stopWatch.reset();
-		stopWatch.start();
-
-		List<ITile<E, I>> tiles = new ArrayList<ITile<E,I>>();
-		for (TileCoordinates c : tileCoordinates.get(zoom)) {
-			ITile<E, I> tile = 
-					this.getTile(c, additionalDataProvider.getAdditionalData(c));
-			tiles.add(tile);
-		}
-		
-		stopWatch.stop();
-		this.logger.debug(
-				"getting {} tiles from heatmap: {}", 
-				tiles.size(), 
-				stopWatch.toString());
-		
-		return tiles;
-	}
 
 	@Override
-	public TileCoordinates getMinTileCoordiantes(int zoom) {
-		
-		TileCoordinates minCoordinates = new TileCoordinates(0, 0, zoom);
-		TileCoordinates projectedMinTileCoordinates = 
-				this.projection.fromTopLeftToCustom(
-						minCoordinates, 
-						this.dimensions);
-		
-		return projectedMinTileCoordinates;
+	public Iterator<TileCoordinates> getTileCoordinatesWithContent(int zoom) {
+		return this.dataSource.getNonEmptyTiles(zoom, zoom, this.filter).get(zoom).iterator();
 	}
-
-	@Override
-	public TileCoordinates getMaxTileCoordiantes(int zoom) {
-		
-		GridDimensions gridDimensions = this.dimensions.getGridDimensions(zoom);
-		TileCoordinates maxCoordinates = new TileCoordinates(
-				gridDimensions.getWidth() - 1, 
-				gridDimensions.getHeight() - 1, 
-				zoom);
-		
-		TileCoordinates projectedMaxTileCoordinates = 
-				this.projection.fromTopLeftToCustom(
-						maxCoordinates, 
-						this.dimensions);
-		
-		return projectedMaxTileCoordinates;
-	}
-
-
 }

@@ -20,6 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
+import de.uniwue.dmir.heatmap.core.IHeatmap.IZoomLevelMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 /**
@@ -34,26 +35,26 @@ public interface ITileCoordinatesProjection {
 	
 	TileCoordinates fromCustomToTopLeft(
 			TileCoordinates tileCoordinates,
-			IHeatmapDimensions dimensions);
+			IZoomLevelMapper zoomLevelMapper);
 	
 	TileCoordinates fromTopLeftToCustom(
 			TileCoordinates tileCoordinates,
-			IHeatmapDimensions dimensions);
+			IZoomLevelMapper zoomLevelMapper);
 	
-	public static class DefaultTileCoordinatesProjection 
+	public static class IdentityTileCoordinatesProjection 
 	implements ITileCoordinatesProjection {
 
 		@Override
 		public TileCoordinates fromCustomToTopLeft(
 				TileCoordinates tileCoordinates, 
-				IHeatmapDimensions dimensions) {
+				IZoomLevelMapper zoomLevelMapper) {
 			return tileCoordinates;
 		}
 
 		@Override
 		public TileCoordinates fromTopLeftToCustom(
 				TileCoordinates tileCoordinates, 
-				IHeatmapDimensions dimensions) {
+				IZoomLevelMapper zoomLevelMapper) {
 			return tileCoordinates;
 		}
 

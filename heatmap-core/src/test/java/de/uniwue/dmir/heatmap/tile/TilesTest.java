@@ -30,8 +30,7 @@ import javax.imageio.ImageIO;
 import org.junit.Test;
 
 import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.DefaultHeatmapDimensions;
+import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.tile.Tile;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
@@ -53,7 +52,8 @@ public class TilesTest {
 	@Test
 	public void testTile() throws IOException {
 		
-		IHeatmapDimensions dimensions = new DefaultHeatmapDimensions();
+		HeatmapSettings settings = new HeatmapSettings();
+		settings.getZoomLevelRange().setMax(7);
 		
 		GeoTileDataSource<GeoPoint, ValuePixel> dataSouce =
 				new GeoTileDataSource<GeoPoint, ValuePixel>(
@@ -61,7 +61,9 @@ public class TilesTest {
 								new File("src/test/resources/lonlat.txt"),
 								",",
 								false), 
-						new MercatorMapProjection(dimensions), 
+						new MercatorMapProjection(
+								settings.getTileSize(),
+								settings.getZoomLevelMapper()), 
 						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
@@ -74,7 +76,7 @@ public class TilesTest {
 		
 		TileCoordinates tileCoordinates = new TileCoordinates(1, 0, 1);
 		Tile<ValuePixel, SumAndSize> tile = new Tile<ValuePixel, SumAndSize>(
-				dimensions.getTileDimensions(),
+				settings.getTileSize(),
 				tileCoordinates,
 				filter,
 				new SumAndSize[] {});

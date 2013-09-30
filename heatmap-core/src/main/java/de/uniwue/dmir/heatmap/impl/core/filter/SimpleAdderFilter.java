@@ -39,8 +39,8 @@ implements IFilter<T, P> {
 		
 		P[] tileData = tile.getData();
 		
-		int tileWidth = tile.getDimensions().getWidth();
-		int tileHeight = tile.getDimensions().getHeight();
+		int tileWidth = tile.getSize().getWidth();
+		int tileHeight = tile.getSize().getHeight();
 		
 		P addable = this.mapper.map(dataPoint);
 		

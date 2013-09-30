@@ -27,8 +27,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions;
-import de.uniwue.dmir.heatmap.core.IHeatmapDimensions.GridDimensions;
+import de.uniwue.dmir.heatmap.core.IHeatmap.IZoomLevelMapper;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelSize;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 /**
@@ -53,7 +54,8 @@ public class RelativeCoordinates {
 	public List<TileCoordinates> overlappingTiles(
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter,
-			IHeatmapDimensions dimensions) {
+			TileSize tileSize,
+			IZoomLevelMapper zoomLevelMapper) {
 		
 		List<TileCoordinates> coordinates = new ArrayList<TileCoordinates>();
 		
@@ -65,15 +67,15 @@ public class RelativeCoordinates {
 				 0 + 1, -1 + 1,  test, 3, 3);
 		Arrays2d.set(
 				this.getX() + filter.getWidth() - filter.getCenterX() 
-					> dimensions.getTileDimensions().getWidth(), 
+					> tileSize.getWidth(), 
 				 1 + 1,  0 + 1,  test, 3, 3);
 		Arrays2d.set(
 				this.getY() + filter.getHeight() - filter.getCenterY() 
-					> dimensions.getTileDimensions().getHeight(), 
+					> tileSize.getHeight(), 
 				 0 + 1,  1 + 1,  test, 3, 3);
 		
-		GridDimensions gridDimensions = 
-				dimensions.getGridDimensions(tileCoordinates.getZoom());
+		ZoomLevelSize gridDimensions = 
+				zoomLevelMapper.getSize(tileCoordinates.getZoom());
 		
 		for (int x = -1; x <= 1; x ++) {
 

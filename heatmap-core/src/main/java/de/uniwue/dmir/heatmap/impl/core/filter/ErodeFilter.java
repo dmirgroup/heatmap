@@ -61,8 +61,8 @@ implements IFilter<T, P>{
 				if (!Arrays2d.checkIndex(
 						x, 
 						y, 
-						tile.getDimensions().getWidth(), 
-						tile.getDimensions().getHeight())) {
+						tile.getSize().getWidth(), 
+						tile.getSize().getHeight())) {
 					continue;
 				}
 				
@@ -71,8 +71,8 @@ implements IFilter<T, P>{
 				P currentValue = Arrays2d.get(
 						x, y, 
 						tileData, 
-						tile.getDimensions().getWidth(), 
-						tile.getDimensions().getHeight());
+						tile.getSize().getWidth(), 
+						tile.getSize().getHeight());
 				
 				P sum;
 				if (currentValue == null) {
@@ -84,8 +84,8 @@ implements IFilter<T, P>{
 				Arrays2d.set(
 						sum, x, y, 
 						tileData, 
-						tile.getDimensions().getWidth(), 
-						tile.getDimensions().getHeight());
+						tile.getSize().getWidth(), 
+						tile.getSize().getHeight());
 			}
 		}
 	}
