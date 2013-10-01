@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import de.uniwue.dmir.heatmap.core.ArrayTileFactory;
 import de.uniwue.dmir.heatmap.core.Heatmap;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
@@ -37,7 +38,6 @@ import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy;
-import de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
@@ -78,7 +78,7 @@ public class SpringTest2 {
 						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
-		IFilter<ValuePixel, SumAndSize> filter = 
+		IFilter<ValuePixel, SumAndSize[]> filter = 
 				new ImageFilter<ValuePixel, SumAndSize>(
 						new ValuePixelToSumAndSizeMapper(),
 						new SumAndSizeAdder(),
@@ -93,14 +93,12 @@ public class SpringTest2 {
 //						new SumAndSizeAdder(),
 //						42, 42, 21, 21);
 		
-		IHeatmap<ValuePixel, SumAndSize> heatmap = new Heatmap<ValuePixel, SumAndSize>(
+		IHeatmap<ValuePixel, SumAndSize[]> heatmap = new Heatmap<ValuePixel, SumAndSize[]>(
+				new ArrayTileFactory<SumAndSize>(SumAndSize.class),
 				dataSouce, 
 				filter, 
 				settings);
 		
-		NonEmptyTileIterator<ValuePixel, SumAndSize> tileIterator =
-				new NonEmptyTileIterator<ValuePixel, SumAndSize>(SumAndSize.class);
-
 		BufferedImage colorScheme = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_alpha70.png"));
 		
@@ -113,13 +111,13 @@ public class SpringTest2 {
 		visualizer.setAlphaValue(0.2f);
 		visualizer.setForceAlphaValue(true);
 
-		HeatmapFileWriter<ValuePixel, SumAndSize> heatmapFileWriter =
-				new HeatmapFileWriter<ValuePixel, SumAndSize>(
+		HeatmapFileWriter<SumAndSize[]> heatmapFileWriter =
+				new HeatmapFileWriter<SumAndSize[]>(
 						visualizer,
 						new DefaultFileStrategy("out/tiles"), 
 						"png");
 		
-		tileIterator.iterate(heatmap, heatmapFileWriter);
+		heatmap.processTiles(heatmapFileWriter);
 
 		appContext.close();
 	}

@@ -77,6 +77,11 @@
 		<constructor-arg name="max" value="10" />
 	</bean>
 	
+	<bean id="tileFactory"
+			class="de.uniwue.dmir.heatmap.core.ArrayTileFactory">
+		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize" />
+	</bean>
+	
 	<bean id="heatmap"
 			class="de.uniwue.dmir.heatmap.core.Heatmap">
 
@@ -116,11 +121,6 @@
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="fileStrategy" />
 		<constructor-arg name="imageFormat" value="png" />
-	</bean>
-	
-	<bean id="iterator"
-			class="de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator">
-		<constructor-arg name="dataClass" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize" />		
 	</bean>
 	
 </beans>

@@ -25,12 +25,14 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import lombok.Setter;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
 
-public class SumAndSizeAlphaVisualizer implements IVisualizer<SumAndSize> {
+public class SumAndSizeAlphaVisualizer 
+implements IVisualizer<SumAndSize[]> {
 
 	public static final double DEFAULT_SCALE_FACTOR = 100;
 	public static final float DEFAULT_ALPHA_VALUE = 0.7f;
@@ -79,27 +81,14 @@ public class SumAndSizeAlphaVisualizer implements IVisualizer<SumAndSize> {
 		return this.colorScheme.getHeight() - 1;
 	}
 	
-	public static double[] ranges(double min, double max, int colors) {
-		
-		double[] ranges = new double[colors - 2];
-		ranges[0] = min;
-		
-		double diff = max - min;
-		double step = diff / (colors - 3);
-		
-		for (int i = 1; i < colors - 2; i ++) {
-			ranges[i] = min + i * step;
-		}
-		
-		return ranges;
-	}
-	
-	public BufferedImage visualize(ITile<?, SumAndSize> tile) {
+	public BufferedImage visualize(
+			SumAndSize[] data,
+			TileSize tileSize,
+			TileCoordinates coordinates) {
 
-		int width = tile.getSize().getWidth();
-		int height = tile.getSize().getHeight();
+		int width = tileSize.getWidth();
+		int height = tileSize.getHeight();
 		
-		SumAndSize[] objects = tile.getData();
 		
 		BufferedImage image = new BufferedImage(
 				width, 
@@ -114,16 +103,16 @@ public class SumAndSizeAlphaVisualizer implements IVisualizer<SumAndSize> {
 			graphics.drawRect(0, 0, width - 1, height - 1);
 			graphics.drawString(String.format(
 					"x:%d, y:%d, z:%d", 
-					tile.getCoordinates().getX(),
-					tile.getCoordinates().getY(),
-					tile.getCoordinates().getZoom()),
+					coordinates.getX(),
+					coordinates.getY(),
+					coordinates.getZoom()),
 					5, 15);
 		}
 		
 		for (int i  = 0; i < width; i++) {
 			for (int j  = 0; j < height; j++) {
 
-				SumAndSize object = Arrays2d.get(i, j, objects, width, height);
+				SumAndSize object = Arrays2d.get(i, j, data, width, height);
 
 				if (this.colorScheme == null) {
 					if (object != null && object.getSum() > 0) {
@@ -157,6 +146,20 @@ public class SumAndSizeAlphaVisualizer implements IVisualizer<SumAndSize> {
 		
 		return image;
 	}
-	
+
+	public static double[] ranges(double min, double max, int colors) {
+		
+		double[] ranges = new double[colors - 2];
+		ranges[0] = min;
+		
+		double diff = max - min;
+		double step = diff / (colors - 3);
+		
+		for (int i = 1; i < colors - 2; i ++) {
+			ranges[i] = min + i * step;
+		}
+		
+		return ranges;
+	}
 
 }

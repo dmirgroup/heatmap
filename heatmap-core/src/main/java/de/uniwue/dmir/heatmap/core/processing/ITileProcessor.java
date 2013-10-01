@@ -20,9 +20,9 @@
  */
 package de.uniwue.dmir.heatmap.core.processing;
 
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
-public interface ITileProcessor<E extends IExternalData, I> {
-	void process(ITile<E, I> tile);
+public interface ITileProcessor<I> {
+	void process(I tile, TileSize tileSize, TileCoordinates coordinates);
 }

@@ -22,17 +22,16 @@ package de.uniwue.dmir.heatmap.impl.core.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import de.uniwue.dmir.heatmap.core.IFilter;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @AllArgsConstructor
 @Getter
 public class ErodeFilter<T extends IExternalData, P>
-implements IFilter<T, P>{
+extends AbstractFilter<T, P[]> {
 
 	private IMapper<T, P> mapper;
 	private IAdder<P> adder;
@@ -43,9 +42,7 @@ implements IFilter<T, P>{
 	private int centerX;
 	private int centerY;
 
-	public void filter(T dataPoint, ITile<T, P> tile) {
-		
-		P[] tileData = tile.getData();
+	public void filter(T dataPoint, P[] tileData, TileSize tileSize) {
 		
 		int startX = dataPoint.getCoordinates().getX();
 		int startY = dataPoint.getCoordinates().getY();
@@ -61,8 +58,8 @@ implements IFilter<T, P>{
 				if (!Arrays2d.checkIndex(
 						x, 
 						y, 
-						tile.getSize().getWidth(), 
-						tile.getSize().getHeight())) {
+						tileSize.getWidth(), 
+						tileSize.getHeight())) {
 					continue;
 				}
 				
@@ -71,8 +68,8 @@ implements IFilter<T, P>{
 				P currentValue = Arrays2d.get(
 						x, y, 
 						tileData, 
-						tile.getSize().getWidth(), 
-						tile.getSize().getHeight());
+						tileSize.getWidth(), 
+						tileSize.getHeight());
 				
 				P sum;
 				if (currentValue == null) {
@@ -84,8 +81,8 @@ implements IFilter<T, P>{
 				Arrays2d.set(
 						sum, x, y, 
 						tileData, 
-						tile.getSize().getWidth(), 
-						tile.getSize().getHeight());
+						tileSize.getWidth(), 
+						tileSize.getHeight());
 			}
 		}
 	}

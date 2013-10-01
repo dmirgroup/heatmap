@@ -24,20 +24,19 @@ import java.awt.image.BufferedImage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import de.uniwue.dmir.heatmap.core.IFilter;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.filter.operators.IScalarMultiplier;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @AllArgsConstructor
 @Getter
-public class ImageFilter<T extends IExternalData, P> 
-implements IFilter<T, P>{
+public class ImageFilter<E extends IExternalData, P> 
+extends AbstractFilter<E, P[]> {
 
-	private IMapper<T, P> internalMapper;
+	private IMapper<E, P> internalMapper;
 	private IAdder<P> adder;
 	private IScalarMultiplier<P> multiplier;
 	
@@ -50,7 +49,7 @@ implements IFilter<T, P>{
 	private Double[] array;
 
 	public ImageFilter(
-			IMapper<T, P> internalMapper,
+			IMapper<E, P> internalMapper,
 			IAdder<P> adder,
 			IScalarMultiplier<P> multiplier,
 			BufferedImage image) {
@@ -60,7 +59,7 @@ implements IFilter<T, P>{
 	}
 	
 	private ImageFilter(
-			IMapper<T, P> internalMapper,
+			IMapper<E, P> internalMapper,
 			IAdder<P> adder,
 			IScalarMultiplier<P> multiplier) {
 		
@@ -104,9 +103,7 @@ implements IFilter<T, P>{
 		}
 	}
 	
-	public void filter(T dataPoint, ITile<T, P> tile) {
-		
-		P[] tileData = tile.getData();
+	public void filter(E dataPoint, P[] tile, TileSize tileSize) {
 		
 		int startX = dataPoint.getCoordinates().getX();
 		int startY = dataPoint.getCoordinates().getY();
@@ -122,8 +119,8 @@ implements IFilter<T, P>{
 				if (!Arrays2d.checkIndex(
 						x, 
 						y, 
-						tile.getSize().getWidth(), 
-						tile.getSize().getHeight())) {
+						tileSize.getWidth(), 
+						tileSize.getHeight())) {
 					continue;
 				}
 				
@@ -135,9 +132,9 @@ implements IFilter<T, P>{
 				
 				P currentValue = Arrays2d.get(
 						x, y, 
-						tileData, 
-						tile.getSize().getWidth(), 
-						tile.getSize().getHeight());
+						tile, 
+						tileSize.getWidth(), 
+						tileSize.getHeight());
 				
 				P sum;
 				if (currentValue == null) {
@@ -148,9 +145,9 @@ implements IFilter<T, P>{
 				
 				Arrays2d.set(
 						sum, x, y, 
-						tileData, 
-						tile.getSize().getWidth(), 
-						tile.getSize().getHeight());
+						tile, 
+						tileSize.getWidth(), 
+						tileSize.getHeight());
 			}
 		}
 	}

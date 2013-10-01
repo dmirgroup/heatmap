@@ -20,9 +20,19 @@
  */
 package de.uniwue.dmir.heatmap.core.processing;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
-public interface ITileIterator<E extends IExternalData, I> {
-	public void iterate(IHeatmap<E, I> heatmap, ITileProcessor<E, I> processor);
+public interface IInternalDataProvider<I> {
+	
+	/**
+	 * @param coordinates
+	 * @return 
+	 * 		internal data for the given coordinates; 
+	 * 		may be <code>null</code> if no data is available for the given
+	 * 		coordinates
+	 */
+	I getData(TileCoordinates coordinates);
+	
 }
+
+

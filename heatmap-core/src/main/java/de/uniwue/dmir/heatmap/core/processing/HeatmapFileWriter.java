@@ -32,13 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.core.IVisualizer;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 @AllArgsConstructor
-public class HeatmapFileWriter<E extends IExternalData, I> 
-implements ITileProcessor<E, I> {
+public class HeatmapFileWriter<I> 
+implements ITileProcessor<I> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -47,14 +46,15 @@ implements ITileProcessor<E, I> {
 	private String imageFormat;
 	
 	@Override
-	public void process(ITile<E, I> tile) {
+	public void process(I tile, TileSize tileSize, TileCoordinates coordinates) {
+		
 		if (tile == null) {
 			return;
 		}
 		
-		BufferedImage image = this.visualizer.visualize(tile);
+		BufferedImage image = this.visualizer.visualize(tile, tileSize, coordinates);
 		
-		File file = this.fileStrategy.getFile(tile.getCoordinates(), this.imageFormat);
+		File file = this.fileStrategy.getFile(coordinates, this.imageFormat);
 		file.getParentFile().mkdirs();
 		
 		try {

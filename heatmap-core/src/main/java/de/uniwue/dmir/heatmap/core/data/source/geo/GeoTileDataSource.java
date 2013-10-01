@@ -21,11 +21,8 @@
 package de.uniwue.dmir.heatmap.core.data.source.geo;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IExternalDataSource;
@@ -54,7 +51,7 @@ implements IExternalDataSource<T> {
 	private IToGeoCoordinatesMapper<S> coordinateMapper;
 	private IToInternalDataMapper<S, T> externalDataMapper;
 	
-	public List<T> getData(
+	public Iterator<T> getData(
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter) {
 		
@@ -69,13 +66,12 @@ implements IExternalDataSource<T> {
 				geoBoundingBox.getSouthEast().getLongitude(), 
 				geoBoundingBox.getSouthEast().getLatitude());
 		
-		return convert(sourceData, tileCoordinates);
+		return convert(sourceData, tileCoordinates).iterator();
 	}
 	
 	@Override
-	public Map<Integer, Set<TileCoordinates>> getNonEmptyTiles(
-			int zoomStart,
-			int zoomStop,
+	public Iterator<TileCoordinates> getTileCoordinatesWithContent(
+			int zoom,
 			IFilter<?, ?> filter) {
 		
 		List<S> sourceData = this.geoDataSource.getData(
@@ -84,27 +80,19 @@ implements IExternalDataSource<T> {
 				 180,
 				 -90);
 		
-		Map<Integer, Set<TileCoordinates>> map = 
-				new TreeMap<Integer, Set<TileCoordinates>>();
+		List<TileCoordinates> coordinates = new ArrayList<TileCoordinates>();
 		
-		for (int zoom = zoomStart; zoom <= zoomStop; zoom++) {
-			
-			Set<TileCoordinates> coordinates = new HashSet<TileCoordinates>();
-			map.put(zoom, coordinates);
-			
-			for (S data : sourceData) {
+		for (S data : sourceData) {
 
-				GeoCoordinates geoCoordinates = this.coordinateMapper.map(data);
-				
-				List<TileCoordinates> tileCoordinates =
-						this.projection.overlappingTiles(geoCoordinates, zoom, filter);
+			GeoCoordinates geoCoordinates = this.coordinateMapper.map(data);
+			
+			List<TileCoordinates> tileCoordinates =
+					this.projection.overlappingTiles(geoCoordinates, zoom, filter);
 
-				coordinates.addAll(tileCoordinates);
-				
-			}
+			coordinates.addAll(tileCoordinates);
 		}
 		
-		return map;
+		return coordinates.iterator();
 	}
 	
 	/**

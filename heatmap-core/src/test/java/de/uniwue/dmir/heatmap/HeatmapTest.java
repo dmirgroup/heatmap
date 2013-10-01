@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 
 import org.junit.Test;
 
+import de.uniwue.dmir.heatmap.core.ArrayTileFactory;
 import de.uniwue.dmir.heatmap.core.Heatmap;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
@@ -36,7 +37,6 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter;
 import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy;
-import de.uniwue.dmir.heatmap.core.processing.NonEmptyTileIterator;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
@@ -61,7 +61,7 @@ public class HeatmapTest {
 		GeoTileDataSource<GeoPoint, ValuePixel> dataSouce =
 				new GeoTileDataSource<GeoPoint, ValuePixel>(
 						new CsvGeoDataSource(
-								new File("src/test/resources/lonlat1O.txt"),
+								new File("src/test/resources/lonlat.txt"),
 								",",
 								false), 
 						new MercatorMapProjection(
@@ -70,8 +70,7 @@ public class HeatmapTest {
 						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
-		
-		IFilter<ValuePixel, SumAndSize> filter = 
+		IFilter<ValuePixel, SumAndSize[]> filter = 
 				new ImageFilter<ValuePixel, SumAndSize>(
 						new ValuePixelToSumAndSizeMapper(),
 						new SumAndSizeAdder(),
@@ -87,14 +86,13 @@ public class HeatmapTest {
 //						new SumAndSizeAdder(),
 //						42, 42, 21, 21);
 		
-		IHeatmap<ValuePixel, SumAndSize> heatmap = new Heatmap<ValuePixel, SumAndSize>(
-				dataSouce, 
-				filter, 
-				settings);
+		IHeatmap<ValuePixel, SumAndSize[]> heatmap =
+				new Heatmap<ValuePixel, SumAndSize[]>(
+						new ArrayTileFactory<SumAndSize>(SumAndSize.class),
+						dataSouce, 
+						filter, 
+						settings);
 		
-		NonEmptyTileIterator<ValuePixel, SumAndSize> tileIterator =
-				new NonEmptyTileIterator<ValuePixel, SumAndSize>(SumAndSize.class);
-
 		BufferedImage colorScheme = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_70.png"));
 		
@@ -108,12 +106,12 @@ public class HeatmapTest {
 				new Color(colorScheme.getRGB(0, colorScheme.getHeight() - 1), true));
 //		visualizer.setForceAlphaValue(true);
 
-		HeatmapFileWriter<ValuePixel, SumAndSize> heatmapFileWriter =
-				new HeatmapFileWriter<ValuePixel, SumAndSize>(
+		HeatmapFileWriter<SumAndSize[]> heatmapFileWriter =
+				new HeatmapFileWriter<SumAndSize[]>(
 						visualizer,
 						new DefaultFileStrategy("out/tiles"), 
 						"png");
 		
-		tileIterator.iterate(heatmap, heatmapFileWriter);
+		heatmap.processTiles(heatmapFileWriter);
 	}
 }

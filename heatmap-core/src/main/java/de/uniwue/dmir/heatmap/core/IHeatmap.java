@@ -20,13 +20,11 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import java.util.Iterator;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import de.uniwue.dmir.heatmap.core.ITileCoordinatesProjection.IdentityTileCoordinatesProjection;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 /**
@@ -73,23 +71,20 @@ public interface IHeatmap<E extends IExternalData, I> {
 	public static final int DEFAULT_MIN_ZOOM_LEVEL = 0;
 	public static final int DEFAULT_MAX_ZOOM_LEVEL = 18;
 	
+	/**
+	 * @return heatmap settings
+	 */
 	HeatmapSettings getSettings();
 	
 	/**
-	 * @param coordinates
-	 * @param additionalData
+	 * @param coordinates tile coordinates
 	 * 
 	 * @return <code>null</code> if the tile does not contain data; 
 	 * 		the tile corresponding to the coordinates otherwise
 	 */
-	ITile<E, I> getTile(TileCoordinates coordinates, I[] additionalData);
+	I getTile(TileCoordinates coordinates);
 	
-	/**
-	 * @param zoom zoom level
-	 * @return iterator with all tile coordinates of the given zoom level that
-	 * 		contain data points
-	 */
-	Iterator<TileCoordinates> getTileCoordinatesWithContent(int zoom);
+	void processTiles(ITileProcessor<I> processor);
 	
 	@Data
 	@AllArgsConstructor

@@ -21,7 +21,6 @@
 package de.uniwue.dmir.heatmap.core;
 
 import java.util.Iterator;
-import java.util.List;
 
 import lombok.Getter;
 
@@ -30,86 +29,114 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
-import de.uniwue.dmir.heatmap.core.tile.Tile;
+import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 public class Heatmap<E extends IExternalData, I> 
-implements IHeatmap<E, I>{
+implements IHeatmap<E, I> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
+	private ITileFactory<I> tileFactory;
+
 	private IExternalDataSource<E> dataSource;
 	private IFilter<E, I> filter;
+	
+	private IHeatmap<?, I> seed;
 	
 	@Getter
 	private HeatmapSettings settings;
 	
 	public Heatmap(
+			ITileFactory<I> tileFactory,
 			IExternalDataSource<E> dataSource,
 			IFilter<E, I> filter,
 			HeatmapSettings settings) {
 		
+		this.seed = new EmptyHeatmap<E, I>(settings);
+		
+		this.tileFactory = tileFactory;
 		this.dataSource = dataSource;
 		this.filter = filter;
 		this.settings = settings;
 	}
 	
 	@Override
-	public ITile<E, I> getTile(TileCoordinates coordinates, I[] additionalData) {
+	public I getTile(TileCoordinates coordinates) {
 		
 		// tile coordinates to top-left reference system
 		TileCoordinates projectedCoordinates =
 				this.settings.getTileProjection().fromCustomToTopLeft(
-						coordinates, 
+						coordinates,
 						this.settings.getZoomLevelMapper());
-		
 		
 		// get data
 		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		
-		List<E> externalData = this.dataSource.getData(
+		Iterator<E> externalData = this.dataSource.getData(
 				projectedCoordinates, 
 				this.filter);
 		
 		stopWatch.stop();
 		this.logger.debug(
-				"getting {} data points for tile: {}", 
-				externalData.size(),
+				"getting data points for tile: {}", 
 				stopWatch.toString());
 		
 		// return null if no data was found
-		if (externalData == null || externalData.isEmpty()) {
+		if (externalData == null || !externalData.hasNext()) {
 			this.logger.debug("adding data to tile: no data");
 			return null;
 		}
 		
-		Tile<E, I> tile = new Tile<E, I>(
-				this.settings.getTileSize(), 
-				projectedCoordinates, 
-				this.filter, 
-				additionalData);
+		// initialize tile
 		
+		I tile = this.seed.getTile(projectedCoordinates);
+		
+		if (tile == null) {
+			tile = this.tileFactory.newInstance(
+					this.settings.getTileSize(), 
+					projectedCoordinates);
+		}
+		
+		// add external data to tile
+
 		stopWatch.reset();
 		stopWatch.start();
 		
-		for (E e : externalData) {
-			tile.add(e);
+		int externalDataPointCount = 0;
+		while(externalData.hasNext()) {
+			E externalDataPoint = externalData.next();
+			this.filter.filter(externalDataPoint, tile, this.settings.getTileSize());
+			externalDataPointCount ++;
 		}
 		
 		stopWatch.stop();
 		this.logger.debug(
 				"adding {} data points to tile: {}" , 
-				externalData.size(), 
+				externalDataPointCount, 
 				stopWatch.toString());
 			
 		return tile;
 	}
 
 	@Override
-	public Iterator<TileCoordinates> getTileCoordinatesWithContent(int zoom) {
-		return this.dataSource.getNonEmptyTiles(zoom, zoom, this.filter).get(zoom).iterator();
+	public void processTiles(ITileProcessor<I> processor) {
+		
+		int min = this.settings.getZoomLevelRange().getMin();
+		int max = this.settings.getZoomLevelRange().getMax();
+		
+		for (int zoomLevel = min; zoomLevel <= max; zoomLevel ++) {
+			Iterator<TileCoordinates> iterator =
+					this.dataSource.getTileCoordinatesWithContent(
+							zoomLevel, this.filter);
+			
+			while (iterator.hasNext()) {
+				TileCoordinates coordinates = iterator.next();
+				I tile = this.getTile(coordinates);
+				processor.process(tile, this.settings.getTileSize(), coordinates);
+			}
+		}
 	}
 }

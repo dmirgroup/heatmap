@@ -26,18 +26,22 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
 
 public class SumAndSizeBinaryVisualizer 
-implements IVisualizer<SumAndSize> {
+implements IVisualizer<SumAndSize[]> {
 
-	public BufferedImage visualize(ITile<?, SumAndSize> tile) {
+	public BufferedImage visualize(
+			SumAndSize[] data,
+			TileSize tileSize,
+			TileCoordinates coordinates) {
 		
-		int width = tile.getSize().getWidth();
-		int height = tile.getSize().getHeight();
+		int width = tileSize.getWidth();
+		int height = tileSize.getHeight();
 
 		BufferedImage image = new BufferedImage(
 				width, 
@@ -46,7 +50,6 @@ implements IVisualizer<SumAndSize> {
 
 		Graphics graphics = image.createGraphics();
 
-		SumAndSize[] data = tile.getData();
 		for (int i  = 0; i < width; i++) {
 			for (int j  = 0; j < height; j++) {
 				SumAndSize object = Arrays2d.get(i, j, data, width, height);

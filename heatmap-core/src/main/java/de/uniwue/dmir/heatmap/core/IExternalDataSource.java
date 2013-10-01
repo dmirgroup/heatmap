@@ -20,9 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Iterator;
 
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
@@ -32,9 +30,9 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  *
- * @param <T> data type to retrieve
+ * @param <E> data type to retrieve
  */
-public interface IExternalDataSource<T extends IExternalData> {
+public interface IExternalDataSource<E extends IExternalData> {
 
 	/**
 	 * @param tileCoordinates coordinates of tile to retrieve data for
@@ -43,20 +41,18 @@ public interface IExternalDataSource<T extends IExternalData> {
 	 * 
 	 * @return all data relevant for the tile with the given coordinates
 	 */
-	List<T> getData(
+	Iterator<E> getData(
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter);
 	
 	/**
 	 * @param zoomStart
-	 * @param zoomStop
 	 * @param filter
 	 * 
 	 * @return tile which have data for the given zoom level
 	 */
-	Map<Integer, Set<TileCoordinates>> getNonEmptyTiles(
-			int zoomStart, 
-			int zoomStop,
+	Iterator<TileCoordinates> getTileCoordinatesWithContent(
+			int zoom,
 			IFilter<?, ?> filter);
 
 }

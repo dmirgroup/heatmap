@@ -24,19 +24,22 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
-import de.uniwue.dmir.heatmap.core.tile.ITile;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
 
-public class SumAndSizeBlenderVisualizer implements IVisualizer<SumAndSize> {
+public class SumAndSizeBlenderVisualizer 
+implements IVisualizer<SumAndSize[]> {
 
-	public BufferedImage visualize(ITile<?, SumAndSize> tile) {
+	public BufferedImage visualize(
+			SumAndSize[] objects,
+			TileSize tileSize,
+			TileCoordinates coordinates) {
 
-		int width = tile.getSize().getWidth();
-		int height = tile.getSize().getHeight();
-		
-		SumAndSize[] objects = tile.getData();
+		int width = tileSize.getWidth();
+		int height = tileSize.getHeight();
 		
 		BufferedImage image = new BufferedImage(
 				width, 
@@ -51,9 +54,9 @@ public class SumAndSizeBlenderVisualizer implements IVisualizer<SumAndSize> {
 		graphics.drawRect(0, 0, width - 1, height - 1);
 		graphics.drawString(String.format(
 				"x:%d, y:%d, z:%d", 
-				tile.getCoordinates().getX(),
-				tile.getCoordinates().getY(),
-				tile.getCoordinates().getZoom()),
+				coordinates.getX(),
+				coordinates.getY(),
+				coordinates.getZoom()),
 				15, 15);
 		
 //		double max = 0;

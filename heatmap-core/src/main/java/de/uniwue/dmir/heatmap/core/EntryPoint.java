@@ -22,7 +22,6 @@ package de.uniwue.dmir.heatmap.core;
 
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import de.uniwue.dmir.heatmap.core.processing.ITileIterator;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 
 public class EntryPoint {
@@ -36,13 +35,10 @@ public class EntryPoint {
 		IHeatmap heatmap = 
 				appContext.getBean(IHeatmap.class);
 		
-		ITileIterator tileIterator =
-				appContext.getBean(ITileIterator.class);
-
 		ITileProcessor tileProcessor =
 				appContext.getBean(ITileProcessor.class);
 		
-		tileIterator.iterate(heatmap, tileProcessor);
+		heatmap.processTiles(tileProcessor);
 
 		appContext.close();
 	}
