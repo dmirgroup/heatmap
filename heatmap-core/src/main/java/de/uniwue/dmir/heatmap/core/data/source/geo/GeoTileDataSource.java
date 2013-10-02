@@ -21,8 +21,10 @@
 package de.uniwue.dmir.heatmap.core.data.source.geo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IExternalDataSource;
@@ -80,7 +82,7 @@ implements IExternalDataSource<T> {
 				 180,
 				 -90);
 		
-		List<TileCoordinates> coordinates = new ArrayList<TileCoordinates>();
+		Set<TileCoordinates> coordinates = new HashSet<TileCoordinates>();
 		
 		for (S data : sourceData) {
 

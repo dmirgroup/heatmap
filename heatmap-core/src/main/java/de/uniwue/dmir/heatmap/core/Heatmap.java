@@ -72,6 +72,8 @@ implements IHeatmap<E, I> {
 		
 		// get data
 		
+		this.logger.debug("Getting data points for tile.");
+		
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 		
@@ -81,7 +83,7 @@ implements IHeatmap<E, I> {
 		
 		stopWatch.stop();
 		this.logger.debug(
-				"getting data points for tile: {}", 
+				"Done getting data points for tile: {}", 
 				stopWatch.toString());
 		
 		// return null if no data was found
@@ -102,6 +104,9 @@ implements IHeatmap<E, I> {
 		
 		// add external data to tile
 
+
+		this.logger.debug("Adding data points to tile: {}", coordinates);
+		
 		stopWatch.reset();
 		stopWatch.start();
 		
@@ -114,7 +119,7 @@ implements IHeatmap<E, I> {
 		
 		stopWatch.stop();
 		this.logger.debug(
-				"adding {} data points to tile: {}" , 
+				"Done adding {} data points to tile: {}" , 
 				externalDataPointCount, 
 				stopWatch.toString());
 			
@@ -124,19 +129,40 @@ implements IHeatmap<E, I> {
 	@Override
 	public void processTiles(ITileProcessor<I> processor) {
 		
+		this.logger.debug("Processing tiles.");
+		
 		int min = this.settings.getZoomLevelRange().getMin();
 		int max = this.settings.getZoomLevelRange().getMax();
 		
 		for (int zoomLevel = min; zoomLevel <= max; zoomLevel ++) {
+
+			this.logger.debug(
+					"Getting tile coordinates with content for zoom level {}.",
+					zoomLevel);
+			
 			Iterator<TileCoordinates> iterator =
 					this.dataSource.getTileCoordinatesWithContent(
 							zoomLevel, this.filter);
 			
+			this.logger.debug("Done getting tile coordinates with content.");
+			
+			this.logger.debug("Processing tiles on zoom level {}.", zoomLevel);
+			
+			int tileCount = 0;
 			while (iterator.hasNext()) {
 				TileCoordinates coordinates = iterator.next();
 				I tile = this.getTile(coordinates);
 				processor.process(tile, this.settings.getTileSize(), coordinates);
+				tileCount ++;
 			}
+
+			this.logger.debug(
+					"Done processing {} tiles on zoom level: {}", 
+					tileCount, 
+					zoomLevel);
 		}
+
+		this.logger.debug("Done processing tiles.");
+		
 	}
 }
