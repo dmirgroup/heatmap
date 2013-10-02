@@ -17,8 +17,16 @@
 
 	<import resource="datasource.xml"/>
 
+	<bean id="zoomLevelRange"
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
+		<constructor-arg name="min" value="0" />
+		<constructor-arg name="max" value="10" />
+	</bean>
+
 	<bean id="heatmapSettings"
-		class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" />
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" >
+		<property name="zoomLevelRange" ref="zoomLevelRange" />
+	</bean>
 		
 	<bean id="projection"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection">
@@ -32,17 +40,17 @@
 	<bean id="externalDataMapper"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper" />
 	
-	<bean id="rtreeGeoDataSource"
+<!-- 	<bean id="rtreeGeoDataSource"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.RTreeGeoDataSource">
 			
 		<constructor-arg name="dataSource" ref="geoDataSource" />
 		<constructor-arg name="mapper" ref="coordinateMapper" />
-	</bean>
+	</bean> -->
 	
 	<bean id="tileDatasource"
 			class="de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource" >
 			
-		<constructor-arg name="geoDataSource" ref="rtreeGeoDataSource"/>
+		<constructor-arg name="geoDataSource" ref="geoDataSource"/>
 		<constructor-arg name="projection" ref="projection" />
 		<constructor-arg name="externalDataMapper" ref="externalDataMapper" />
 		<constructor-arg name="coordinateMapper" ref="coordinateMapper" />
@@ -71,12 +79,6 @@
 		<constructor-arg name="image" ref="image" />
 	</bean>
 	
-	<bean id="zoomLevelRange"
-			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
-		<constructor-arg name="min" value="0" />
-		<constructor-arg name="max" value="10" />
-	</bean>
-	
 	<bean id="tileFactory"
 			class="de.uniwue.dmir.heatmap.core.ArrayTileFactory">
 		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize" />
@@ -85,9 +87,10 @@
 	<bean id="heatmap"
 			class="de.uniwue.dmir.heatmap.core.Heatmap">
 
+		<constructor-arg name="tileFactory" ref="tileFactory" />
 		<constructor-arg name="dataSource" ref="tileDatasource" />
 		<constructor-arg name="filter" ref="filter" />
-		<constructor-arg name="zoomLevelRange" ref="zoomLevelRange" />
+		<constructor-arg name="settings" ref="heatmapSettings" />
 	</bean>
 	
 	<bean id="colorScheme"

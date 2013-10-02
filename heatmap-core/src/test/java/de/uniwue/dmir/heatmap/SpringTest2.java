@@ -63,9 +63,6 @@ public class SpringTest2 {
 		IGeoDataSource<GeoPoint> dataSource = 
 				appContext.getBean(IGeoDataSource.class);
 		
-//		RTreeGeoDataSource<GeoPoint> rTreeGeoDataSource = 
-//				new RTreeGeoDataSource<GeoPoint>(dataSource, new GeoPointCoordinateMapper());
-		
 		HeatmapSettings settings = new HeatmapSettings();
 		settings.getZoomLevelRange().setMax(7);
 		

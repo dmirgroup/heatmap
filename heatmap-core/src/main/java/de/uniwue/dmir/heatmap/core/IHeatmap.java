@@ -97,17 +97,18 @@ public interface IHeatmap<E extends IExternalData, I> {
 		
 		public HeatmapSettings() {
 			
-			this.tileSize = new TileSize(
-					DEFAULT_TILE_WIDTH, 
-					DEFAULT_TILE_HEIGHT);
+			this(
+					new TileSize(
+						DEFAULT_TILE_WIDTH, 
+						DEFAULT_TILE_HEIGHT),
 			
-			this.zoomLevelRange = new ZoomLevelRange(
-					DEFAULT_MIN_ZOOM_LEVEL, 
-					DEFAULT_MAX_ZOOM_LEVEL);
+					new ZoomLevelRange(
+						DEFAULT_MIN_ZOOM_LEVEL, 
+						DEFAULT_MAX_ZOOM_LEVEL),
 			
-			this.zoomLevelMapper = new DefaultZoomLevelMapper();
+					new DefaultZoomLevelMapper(),
 			
-			this.tileProjection = new IdentityTileCoordinatesProjection();
+					new IdentityTileCoordinatesProjection());
 		}
 	}
 	

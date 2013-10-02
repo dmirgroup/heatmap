@@ -93,18 +93,18 @@ public class HeatmapTest {
 						filter, 
 						settings);
 		
+		
+//		SumAndSizeBinaryVisualizer visualizer = new SumAndSizeBinaryVisualizer();
+		
 		BufferedImage colorScheme = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_70.png"));
-		
 		double[] ranges = SumAndSizeAlphaVisualizer.ranges(1, 500, colorScheme.getHeight());
-		
-//		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeBinaryVisualizer(),
 		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeAlphaVisualizer(
 				colorScheme, ranges);
 		visualizer.setAlphaValue(0.5f);
 		visualizer.setBackgroundColor(
 				new Color(colorScheme.getRGB(0, colorScheme.getHeight() - 1), true));
-//		visualizer.setForceAlphaValue(true);
+		visualizer.setForceAlphaValue(true);
 
 		HeatmapFileWriter<SumAndSize[]> heatmapFileWriter =
 				new HeatmapFileWriter<SumAndSize[]>(
