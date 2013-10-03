@@ -20,19 +20,34 @@
  */
 package de.uniwue.dmir.heatmap.core.processing;
 
+import java.io.File;
+
+import lombok.AllArgsConstructor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
-public interface IInternalDataProvider<I> {
+@AllArgsConstructor
+public abstract class AbstractFileWriter<I> 
+implements ITileProcessor<I> {
+
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	protected IFileStrategy fileStrategy;
+	protected String fileFormat;
 	
 	/**
-	 * @param coordinates
-	 * @return 
-	 * 		internal data for the given coordinates; 
-	 * 		may be <code>null</code> if no data is available for the given
-	 * 		coordinates
+	 * Gets the file and creates the necessary folders if need be.
+	 * 
+	 * @param coordinates coordinates of the tile to create a file for
+	 * @return the file for the given tile coordinates
 	 */
-	I getData(TileCoordinates coordinates);
-	
+	protected File getFile(TileCoordinates coordinates) {
+		File file = this.fileStrategy.getFile(coordinates, this.fileFormat);
+		file.getParentFile().mkdirs();
+		return file;
+	}
+
 }
-
-

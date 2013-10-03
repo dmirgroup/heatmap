@@ -114,16 +114,36 @@
 		<property name="alphaValue" value="0.2f" />
 	</bean>
 	
-	<bean id="fileStrategy"
-			class="de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy">
+	<bean id="tileFileStrategy"
+			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
 		<constructor-arg name="folder" value="out/tiles" />
 	</bean>
 	
-	<bean id="writer"
-			class="de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter">
+	<bean id="tileWriter"
+			class="de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter">
 		<constructor-arg name="visualizer" ref="visualizer" />
-		<constructor-arg name="fileStrategy" ref="fileStrategy" />
-		<constructor-arg name="imageFormat" value="png" />
+		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
+		<constructor-arg name="fileFormat" value="png" />
+	</bean>
+	
+	<bean id="dataFileStrategy"
+			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
+		<constructor-arg name="folder" value="out/data" />
+	</bean>
+	
+	<bean id="dataWriter"
+			class="de.uniwue.dmir.heatmap.core.processing.DataFileWriter">
+		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
+	</bean>
+	
+	<bean id="writer"
+			class="de.uniwue.dmir.heatmap.core.processing.ProxyTileProcessor">
+		<constructor-arg name="processors">
+			<list>
+				<ref bean="tileWriter" />
+				<ref bean="dataWriter" />
+			</list>
+		</constructor-arg>
 	</bean>
 	
 </beans>

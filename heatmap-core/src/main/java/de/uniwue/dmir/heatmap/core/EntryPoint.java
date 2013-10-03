@@ -34,9 +34,9 @@ public class EntryPoint {
 		
 		IHeatmap heatmap = 
 				appContext.getBean(IHeatmap.class);
-		
+
 		ITileProcessor tileProcessor =
-				appContext.getBean(ITileProcessor.class);
+				appContext.getBean("writer", ITileProcessor.class);
 		
 		heatmap.processTiles(tileProcessor);
 

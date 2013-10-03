@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.core;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import de.uniwue.dmir.heatmap.core.ITileCoordinatesProjection.IdentityTileCoordinatesProjection;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
@@ -63,7 +62,7 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  */
-public interface IHeatmap<E extends IExternalData, I> {
+public interface IHeatmap<I> {
 	
 	public static final int DEFAULT_TILE_WIDTH = 256;
 	public static final int DEFAULT_TILE_HEIGHT = 256;

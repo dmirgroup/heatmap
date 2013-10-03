@@ -33,7 +33,7 @@ import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 public class Heatmap<E extends IExternalData, I> 
-implements IHeatmap<E, I> {
+implements IHeatmap<I> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -42,7 +42,7 @@ implements IHeatmap<E, I> {
 	private IExternalDataSource<E> dataSource;
 	private IFilter<E, I> filter;
 	
-	private IHeatmap<?, I> seed;
+	private IHeatmap<I> seed;
 	
 	@Getter
 	private HeatmapSettings settings;
@@ -53,7 +53,7 @@ implements IHeatmap<E, I> {
 			IFilter<E, I> filter,
 			HeatmapSettings settings) {
 		
-		this.seed = new EmptyHeatmap<E, I>(settings);
+		this.seed = new EmptyHeatmap<I>(settings);
 		
 		this.tileFactory = tileFactory;
 		this.dataSource = dataSource;

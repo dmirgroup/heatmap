@@ -22,13 +22,12 @@ package de.uniwue.dmir.heatmap.core;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 @AllArgsConstructor
-public class EmptyHeatmap<E extends IExternalData, I> 
-implements IHeatmap<E, I>{
+public class EmptyHeatmap<I> 
+implements IHeatmap<I>{
 
 	@Getter
 	private HeatmapSettings settings;

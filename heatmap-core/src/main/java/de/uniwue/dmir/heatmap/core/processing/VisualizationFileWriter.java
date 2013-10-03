@@ -26,24 +26,28 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import lombok.AllArgsConstructor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
-@AllArgsConstructor
-public class HeatmapFileWriter<I> 
-implements ITileProcessor<I> {
+public class VisualizationFileWriter<I> 
+extends AbstractFileWriter<I> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private IVisualizer<I> visualizer;
-	private IFileStrategy fileStrategy;
-	private String imageFormat;
+	
+	public VisualizationFileWriter(
+			IFileStrategy fileStrategy, 
+			String fileFormat, 
+			IVisualizer<I> visualizer) {
+		
+		super(fileStrategy, fileFormat);
+		this.visualizer = visualizer;
+	}
 	
 	@Override
 	public void process(I tile, TileSize tileSize, TileCoordinates coordinates) {
@@ -52,46 +56,14 @@ implements ITileProcessor<I> {
 			return;
 		}
 		
+		File file = this.getFile(coordinates);
+		
 		BufferedImage image = this.visualizer.visualize(tile, tileSize, coordinates);
-		
-		File file = this.fileStrategy.getFile(coordinates, this.imageFormat);
-		file.getParentFile().mkdirs();
-		
 		try {
-			ImageIO.write(image, this.imageFormat, file);
+			ImageIO.write(image, super.fileFormat, file);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-	
-	public static interface IFileStrategy {
-		File getFile(TileCoordinates coordinates, String extension);
-	}
-	
-	@AllArgsConstructor
-	public static class DefaultFileStrategy implements IFileStrategy {
-
-		private String folder;
-		
-		public DefaultFileStrategy() {
-			this(null);
-		}
-		
-		@Override
-		public File getFile(TileCoordinates coordinates, String extension) {
-			String file = String.format("%d/%d/%d.%s",
-					coordinates.getZoom(),
-					coordinates.getX(),
-					coordinates.getY(),
-					extension);
-			
-			if (this.folder == null) {
-				return new File(file);
-			} else {
-				return new File(this.folder, file);
-			}
-		}
-		
 	}
 
 }

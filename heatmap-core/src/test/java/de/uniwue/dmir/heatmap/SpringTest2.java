@@ -36,8 +36,8 @@ import de.uniwue.dmir.heatmap.core.IHeatmap;
 import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
-import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter;
-import de.uniwue.dmir.heatmap.core.processing.HeatmapFileWriter.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
@@ -90,7 +90,7 @@ public class SpringTest2 {
 //						new SumAndSizeAdder(),
 //						42, 42, 21, 21);
 		
-		IHeatmap<ValuePixel, SumAndSize[]> heatmap = new Heatmap<ValuePixel, SumAndSize[]>(
+		IHeatmap<SumAndSize[]> heatmap = new Heatmap<ValuePixel, SumAndSize[]>(
 				new ArrayTileFactory<SumAndSize>(SumAndSize.class),
 				dataSouce, 
 				filter, 
@@ -108,11 +108,11 @@ public class SpringTest2 {
 		visualizer.setAlphaValue(0.2f);
 		visualizer.setForceAlphaValue(true);
 
-		HeatmapFileWriter<SumAndSize[]> heatmapFileWriter =
-				new HeatmapFileWriter<SumAndSize[]>(
-						visualizer,
+		VisualizationFileWriter<SumAndSize[]> heatmapFileWriter =
+				new VisualizationFileWriter<SumAndSize[]>(
 						new DefaultFileStrategy("out/tiles"), 
-						"png");
+						"png",
+						visualizer);
 		
 		heatmap.processTiles(heatmapFileWriter);
 

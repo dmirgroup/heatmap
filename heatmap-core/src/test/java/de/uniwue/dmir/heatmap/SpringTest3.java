@@ -42,10 +42,11 @@ public class SpringTest3 {
 				appContext.getBean(IHeatmap.class);
 		
 		ITileProcessor tileProcessor =
-				appContext.getBean(ITileProcessor.class);
+				appContext.getBean("writer", ITileProcessor.class);
 		
 		heatmap.processTiles(tileProcessor);
 		
 		appContext.close();
 	}
+	
 }
