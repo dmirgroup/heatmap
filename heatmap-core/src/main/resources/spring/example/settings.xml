@@ -92,6 +92,7 @@
 		<constructor-arg name="settings" ref="heatmapSettings" />
 		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize[]" />
 		<constructor-arg name="folder" value="out/data" />
+		<constructor-arg name="gzip" value="true" />
 	</bean>
 	
 	<!-- Defining heat map. -->
@@ -158,6 +159,7 @@
 	<bean id="dataWriter"
 			class="de.uniwue.dmir.heatmap.core.processing.DataFileWriter">
 		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
+		<constructor-arg name="gzip" value="true" />
 	</bean>
 
 	<!-- Defining proxy writer. -->

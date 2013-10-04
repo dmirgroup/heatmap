@@ -30,6 +30,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import de.uniwue.dmir.heatmap.core.processing.AbstractFileWriter;
 import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.core.processing.IFileStrategy;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
@@ -72,9 +73,12 @@ implements IHeatmap<I> {
 	@Override
 	public I getTile(TileCoordinates coordinates) {
 		
-		File file = this.fileStrategy.getFile(coordinates, FILE_EXTENSION);
-
+		String extension = 
+				FILE_EXTENSION 
+				+ (this.gzip ? AbstractFileWriter.GZIP_EXTENSION : "");
 		
+		File file = this.fileStrategy.getFile(coordinates, extension);
+
 		try {
 			
 			if (!file.exists()) {

@@ -39,6 +39,8 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 public abstract class AbstractFileWriter<I> 
 implements ITileProcessor<I> {
 
+	public static final String GZIP_EXTENSION = ".gz";
+	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	protected IFileStrategy fileStrategy;
@@ -58,7 +60,9 @@ implements ITileProcessor<I> {
 	protected OutputStream getOutputStream(TileCoordinates coordinates) 
 	throws IOException {
 		
-		File file = this.fileStrategy.getFile(coordinates, this.fileFormat);
+		String extension = this.fileFormat + (this.gzip ? GZIP_EXTENSION : "");
+		
+		File file = this.fileStrategy.getFile(coordinates, extension);
 		file.getParentFile().mkdirs();
 		
 		OutputStream outputStream = new FileOutputStream(file);
