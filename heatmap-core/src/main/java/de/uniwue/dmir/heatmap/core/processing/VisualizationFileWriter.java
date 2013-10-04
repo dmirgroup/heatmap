@@ -21,8 +21,8 @@
 package de.uniwue.dmir.heatmap.core.processing;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
@@ -45,7 +45,7 @@ extends AbstractFileWriter<I> {
 			String fileFormat, 
 			IVisualizer<I> visualizer) {
 		
-		super(fileStrategy, fileFormat);
+		super(fileStrategy, fileFormat, false);
 		this.visualizer = visualizer;
 	}
 	
@@ -56,11 +56,10 @@ extends AbstractFileWriter<I> {
 			return;
 		}
 		
-		File file = this.getFile(coordinates);
-		
 		BufferedImage image = this.visualizer.visualize(tile, tileSize, coordinates);
 		try {
-			ImageIO.write(image, super.fileFormat, file);
+			OutputStream outputStream = this.getOutputStream(coordinates);
+			ImageIO.write(image, super.fileFormat, outputStream);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

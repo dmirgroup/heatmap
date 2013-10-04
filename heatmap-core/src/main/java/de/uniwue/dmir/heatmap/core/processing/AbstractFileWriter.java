@@ -21,8 +21,14 @@
 package de.uniwue.dmir.heatmap.core.processing;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.zip.GZIPOutputStream;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,16 +44,29 @@ implements ITileProcessor<I> {
 	protected IFileStrategy fileStrategy;
 	protected String fileFormat;
 	
+	@Setter
+	@Getter
+	private boolean gzip;
+	
 	/**
 	 * Gets the file and creates the necessary folders if need be.
 	 * 
 	 * @param coordinates coordinates of the tile to create a file for
 	 * @return the file for the given tile coordinates
+	 * @throws IOException 
 	 */
-	protected File getFile(TileCoordinates coordinates) {
+	protected OutputStream getOutputStream(TileCoordinates coordinates) 
+	throws IOException {
+		
 		File file = this.fileStrategy.getFile(coordinates, this.fileFormat);
 		file.getParentFile().mkdirs();
-		return file;
+		
+		OutputStream outputStream = new FileOutputStream(file);
+		if (this.gzip) {
+			outputStream = new GZIPOutputStream(outputStream);
+		}
+		return outputStream;
+		
 	}
-
+	
 }

@@ -21,7 +21,10 @@
 package de.uniwue.dmir.heatmap.core;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -42,18 +45,21 @@ implements IHeatmap<I> {
 	
 	private String folder;
 	private IFileStrategy fileStrategy;
+	private boolean gzip;
 
 	private ObjectMapper mapper;
 
 	public FilesystemHeatmap(
 			HeatmapSettings settings,
 			Class<I> clazz,
-			String folder) {
+			String folder,
+			boolean gzip) {
 
 		this.settings = settings;
 		this.clazz = clazz;
 		this.folder = folder;
 		this.fileStrategy = new DefaultFileStrategy(folder);
+		this.gzip = gzip;
 		
 		this.mapper = new ObjectMapper();
 	}
@@ -65,12 +71,22 @@ implements IHeatmap<I> {
 
 	@Override
 	public I getTile(TileCoordinates coordinates) {
+		
 		File file = this.fileStrategy.getFile(coordinates, FILE_EXTENSION);
+
+		
 		try {
+			
 			if (!file.exists()) {
 				return null;
 			} else {
-				return this.mapper.readValue(file, this.clazz);
+				InputStream inputStream = new FileInputStream(file);
+				
+				if (this.gzip) {
+					inputStream = new GZIPInputStream(inputStream);
+				}
+				
+				return this.mapper.readValue(inputStream, this.clazz);
 			}
 		} catch (JsonParseException e) {
 			throw new IllegalArgumentException(e);
