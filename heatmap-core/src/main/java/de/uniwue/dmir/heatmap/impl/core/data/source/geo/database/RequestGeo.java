@@ -22,9 +22,11 @@ package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class RequestGeo extends RequestSettingsTime {
 
 	private double lonWest;

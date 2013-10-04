@@ -27,22 +27,38 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.core.IHeatmap;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
+import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo;
 
 public class SpringTest3 {
 
+	public static final String HEATMAP_BEAN = "heatmap";
+	public static final String WRITER_BEAN = "writer";
+	
 	@Test
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testHeatmap() throws IOException {
 		
+//		System.setProperty("min", "1920-01-01 00:00:00");
+//		System.setProperty("max", "2013-01-01 00:00:00");
+
+		System.setProperty("min", "2013-01-01 00:00:00");
+		System.setProperty("max", "2013-05-01 00:00:00");
+		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
-						"spring/example/settings.xml");
+						new String[] {"spring/example/settings.xml"},
+						false);
+		appContext.getEnvironment().setActiveProfiles("minmax");
+		appContext.refresh();
+		
+		RequestGeo request = appContext.getBean("request", RequestGeo.class);
+		System.out.println(request);
 		
 		IHeatmap heatmap = 
-				appContext.getBean(IHeatmap.class);
-		
-		ITileProcessor tileProcessor =
-				appContext.getBean("writer", ITileProcessor.class);
+				appContext.getBean(HEATMAP_BEAN, IHeatmap.class);
+
+		ITileProcessor tileProcessor = 
+				appContext.getBean(WRITER_BEAN, ITileProcessor.class);
 		
 		heatmap.processTiles(tileProcessor);
 		

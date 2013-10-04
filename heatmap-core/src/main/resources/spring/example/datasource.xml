@@ -69,14 +69,39 @@
 	
 	<bean id="geoDataSource"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.DatabaseGeoDataSource">
-		<constructor-arg name="request">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo">
-				<constructor-arg name="table" value="data_airprobe" />
-				<constructor-arg name="longitudeAttribute" value="geo_lon" />
-				<constructor-arg name="latitudeAttribute" value="geo_lat" />
-			</bean>
-		</constructor-arg>
-	
+		<constructor-arg name="request" ref="request" />
 	</bean>
+	
+	<bean id="abstractRequest" 
+			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo" 
+			abstract="true">
+			
+		<constructor-arg name="table" value="data_airprobe" />
+		<constructor-arg name="longitudeAttribute" value="geo_lon" />
+		<constructor-arg name="latitudeAttribute" value="geo_lat" />
+	</bean>
+	
+	<bean id="request" parent="abstractRequest" />
+	
+	<beans profile="minmax">
+	
+		<bean id="dateFactory" class="java.text.SimpleDateFormat">
+			<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
+		</bean>
+		
+		<bean id="min" factory-bean="dateFactory" factory-method="parse">
+			<constructor-arg value="#{systemProperties.min}" />
+		</bean>
+		
+		<bean id="max" factory-bean="dateFactory" factory-method="parse">
+			<constructor-arg value="#{systemProperties.max}" />
+		</bean>
+	
+		<bean id="request" parent="abstractRequest" >
+			<property name="timestampAttribute" value="meta_timestamp_received" />
+			<property name="minimumTimestamp" ref="min" />
+			<property name="maximumTimestamp" ref="max" />
+		</bean>
+	</beans>
 	
 </beans>

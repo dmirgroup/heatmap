@@ -67,7 +67,11 @@ implements IHeatmap<I> {
 	public I getTile(TileCoordinates coordinates) {
 		File file = this.fileStrategy.getFile(coordinates, FILE_EXTENSION);
 		try {
-			return this.mapper.readValue(file, this.clazz);
+			if (!file.exists()) {
+				return null;
+			} else {
+				return this.mapper.readValue(file, this.clazz);
+			}
 		} catch (JsonParseException e) {
 			throw new IllegalArgumentException(e);
 		} catch (JsonMappingException e) {

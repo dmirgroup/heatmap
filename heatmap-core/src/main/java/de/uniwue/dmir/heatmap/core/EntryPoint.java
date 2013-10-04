@@ -25,18 +25,23 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 
 public class EntryPoint {
+
+	public static final String SETTINGS_FILE = "settings.xml";
+	
+	public static final String HEATMAP_BEAN = "heatmap";
+	public static final String WRITER_BEAN = "writer";
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 		
 		FileSystemXmlApplicationContext appContext = 
-				new FileSystemXmlApplicationContext("settings.xml");
+				new FileSystemXmlApplicationContext(SETTINGS_FILE);
 		
 		IHeatmap heatmap = 
-				appContext.getBean(IHeatmap.class);
+				appContext.getBean(HEATMAP_BEAN, IHeatmap.class);
 
-		ITileProcessor tileProcessor =
-				appContext.getBean("writer", ITileProcessor.class);
+		ITileProcessor tileProcessor = 
+				appContext.getBean(WRITER_BEAN, ITileProcessor.class);
 		
 		heatmap.processTiles(tileProcessor);
 

@@ -23,6 +23,7 @@ package de.uniwue.dmir.heatmap.core;
 import java.util.Iterator;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -42,6 +43,8 @@ implements IHeatmap<I> {
 	private IExternalDataSource<E> dataSource;
 	private IFilter<E, I> filter;
 	
+	@Getter
+	@Setter
 	private IHeatmap<I> seed;
 	
 	@Getter
@@ -53,7 +56,21 @@ implements IHeatmap<I> {
 			IFilter<E, I> filter,
 			HeatmapSettings settings) {
 		
-		this.seed = new EmptyHeatmap<I>(settings);
+		this(tileFactory, dataSource, filter, settings, null);
+	}
+	
+	public Heatmap(
+			ITileFactory<I> tileFactory,
+			IExternalDataSource<E> dataSource,
+			IFilter<E, I> filter,
+			HeatmapSettings settings,
+			IHeatmap<I> seed) {
+		
+		if (seed == null) {
+			this.seed = new EmptyHeatmap<I>(settings);
+		} else {
+			this.seed = seed;
+		}
 		
 		this.tileFactory = tileFactory;
 		this.dataSource = dataSource;
@@ -88,19 +105,23 @@ implements IHeatmap<I> {
 		
 		// return null if no data was found
 		if (externalData == null || !externalData.hasNext()) {
-			this.logger.debug("adding data to tile: no data");
+			this.logger.debug("Adding data to tile: no data.");
 			return null;
 		}
 		
 		// initialize tile
 		
+		this.logger.debug("Loading data seed.");
 		I tile = this.seed.getTile(projectedCoordinates);
 		
 		if (tile == null) {
+			this.logger.debug("No data seed available; initializing empty tile.");
 			tile = this.tileFactory.newInstance(
 					this.settings.getTileSize(), 
 					projectedCoordinates);
 		}
+
+		this.logger.debug("Done loading data seed.");
 		
 		// add external data to tile
 

@@ -15,19 +15,23 @@
 		http://www.springframework.org/schema/tx
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-	<import resource="datasource.xml"/>
+	<!-- General heatmap setings. -->
 
 	<bean id="zoomLevelRange"
 			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
 		<constructor-arg name="min" value="0" />
-		<constructor-arg name="max" value="10" />
+		<constructor-arg name="max" value="0" />
 	</bean>
 
 	<bean id="heatmapSettings"
 			class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" >
 		<property name="zoomLevelRange" ref="zoomLevelRange" />
 	</bean>
-		
+
+	<!-- Defining data source. -->
+	
+	<import resource="datasource.xml"/>
+
 	<bean id="projection"
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection">
 		<constructor-arg name="tileSize" value="#{heatmapSettings.tileSize}" />
@@ -56,6 +60,8 @@
 		<constructor-arg name="coordinateMapper" ref="coordinateMapper" />
 	</bean>
 	
+	<!-- Defining filter. -->
+	
 	<bean id="internalMapper"
 			class="de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumAndSizeMapper" />
 			
@@ -79,6 +85,17 @@
 		<constructor-arg name="image" ref="image" />
 	</bean>
 	
+	<!-- Defining heat map seed. -->
+	<bean id="seed"
+			class="de.uniwue.dmir.heatmap.core.FilesystemHeatmap">
+	
+		<constructor-arg name="settings" ref="heatmapSettings" />
+		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize[]" />
+		<constructor-arg name="folder" value="out/data" />
+	</bean>
+	
+	<!-- Defining heat map. -->
+	
 	<bean id="tileFactory"
 			class="de.uniwue.dmir.heatmap.core.ArrayTileFactory">
 		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize" />
@@ -91,7 +108,10 @@
 		<constructor-arg name="dataSource" ref="tileDatasource" />
 		<constructor-arg name="filter" ref="filter" />
 		<constructor-arg name="settings" ref="heatmapSettings" />
+		<constructor-arg name="seed" ref="seed" />
 	</bean>
+	
+	<!-- Defining visualizer. -->
 	
 	<bean id="colorScheme"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
@@ -114,28 +134,34 @@
 		<property name="alphaValue" value="0.2f" />
 	</bean>
 	
+	<!-- Defining visualization writer. -->
+	
 	<bean id="tileFileStrategy"
 			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
 		<constructor-arg name="folder" value="out/tiles" />
 	</bean>
-	
+
 	<bean id="tileWriter"
 			class="de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter">
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
 		<constructor-arg name="fileFormat" value="png" />
 	</bean>
-	
+
+	<!-- Defining data writer. -->
+
 	<bean id="dataFileStrategy"
 			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
 		<constructor-arg name="folder" value="out/data" />
 	</bean>
-	
+
 	<bean id="dataWriter"
 			class="de.uniwue.dmir.heatmap.core.processing.DataFileWriter">
 		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
 	</bean>
-	
+
+	<!-- Defining proxy writer. -->
+
 	<bean id="writer"
 			class="de.uniwue.dmir.heatmap.core.processing.ProxyTileProcessor">
 		<constructor-arg name="processors">
@@ -145,5 +171,5 @@
 			</list>
 		</constructor-arg>
 	</bean>
-	
+
 </beans>
