@@ -7,7 +7,7 @@ WORK_DIR="/home/everyaware/heatmap-processor"
 # read dates
 
 if [ ! "$1" ]; then
-  last_date=`tail -n 1 $DATE_LOG`
+  last_date=`tail -n 1 $WORK_DIR/$DATE_LOG`
 else
   last_date=$1
 fi
@@ -19,7 +19,7 @@ echo "current date: $current_date"
 
 # append current date to date log
 
-echo $current_date >> $DATE_LOG
+echo $current_date >> $WORK_DIR/$DATE_LOG
 
 # compile command
 
