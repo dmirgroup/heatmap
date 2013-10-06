@@ -73,7 +73,7 @@
 	
 	<bean id="image"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
-		<constructor-arg name="resource" value="classpath:filter/dot13_black.png" />
+		<constructor-arg name="resource" value="classpath:filter/dot13_black_ring.png" />
 	</bean>
 	
 	<bean id="filter"
@@ -83,6 +83,7 @@
 		<constructor-arg name="adder" ref="adder" />
 		<constructor-arg name="multiplier" ref="multiplier" />
 		<constructor-arg name="image" ref="image" />
+		<constructor-arg name="useAlpha" value="true" />
 	</bean>
 	
 	<!-- Defining heat map seed. -->
@@ -132,7 +133,7 @@
 		<constructor-arg name="ranges" ref="ranges" />
 		
 		<property name="forceAlphaValue" value="true" />
-		<property name="alphaValue" value="0.2f" />
+		<property name="alphaValue" value="0.5f" />
 	</bean>
 	
 	<!-- Defining visualization writer. -->

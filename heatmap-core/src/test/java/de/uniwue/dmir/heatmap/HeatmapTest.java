@@ -52,6 +52,17 @@ import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAndSizeAlphaVisualizer;
 
 public class HeatmapTest {
 
+//	@Test
+//	public void testSimpleHeatmap() {
+//		
+//		// initializing heat map settings
+//		
+//		HeatmapSettings settings = new HeatmapSettings();
+//		settings.getZoomLevelRange().setMax(1);
+//		
+//		
+//	}
+	
 	@Test
 	public void testHeatmap() throws IOException {
 		

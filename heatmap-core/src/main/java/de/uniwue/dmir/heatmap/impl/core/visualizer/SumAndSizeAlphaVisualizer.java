@@ -89,6 +89,7 @@ implements IVisualizer<SumAndSize[]> {
 		int width = tileSize.getWidth();
 		int height = tileSize.getHeight();
 		
+		// initialize buffered image and cooresponding graphics object
 		
 		BufferedImage image = new BufferedImage(
 				width, 
@@ -98,6 +99,7 @@ implements IVisualizer<SumAndSize[]> {
 		Graphics graphics = image.createGraphics();
 		
 		// debugging
+		
 		if (this.debug) {
 			graphics.setColor(Color.BLACK);
 			graphics.drawRect(0, 0, width - 1, height - 1);
@@ -109,26 +111,46 @@ implements IVisualizer<SumAndSize[]> {
 					5, 15);
 		}
 		
+		// run through pixels
+		
 		for (int i  = 0; i < width; i++) {
 			for (int j  = 0; j < height; j++) {
 
 				SumAndSize object = Arrays2d.get(i, j, data, width, height);
 
 				if (this.colorScheme == null) {
+					
+					// we are using gray scale now
+					
 					if (object != null && object.getSum() > 0) {
+						
+						// scale the given value by the configured scaling factor 
+						// the corresponding value may not exceed 0
 						float value = (float) Math.min(object.getSum() / this.scalingFactor, 1);
+						
+						// draw the pixel
+						
 						Color color = new Color(value, value, value, this.alphaValue);
 						image.setRGB(i, j, color.getRGB());
+						
 					} else {
+						
+						// no object given: set default background color
 						image.setRGB(i, j, this.backgroundColor.getRGB());
 					}
 				} else {
-					if (object == null) {
-						image.setRGB(i, j, this.backgroundColor.getRGB());
-					} else {
+					
+					// we are using the given color scheme
+					
+					if (object != null) {
+						
+						// get color index
 						int index = this.colorScheme.getHeight() - 1 - colorIndex(object.getSum());
+						
+						// get the color
 						int color = this.colorScheme.getRGB(0, index);
 						
+						// we may want to force a configured alpha value
 						if (this.forceAlphaValue) {
 							Color alphaColor = new Color(color);
 							alphaColor = new Color(
@@ -138,7 +160,14 @@ implements IVisualizer<SumAndSize[]> {
 									(int) (this.alphaValue * 255));
 							color = alphaColor.getRGB();
 						}
+						
+						// draw the pixel
 						image.setRGB(i, j, color);
+						
+					} else {
+
+						// no object given: set default background color
+						image.setRGB(i, j, this.backgroundColor.getRGB());
 					}
 				}
 			}

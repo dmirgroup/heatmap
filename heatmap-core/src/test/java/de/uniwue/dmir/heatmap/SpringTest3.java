@@ -27,7 +27,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.core.IHeatmap;
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo;
 
 public class SpringTest3 {
 
@@ -42,7 +41,7 @@ public class SpringTest3 {
 //		System.setProperty("max", "2013-01-01 00:00:00");
 
 		System.setProperty("min", "2013-01-01 00:00:00");
-		System.setProperty("max", "2013-05-01 00:00:00");
+		System.setProperty("max", "2013-02-01 00:00:00");
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
@@ -50,9 +49,6 @@ public class SpringTest3 {
 						false);
 		appContext.getEnvironment().setActiveProfiles("minmax");
 		appContext.refresh();
-		
-		RequestGeo request = appContext.getBean("request", RequestGeo.class);
-		System.out.println(request);
 		
 		IHeatmap heatmap = 
 				appContext.getBean(HEATMAP_BEAN, IHeatmap.class);

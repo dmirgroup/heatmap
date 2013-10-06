@@ -22,6 +22,9 @@ package de.uniwue.dmir.heatmap.impl.core.filter;
 
 import java.util.Collection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
@@ -29,6 +32,8 @@ import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 public abstract class AbstractFilter<E extends IExternalData, I> 
 implements IFilter<E, I> {
 
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@Override
 	public void filter(Collection<E> dataPoints, I tile, TileSize tileSize) {
 		for (E dataPoint : dataPoints) {

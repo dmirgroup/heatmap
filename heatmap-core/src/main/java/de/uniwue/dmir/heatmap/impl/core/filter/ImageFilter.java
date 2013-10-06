@@ -22,7 +22,6 @@ package de.uniwue.dmir.heatmap.impl.core.filter;
 
 import java.awt.image.BufferedImage;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
@@ -31,7 +30,6 @@ import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.filter.operators.IScalarMultiplier;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
-@AllArgsConstructor
 @Getter
 public class ImageFilter<E extends IExternalData, P> 
 extends AbstractFilter<E, P[]> {
@@ -39,6 +37,8 @@ extends AbstractFilter<E, P[]> {
 	private IMapper<E, P> internalMapper;
 	private IAdder<P> adder;
 	private IScalarMultiplier<P> multiplier;
+	
+	private boolean useAlpha;
 	
 	private int width;
 	private int height;
@@ -53,25 +53,37 @@ extends AbstractFilter<E, P[]> {
 			IAdder<P> adder,
 			IScalarMultiplier<P> multiplier,
 			BufferedImage image) {
+		this(internalMapper, adder, multiplier, false);
+	}
+	
+	public ImageFilter(
+			IMapper<E, P> internalMapper,
+			IAdder<P> adder,
+			IScalarMultiplier<P> multiplier,
+			BufferedImage image,
+			boolean useAlpha) {
 		
-		this(internalMapper, adder, multiplier);
+		this(internalMapper, adder, multiplier, useAlpha);
 		initialize(image);
 	}
 	
 	private ImageFilter(
 			IMapper<E, P> internalMapper,
 			IAdder<P> adder,
-			IScalarMultiplier<P> multiplier) {
+			IScalarMultiplier<P> multiplier,
+			boolean useAlpha) {
 		
 		this.internalMapper = internalMapper;
 		this.adder = adder;
 		this.multiplier = multiplier;
+		this.useAlpha = useAlpha;
 	}
-
+	
 	private void initialize(BufferedImage image) {
-		if (image.getType() != BufferedImage.TYPE_BYTE_GRAY) {
-			throw new IllegalArgumentException(
-					"Image must be a gray scale image.");
+		if (image.getType() == BufferedImage.TYPE_INT_ARGB) {
+			super.logger.warn(
+					"Given image is an ARGB image. "
+					+ "Note that only the red and the alpha channel are read.");
 		}
 		
 		this.width = image.getWidth();
@@ -85,9 +97,18 @@ extends AbstractFilter<E, P[]> {
 		double max = 0;
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j ++) {
-				double value = image.getData().getSampleDouble(i, j, 0);
+				
+				boolean isTransparent = (image.getRGB(i, j) & 0xFF000000) == 0x00000000;
+
+				double value;
+				if (this.useAlpha && isTransparent) {
+					value = Double.NaN;
+				} else {
+					value = image.getData().getSampleDouble(i, j, 0);
+					max = Math.max(max, value);
+				}
+				
 				Arrays2d.set(value, i, j, this.array, this.width, this.height);
-				max = Math.max(max, value);
 			}
 		}
 		
@@ -101,6 +122,8 @@ extends AbstractFilter<E, P[]> {
 				Arrays2d.set(value, i, j, this.array, this.width, this.height);
 			}
 		}
+		
+		System.out.println(Arrays2d.toString(this.array, width, height));
 	}
 	
 	public void filter(E dataPoint, P[] tile, TileSize tileSize) {
@@ -113,10 +136,16 @@ extends AbstractFilter<E, P[]> {
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j ++) {
 				
+				double multiplicator = 
+						Arrays2d.get(i, j, this.array, this.width, this.height);
+				if (Double.isNaN(multiplicator)) {
+					continue;
+				}
+				
 				int x = startX + i;
 				int y = startY + j;
 
-				if (!Arrays2d.checkIndex(
+				if (!Arrays2d.isIndexWithinBounds(
 						x, 
 						y, 
 						tileSize.getWidth(), 
@@ -126,8 +155,6 @@ extends AbstractFilter<E, P[]> {
 				
 				P addable = this.internalMapper.map(dataPoint);
 				
-				double multiplicator = 
-						Arrays2d.get(i, j, this.array, this.width, this.height);
 				this.multiplier.multiply(addable, multiplicator);
 				
 				P currentValue = Arrays2d.get(

@@ -55,7 +55,7 @@ extends AbstractFilter<T, P[]> {
 		for (int x = startX; x < stopX; x++) {
 			for (int y = startY; y < stopY; y ++) {
 				
-				if (!Arrays2d.checkIndex(
+				if (!Arrays2d.isIndexWithinBounds(
 						x, 
 						y, 
 						tileSize.getWidth(), 

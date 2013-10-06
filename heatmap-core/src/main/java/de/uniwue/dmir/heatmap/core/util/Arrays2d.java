@@ -126,7 +126,7 @@ public class Arrays2d {
 		return index / width;
 	}
 	
-	public static boolean checkIndex(int x, int y, int width, int height) {
+	public static boolean isIndexWithinBounds(int x, int y, int width, int height) {
 		return x >= 0 && x < width && y >= 0 && y < height;
 	}
 	
