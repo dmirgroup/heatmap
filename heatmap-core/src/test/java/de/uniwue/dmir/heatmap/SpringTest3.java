@@ -42,10 +42,11 @@ public class SpringTest3 {
 
 		System.setProperty("min", "2013-01-01 00:00:00");
 		System.setProperty("max", "2013-02-01 00:00:00");
+		System.setProperty("workdir", "classpath:spring/example/basic");
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
-						new String[] {"spring/example/settings.xml"},
+						new String[] {"spring/example/basic/config.xml"},
 						false);
 		appContext.getEnvironment().setActiveProfiles("minmax");
 		appContext.refresh();

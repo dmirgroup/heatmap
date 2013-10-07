@@ -46,18 +46,6 @@
 	
 	<!-- ############# Data sources. ############# -->
 	
-	<!--Loading properties. -->
-	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:spring/example/datasource.properties</value>
-			</list>
-		</property>
-		<property name="order" value="150" />
-		<property name="ignoreUnresolvablePlaceholders" value="true" />
-		<property name="ignoreResourceNotFound" value="true" />
-	</bean>
-	
 	<bean id="dataSource"
 			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 

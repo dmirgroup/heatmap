@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Defining filter. -->
+	
+	<bean id="internalMapper"
+			class="de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumAndSizeMapper" />
+			
+	<bean id="adder"
+			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeAdder" />
+			
+	<bean id="multiplier"
+			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeScalarMultiplier" />
+	
+	<bean id="image"
+			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
+		<constructor-arg name="resource" value="${filter.image}" />
+	</bean>
+	
+	<bean id="filter"
+			class="de.uniwue.dmir.heatmap.impl.core.filter.ImageFilter">
+	
+		<constructor-arg name="internalMapper" ref="internalMapper" />
+		<constructor-arg name="adder" ref="adder" />
+		<constructor-arg name="multiplier" ref="multiplier" />
+		<constructor-arg name="image" ref="image" />
+		<constructor-arg name="useAlpha" value="true" />
+	</bean>
+
+</beans>

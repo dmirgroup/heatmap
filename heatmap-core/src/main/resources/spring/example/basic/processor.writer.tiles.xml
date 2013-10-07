@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="tileFileStrategy"
+			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
+		<constructor-arg name="folder" value="${out.tiles}" />
+	</bean>
+
+	<bean id="tileWriter"
+			class="de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter">
+		<constructor-arg name="visualizer" ref="visualizer" />
+		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
+		<constructor-arg name="fileFormat" value="png" />
+	</bean>
+
+</beans>

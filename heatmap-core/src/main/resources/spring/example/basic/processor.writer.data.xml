@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="dataFileStrategy"
+			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
+		<constructor-arg name="folder" value="${out.data}" />
+	</bean>
+
+	<bean id="dataWriter"
+			class="de.uniwue.dmir.heatmap.core.processing.DataFileWriter">
+		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
+		<constructor-arg name="gzip" value="true" />
+	</bean>
+
+</beans>

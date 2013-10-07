@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Defining heat map seed. -->
+	<bean id="seed"
+			class="de.uniwue.dmir.heatmap.core.FilesystemHeatmap">
+	
+		<constructor-arg name="settings" ref="heatmapSettings" />
+		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize[]" />
+		<constructor-arg name="folder" value="${in.data}" />
+		<constructor-arg name="gzip" value="true" />
+	</bean>
+
+</beans>
