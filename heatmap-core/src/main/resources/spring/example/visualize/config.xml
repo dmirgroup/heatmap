@@ -29,7 +29,7 @@
 	</bean>
 
 	<!-- Defining file system heat map. -->
-	<bean id="seed"
+	<bean id="heatmap"
 			class="de.uniwue.dmir.heatmap.core.FilesystemHeatmap">
 	
 		<constructor-arg name="settings" ref="heatmapSettings" />
