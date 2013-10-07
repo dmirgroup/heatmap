@@ -36,6 +36,14 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.PixelCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
+/**
+ * 
+ * Strongly inspired by <a href="https://github.com/varunpant/GHEAT-JAVA/blob/master/JavaHeatMaps/gheat/src/main/java/gheat/MercatorProjection.java">
+ * MercatorProjection class</a> from <a href="http://code.google.com/p/gheat/">GHeat</a>.
+ * 
+ * @author Martin Becker
+ *
+ */
 @AllArgsConstructor
 public class MercatorMapProjection implements IMapProjection {
 
