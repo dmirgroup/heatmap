@@ -45,7 +45,7 @@ extends AbstractFileWriter<I> {
 		
 		try {
 			
-			OutputStream outputStream = this.getOutputStream(coordinates);
+			OutputStream outputStream = super.getOutputStream(coordinates);
 			
 			this.mapper.writeValue(outputStream, tile);
 			

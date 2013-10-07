@@ -122,8 +122,6 @@ extends AbstractFilter<E, P[]> {
 				Arrays2d.set(value, i, j, this.array, this.width, this.height);
 			}
 		}
-		
-		System.out.println(Arrays2d.toString(this.array, width, height));
 	}
 	
 	public void filter(E dataPoint, P[] tile, TileSize tileSize) {

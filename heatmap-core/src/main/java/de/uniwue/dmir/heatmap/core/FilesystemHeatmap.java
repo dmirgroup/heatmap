@@ -122,32 +122,17 @@ implements IHeatmap<I> {
 						coordinates.setX(x);
 						
 						for (File data : xFolder.listFiles()) {
-							if (data.isFile()) {
 								
 								String yString = data.getName().split("\\.")[0];
 								long y = Long.parseLong(yString);
 								coordinates.setY(y);
 								
-								try {
-									
-									I tile = this.mapper.readValue(
-											data, 
-											this.clazz);
-									
-									processor.process(
-											tile, 
-											this.settings.getTileSize(), 
-											coordinates);
-									
-								} catch (JsonParseException e) {
-									throw new RuntimeException(e);
-								} catch (JsonMappingException e) {
-									throw new RuntimeException(e);
-								} catch (IOException e) {
-									throw new RuntimeException(e);
-								}								
+								I tile = this.getTile(coordinates);
 								
-							}
+								processor.process(
+										tile, 
+										this.settings.getTileSize(), 
+										coordinates);
 						}
 					}
 				}
@@ -181,4 +166,5 @@ implements IHeatmap<I> {
 //				
 //		heatmap.processTiles(heatmapFileWriter);
 //	}
+	
 }

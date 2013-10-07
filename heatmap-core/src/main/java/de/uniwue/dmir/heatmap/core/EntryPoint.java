@@ -20,12 +20,16 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
 
 public class EntryPoint {
 
+	public static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);
+	
 	public static final String SETTINGS_FILE = "settings.xml";
 	
 	public static final String HEATMAP_BEAN = "heatmap";
@@ -33,9 +37,19 @@ public class EntryPoint {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
+
+		String settingsFile;
+		if (args.length > 0 && args[0] != null) {
+			settingsFile = args[0];
+		} else {
+			settingsFile = SETTINGS_FILE;
+		}
+		
+		LOGGER.debug("Reading settings file: {}", settingsFile);
+		
 		
 		FileSystemXmlApplicationContext appContext = 
-				new FileSystemXmlApplicationContext(SETTINGS_FILE);
+				new FileSystemXmlApplicationContext(settingsFile);
 		
 		IHeatmap heatmap = 
 				appContext.getBean(HEATMAP_BEAN, IHeatmap.class);

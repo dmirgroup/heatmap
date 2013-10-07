@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- General heatmap setings. -->
+
+	<bean id="zoomLevelRange"
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
+		<constructor-arg name="min" value="0" />
+		<constructor-arg name="max" value="0" />
+	</bean>
+
+	<bean id="heatmapSettings"
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" >
+		<property name="zoomLevelRange" ref="zoomLevelRange" />
+	</bean>
+
+	<!-- Defining file system heat map. -->
+	<bean id="seed"
+			class="de.uniwue.dmir.heatmap.core.FilesystemHeatmap">
+	
+		<constructor-arg name="settings" ref="heatmapSettings" />
+		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize[]" />
+		<constructor-arg name="folder" value="out/data" />
+		<constructor-arg name="gzip" value="true" />
+	</bean>
+	
+	<!-- Defining visualizer. -->
+	
+	<bean id="colorScheme"
+			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
+		<constructor-arg name="resource" value="classpath:color-schemes/classic_alpha70.png" />
+	</bean>
+	
+	<bean id="ranges"
+			class="de.uniwue.dmir.heatmap.core.util.RangeFactoryBean">
+		<constructor-arg name="min" value="0." />
+		<constructor-arg name="max" value="1000." />
+		<constructor-arg name="image" ref="colorScheme" />
+	</bean>
+	
+	<bean id="visualizer"
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.SumAndSizeAlphaVisualizer">
+		<constructor-arg name="colorScheme" ref="colorScheme" />
+		<constructor-arg name="ranges" ref="ranges" />
+		
+		<property name="forceAlphaValue" value="true" />
+		<property name="alphaValue" value="0.5f" />
+	</bean>
+	
+	<!-- Defining visualization writer. -->
+	
+	<bean id="tileFileStrategy"
+			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
+		<constructor-arg name="folder" value="out/tiles" />
+	</bean>
+
+	<bean id="tileWriter"
+			class="de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter">
+		<constructor-arg name="visualizer" ref="visualizer" />
+		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
+		<constructor-arg name="fileFormat" value="png" />
+	</bean>
+
+	<!-- Defining proxy writer. -->
+
+	<bean id="writer"
+			class="de.uniwue.dmir.heatmap.core.processing.ProxyTileProcessor">
+		<constructor-arg name="processors">
+			<list>
+				<ref bean="tileWriter" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+</beans>

@@ -34,7 +34,7 @@ java
 -Dspring.profiles.active="minmax"
 -Dmin="'$last_date'" 
 -Dmax="'$current_date'" 
--jar heatmap-core-0.0.1-SNAPSHOT.jar 
+-jar heatmap-core-0.0.1-SNAPSHOT.jar '$WORK_DIR'/settings.xml
 > '$WORK_DIR'/logs/'$log_file'.log 2>&1'
 
 # run command
