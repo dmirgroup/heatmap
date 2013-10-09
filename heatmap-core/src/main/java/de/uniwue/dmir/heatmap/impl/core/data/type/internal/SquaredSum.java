@@ -18,41 +18,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.util;
+package de.uniwue.dmir.heatmap.impl.core.data.type.internal;
 
-import java.awt.image.BufferedImage;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-import lombok.AllArgsConstructor;
-
-import org.springframework.beans.factory.FactoryBean;
-
-import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAlphaVisualizer;
-
-@AllArgsConstructor
-public class RangeFactoryBean implements FactoryBean<double[]> {
-
-	private double min;
-	private double max;
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class SquaredSum extends Sum {
 	
-	private int colors;
+	private double squaredSum;
 	
-	public RangeFactoryBean(double min, double max, BufferedImage image) {
-		this(min, max, image.getHeight());
+	public SquaredSum(double value) {
+		this(1, value, value * value);
 	}
 	
-	@Override
-	public double[] getObject() throws Exception {
-		return SumAlphaVisualizer.ranges(this.min, this.max, this.colors);
+	public SquaredSum(int size, double sum, double squaredSum) {
+		super(size, squaredSum);
+		this.squaredSum = squaredSum;
 	}
-
-	@Override
-	public Class<?> getObjectType() {
-		return double[].class;
-	}
-
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
-
 }

@@ -28,7 +28,7 @@ import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @AllArgsConstructor
-public class SimpleAdderFilter<T extends IExternalData, P> 
+public class AddingFilter<T extends IExternalData, P> 
 extends AbstractFilter<T, P[]> {
 
 	private IMapper<T, P> mapper;

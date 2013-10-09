@@ -18,16 +18,16 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.data.type.internal;
+package de.uniwue.dmir.heatmap.impl.core.data.type.mapper;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
+import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
+import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class SumAndSize {
-	private double sum;
-	private double size;
+public class ValuePixelToSumMapper
+implements IMapper<ValuePixel, Sum> {
+	
+	public Sum map(ValuePixel object) {
+		return new Sum(1, object.getValue());
+	}
 }

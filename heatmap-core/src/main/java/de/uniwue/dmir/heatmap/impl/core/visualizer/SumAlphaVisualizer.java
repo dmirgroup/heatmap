@@ -21,18 +21,16 @@
 package de.uniwue.dmir.heatmap.impl.core.visualizer;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
+import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
 
-public class SumAndSizeAlphaVisualizer 
-implements IVisualizer<SumAndSize[]> {
+public class SumAlphaVisualizer 
+extends AbstractDebuggingVisualizer<Sum[]> {
 
 	public static final double DEFAULT_SCALE_FACTOR = 100;
 	public static final float DEFAULT_ALPHA_VALUE = 0.7f;
@@ -55,7 +53,7 @@ implements IVisualizer<SumAndSize[]> {
 	
 	private double scalingFactor = DEFAULT_SCALE_FACTOR;
 	
-	public SumAndSizeAlphaVisualizer(
+	public SumAlphaVisualizer(
 			BufferedImage colorScheme, 
 			double[] ranges) {
 
@@ -63,11 +61,11 @@ implements IVisualizer<SumAndSize[]> {
 		this.ranges = ranges;
 	}
 	
-	public SumAndSizeAlphaVisualizer(double scaleFactor) {
+	public SumAlphaVisualizer(double scaleFactor) {
 		this.scalingFactor = scaleFactor;
 	}
 	
-	public SumAndSizeAlphaVisualizer() {
+	public SumAlphaVisualizer() {
 		this(DEFAULT_SCALE_FACTOR);
 	}
 	
@@ -82,41 +80,26 @@ implements IVisualizer<SumAndSize[]> {
 	}
 	
 	public BufferedImage visualize(
-			SumAndSize[] data,
+			Sum[] data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
 
 		int width = tileSize.getWidth();
 		int height = tileSize.getHeight();
 		
-		// initialize buffered image and cooresponding graphics object
+		// initialize buffered image 
 		
 		BufferedImage image = new BufferedImage(
 				width, 
 				height, 
 				BufferedImage.TYPE_INT_ARGB);
 		
-		Graphics graphics = image.createGraphics();
-		
-		// debugging
-		
-		if (this.debug) {
-			graphics.setColor(Color.BLACK);
-			graphics.drawRect(0, 0, width - 1, height - 1);
-			graphics.drawString(String.format(
-					"x:%d, y:%d, z:%d", 
-					coordinates.getX(),
-					coordinates.getY(),
-					coordinates.getZoom()),
-					5, 15);
-		}
-		
 		// run through pixels
 		
 		for (int i  = 0; i < width; i++) {
 			for (int j  = 0; j < height; j++) {
 
-				SumAndSize object = Arrays2d.get(i, j, data, width, height);
+				Sum object = Arrays2d.get(i, j, data, width, height);
 
 				if (this.colorScheme == null) {
 					
@@ -172,6 +155,9 @@ implements IVisualizer<SumAndSize[]> {
 				}
 			}
 		}
+		
+		// debugging
+		this.addDebugInformation(tileSize, coordinates, image);
 		
 		return image;
 	}

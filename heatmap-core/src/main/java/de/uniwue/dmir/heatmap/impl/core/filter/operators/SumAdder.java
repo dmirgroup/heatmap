@@ -18,41 +18,20 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.util;
+package de.uniwue.dmir.heatmap.impl.core.filter.operators;
 
-import java.awt.image.BufferedImage;
+import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
+import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
 
-import lombok.AllArgsConstructor;
 
-import org.springframework.beans.factory.FactoryBean;
+public class SumAdder
+implements IAdder<Sum> {
 
-import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAlphaVisualizer;
-
-@AllArgsConstructor
-public class RangeFactoryBean implements FactoryBean<double[]> {
-
-	private double min;
-	private double max;
-	
-	private int colors;
-	
-	public RangeFactoryBean(double min, double max, BufferedImage image) {
-		this(min, max, image.getHeight());
+	public Sum add(Sum o1, Sum o2) {
+		
+		return new Sum(
+				o1.getSize() + o2.getSize(),
+				o1.getSum() + o2.getSum());
 	}
 	
-	@Override
-	public double[] getObject() throws Exception {
-		return SumAlphaVisualizer.ranges(this.min, this.max, this.colors);
-	}
-
-	@Override
-	public Class<?> getObjectType() {
-		return double[].class;
-	}
-
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
-
 }

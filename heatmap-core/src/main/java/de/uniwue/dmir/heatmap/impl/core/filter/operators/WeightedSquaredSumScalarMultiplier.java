@@ -21,15 +21,13 @@
 package de.uniwue.dmir.heatmap.impl.core.filter.operators;
 
 import de.uniwue.dmir.heatmap.core.filter.operators.IScalarMultiplier;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
+import de.uniwue.dmir.heatmap.impl.core.data.type.internal.WeightedSquaredSum;
 
-public class SumAndSizeScalarMultiplier
-implements IScalarMultiplier<SumAndSize> {
+public class WeightedSquaredSumScalarMultiplier
+implements IScalarMultiplier<WeightedSquaredSum> {
 
-	public void multiply(SumAndSize object, double multiplicator) {
-		double value = object.getSum();
-		value *= multiplicator;
-		object.setSum(value);
+	public void multiply(WeightedSquaredSum object, double multiplicator) {
+		object.scaleWeights(multiplicator);
 	}
 
 }

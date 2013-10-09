@@ -34,10 +34,21 @@ import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 public class ImageFilter<E extends IExternalData, P> 
 extends AbstractFilter<E, P[]> {
 
+	/** Maps external data, e.g., from the data base to internal data, i.e., tile data. */
 	private IMapper<E, P> internalMapper;
+	
+	/** Defines how to add up internal data. */
 	private IAdder<P> adder;
+	
+	/** Defines how to multiply internal data with a scalar value. */
 	private IScalarMultiplier<P> multiplier;
 	
+	/** 
+	 * Usually each pixel is initialized by multiplying the red value of 
+	 * the given filter image with the internal data.
+	 * If this boolean variable is <code>true</code>, this initialization is 
+	 * skipped if the alpha value of the pixel is <code>0</code>.
+	 */
 	private boolean useAlpha;
 	
 	private int width;

@@ -18,16 +18,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.data.type.mapper;
+package de.uniwue.dmir.heatmap.impl.core.filter.operators;
 
-import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
-import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
+import de.uniwue.dmir.heatmap.core.filter.operators.IScalarMultiplier;
+import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
 
-public class ValuePixelToSumAndSizeMapper
-implements IMapper<ValuePixel, SumAndSize> {
-	
-	public SumAndSize map(ValuePixel object) {
-		return new SumAndSize(object.getValue(), 1);
+public class SumScalarMultiplier
+implements IScalarMultiplier<Sum> {
+
+	public void multiply(Sum object, double multiplicator) {
+		double value = object.getSum();
+		value *= multiplicator;
+		object.setSum(value);
 	}
+
 }

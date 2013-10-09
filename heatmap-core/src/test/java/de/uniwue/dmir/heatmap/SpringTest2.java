@@ -43,12 +43,12 @@ import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateM
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
-import de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumAndSizeMapper;
+import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
+import de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumMapper;
 import de.uniwue.dmir.heatmap.impl.core.filter.ImageFilter;
-import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeAdder;
-import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeScalarMultiplier;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAndSizeAlphaVisualizer;
+import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAdder;
+import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumScalarMultiplier;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAlphaVisualizer;
 
 public class SpringTest2 {
 
@@ -75,11 +75,11 @@ public class SpringTest2 {
 						new GeoPointToGeoCoordinateMapper(), 
 						new GeoPointToValuePixelMapper());
 		
-		IFilter<ValuePixel, SumAndSize[]> filter = 
-				new ImageFilter<ValuePixel, SumAndSize>(
-						new ValuePixelToSumAndSizeMapper(),
-						new SumAndSizeAdder(),
-						new SumAndSizeScalarMultiplier(),
+		IFilter<ValuePixel, Sum[]> filter = 
+				new ImageFilter<ValuePixel, Sum>(
+						new ValuePixelToSumMapper(),
+						new SumAdder(),
+						new SumScalarMultiplier(),
 						ImageIO.read(new File("src/main/resources/filter/dot13_black.png")));
 		
 //		System.out.println(dataSouce.getData(new TileCoordinates(6, 10, 5), filter));
@@ -90,8 +90,8 @@ public class SpringTest2 {
 //						new SumAndSizeAdder(),
 //						42, 42, 21, 21);
 		
-		IHeatmap<SumAndSize[]> heatmap = new Heatmap<ValuePixel, SumAndSize[]>(
-				new ArrayTileFactory<SumAndSize>(SumAndSize.class),
+		IHeatmap<Sum[]> heatmap = new Heatmap<ValuePixel, Sum[]>(
+				new ArrayTileFactory<Sum>(Sum.class),
 				dataSouce, 
 				filter, 
 				settings);
@@ -99,17 +99,17 @@ public class SpringTest2 {
 		BufferedImage colorScheme = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_alpha70.png"));
 		
-		double[] ranges = SumAndSizeAlphaVisualizer.ranges(1, 500, colorScheme.getHeight());
+		double[] ranges = SumAlphaVisualizer.ranges(1, 500, colorScheme.getHeight());
 //		System.out.println(Arrays.toString(ranges));
 		
 //		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeBinaryVisualizer(),
-		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeAlphaVisualizer(
+		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(
 				colorScheme, ranges);
 		visualizer.setAlphaValue(0.2f);
 		visualizer.setForceAlphaValue(true);
 
-		VisualizationFileWriter<SumAndSize[]> heatmapFileWriter =
-				new VisualizationFileWriter<SumAndSize[]>(
+		VisualizationFileWriter<Sum[]> heatmapFileWriter =
+				new VisualizationFileWriter<Sum[]>(
 						new DefaultFileStrategy("out/tiles"), 
 						"png",
 						visualizer);

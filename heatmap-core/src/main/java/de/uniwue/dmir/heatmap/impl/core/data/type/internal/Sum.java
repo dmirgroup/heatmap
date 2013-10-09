@@ -18,20 +18,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.filter.operators;
+package de.uniwue.dmir.heatmap.impl.core.data.type.internal;
 
-import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
-
-public class SumAndSizeAdder
-implements IAdder<SumAndSize> {
-
-	public SumAndSize add(SumAndSize o1, SumAndSize o2) {
-		
-		return new SumAndSize(
-				o1.getSum() + o2.getSum(),
-				o1.getSize() + o2.getSize());
+@Data
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper= true)
+public class Sum extends Size {
+	
+	private double sum;
+	
+	public Sum(double sum) {
+		this(1, sum);
 	}
 	
+	public Sum(double size, double sum) {
+		super(size);
+		this.sum = sum;
+	}
 }
