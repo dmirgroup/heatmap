@@ -9,7 +9,7 @@ public class WeightedSize {
 	protected double sumOfWeights;
 	
 	public WeightedSize() {
-		this(1, 1);
+		this(1);
 	}
 	
 	public WeightedSize(double size) {

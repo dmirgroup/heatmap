@@ -23,10 +23,12 @@ package de.uniwue.dmir.heatmap.impl.core.data.type.internal;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class WeightedSum extends WeightedSize {
 
 	protected double sumOfValues;
@@ -37,7 +39,11 @@ public class WeightedSum extends WeightedSize {
 	}
 	
 	public WeightedSum(double value, double weight) {
-		this(1, value, value * weight, weight);
+		this(
+				1, 
+				value, 
+				value * weight, 
+				weight);
 	}
 	
 	public WeightedSum(
@@ -65,5 +71,5 @@ public class WeightedSum extends WeightedSize {
 		super.scaleWeights(scalingFactor);
 		this.sumOfWeightedValues *= scalingFactor;
 	}
-
+	
 }

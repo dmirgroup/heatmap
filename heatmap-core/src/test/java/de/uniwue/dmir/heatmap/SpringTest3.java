@@ -41,7 +41,7 @@ public class SpringTest3 {
 //		System.setProperty("max", "2013-01-01 00:00:00");
 
 		System.setProperty("min", "2013-01-01 00:00:00");
-		System.setProperty("max", "2013-02-01 00:00:00");
+		System.setProperty("max", "2013-10-01 00:00:00");
 		System.setProperty("workdir", "classpath:spring/example/basic");
 		
 		ClassPathXmlApplicationContext appContext = 

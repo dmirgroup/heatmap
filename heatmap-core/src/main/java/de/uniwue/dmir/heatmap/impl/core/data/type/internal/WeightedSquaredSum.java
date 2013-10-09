@@ -20,40 +20,54 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.data.type.internal;
 
+import de.uniwue.dmir.heatmap.impl.core.filter.operators.WeightedSquaredSumAdder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class WeightedSquaredSum extends WeightedSum {
 
 	protected double sumOfSquaredValues;
 	protected double sumOfWeightedSquaredValues;
 	
 	public WeightedSquaredSum(double value) {
-		this();
+		this(value, 1);
 	}
 	
 	public WeightedSquaredSum(double value, double weight) {
-		this(1, value, value * value, value * weight, value * value * weight, weight);
+		this(
+				1, 
+				value, 
+				value * value, 
+				value * weight, 
+				value * value * weight, 
+				weight);
 	}
 	
 	public WeightedSquaredSum(
 			
-			double size, 
+			double size,
 			
 			double sumOfValues,
-			double sumOfsquaredValues,
+			double sumOfSquaredValues,
 			
 			double sumOfWeightedValues,
 			double sumOfWeightedSquaredValues,
 			
 			double sumOfWeights) {
 		
-		super(size, sumOfValues, sumOfWeightedValues, sumOfWeights);
-		this.sumOfSquaredValues = sumOfsquaredValues;
+		super(
+				size, 
+				sumOfValues, 
+				sumOfWeightedValues,
+				sumOfWeights);
+
+		this.sumOfSquaredValues = sumOfSquaredValues;
 		this.sumOfWeightedSquaredValues = sumOfWeightedSquaredValues;
 	}
 	
@@ -69,5 +83,28 @@ public class WeightedSquaredSum extends WeightedSum {
 	public void scaleWeights(double scalingFactor) {
 		super.scaleWeights(scalingFactor);
 		this.sumOfWeightedSquaredValues *= scalingFactor;
+	}
+	
+	public static void main(String[] args) {
+		
+		WeightedSquaredSum sum = new WeightedSquaredSum(2);
+		System.out.println(sum);
+		sum.scaleWeights(0.5);
+		System.out.println(sum);
+
+		WeightedSquaredSumAdder adder = new WeightedSquaredSumAdder();
+		
+		WeightedSquaredSum sum2 = new WeightedSquaredSum(4);
+		sum2.scaleWeights(1. / 3);
+		System.out.println(sum2);
+		
+		WeightedSquaredSum sum3 = new WeightedSquaredSum(1);
+		sum3.scaleWeights(2. / 3);
+		System.out.println(sum3);
+
+		WeightedSquaredSum sum4 = adder.add(sum2, sum3);
+		System.out.println(sum4);
+		
+		System.out.println(sum4.getSumOfWeightedValues() / sum4.getSumOfWeights());
 	}
 }

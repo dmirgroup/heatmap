@@ -9,13 +9,13 @@
 	<!-- Defining filter. -->
 	
 	<bean id="internalMapper"
-			class="de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumAndSizeMapper" />
+			class="de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToWeightedSquaredSumMapper" />
 			
 	<bean id="adder"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeAdder" />
+			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.WeightedSquaredSumAdder" />
 			
 	<bean id="multiplier"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAndSizeScalarMultiplier" />
+			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.WeightedSquaredSumScalarMultiplier" />
 	
 	<bean id="image"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">

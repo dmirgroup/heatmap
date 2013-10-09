@@ -19,7 +19,7 @@
 	</bean>
 	
 	<bean id="visualizer"
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.SumAndSizeAlphaVisualizer">
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.WeightedSumAlphaVisualizer">
 		<constructor-arg name="colorScheme" ref="colorScheme" />
 		<constructor-arg name="ranges" ref="ranges" />
 		

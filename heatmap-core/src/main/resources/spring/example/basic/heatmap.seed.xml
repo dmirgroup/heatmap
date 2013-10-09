@@ -11,7 +11,7 @@
 			class="de.uniwue.dmir.heatmap.core.FilesystemHeatmap">
 	
 		<constructor-arg name="settings" ref="heatmapSettings" />
-		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.SumAndSize[]" />
+		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.WeightedSquaredSum[]" />
 		<constructor-arg name="folder" value="${in.data}" />
 		<constructor-arg name="gzip" value="true" />
 	</bean>
