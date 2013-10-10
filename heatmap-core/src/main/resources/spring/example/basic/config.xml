@@ -30,7 +30,7 @@
 		<property name="zoomLevelRange" ref="zoomLevelRange" />
 	</bean>
 	
-	<import resource="heatmap.datasource.geo.xml"/>
+	<import resource="heatmap.datasource.geo.csv.xml"/>
 	<import resource="heatmap.datasource.tiles.xml"/>
 	<import resource="heatmap.filter.xml"/>
 	<import resource="heatmap.seed.xml"/>

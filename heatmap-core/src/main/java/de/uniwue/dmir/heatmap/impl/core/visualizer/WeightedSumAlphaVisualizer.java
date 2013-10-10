@@ -83,6 +83,7 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		if (weightedSum.getSumOfWeights() == 0) {
 			return 0;
 		} else {
+			System.out.println(weightedSum.getSumOfWeightedValues() / weightedSum.getSumOfWeights());
 			return  weightedSum.getSumOfWeightedValues() / weightedSum.getSumOfWeights();
 		}
 	}
@@ -147,7 +148,7 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 							
 //							int alphaValue = (int) (this.alphaValue * 255);
 							int alphaValue = (int) (
-									object.getSumOfWeights() / object.getSize() * 255);
+									Math.max(0, Math.min(255, Math.log(object.getSumOfWeights() * 2) * 255)));
 							
 							alphaColor = new Color(
 									alphaColor.getRed(), 

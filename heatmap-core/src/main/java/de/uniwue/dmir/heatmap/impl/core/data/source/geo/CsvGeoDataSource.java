@@ -28,7 +28,10 @@ import java.io.IOException;
 public class CsvGeoDataSource 
 extends ListGeoDataSource {
 
-	public CsvGeoDataSource(File file, String separator, boolean skipFirstLine) 
+	public CsvGeoDataSource(
+			File file, 
+			String separator, 
+			boolean skipFirstLine) 
 	throws IOException {
 		
 		BufferedReader bufferedReader = 
@@ -44,8 +47,9 @@ extends ListGeoDataSource {
 			String[] split = line.split(separator);
 			double longitude = Double.parseDouble(split[0]);
 			double latitude = Double.parseDouble(split[1]);
+			double value = Double.parseDouble(split[2]);
 			
-			GeoPoint geoPoint = new GeoPoint(longitude, latitude);
+			GeoPoint geoPoint = new GeoPoint(longitude, latitude, value);
 			this.getList().add(geoPoint);
 			
 			line = bufferedReader.readLine();

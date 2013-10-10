@@ -27,12 +27,14 @@ import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 public class GeoPoint {
 	
 	private GeoCoordinates geoCoordinates;
+	private double value;
 	
 	public GeoPoint() {
-		this(0, 0);
+		this(0, 0, 0);
 	}
 	
-	public GeoPoint(double longitude, double latitude) {
+	public GeoPoint(double longitude, double latitude, double value) {
 		this.geoCoordinates = new GeoCoordinates(longitude, latitude);
+		this.value = value;
 	}
 }

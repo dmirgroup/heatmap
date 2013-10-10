@@ -62,6 +62,35 @@ public class Arrays2d {
 		return clip;
 	}
 	
+	public static double[] clipRangeDouble(
+			
+			int minX,
+			int minY,
+			
+			int width,
+			int height,
+			
+			double[] array, 
+			int arrayWidth,
+			int arrayHeight) {
+		
+		int length = width * height;
+		
+		double[] clip = (double[]) Array.newInstance(
+				array.getClass().getComponentType(), 
+				length);
+		
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				int outerIndex = index(x + minX, y + minY, width, height);
+				int innerIndex = index(x, y, width, height);
+				clip[innerIndex] = array[outerIndex];
+			}
+		}
+		
+		return clip;
+	}
+	
 	public static <T> T[] clip(
 			
 			int minX,
@@ -80,11 +109,43 @@ public class Arrays2d {
 		return clipRange(minX, minY, diffX, diffY, array, width, height);
 	}
 	
+	public static double[] clipDouble(
+			
+			int minX,
+			int minY,
+			
+			int maxX,
+			int maxY,
+			
+			double[] array, 
+			int width,
+			int height) {
+		
+		int diffX = maxX - minX;
+		int diffY = maxY - minY;
+		
+		return clipRangeDouble(minX, minY, diffX, diffY, array, width, height);
+	}
+	
 	public static <T> T[] line(int line, T[] array, int width, int height) {
 		return clip(0, line, width, line + 1, array, width, height);
 	}
 	
+	public static double[] lineDouble(int line, double[] array, int width, int height) {
+		return clipDouble(0, line, width, line + 1, array, width, height);
+	}
+	
 	public static <T> int height(T[] array, int width) {
+		
+		if (array.length % width != 0) {
+			throw new IllegalArgumentException("Wrong width.");
+		}
+		
+		return array.length / width;
+		
+	}
+	
+	public static <T> int heightDouble(double[] array, int width) {
 		
 		if (array.length % width != 0) {
 			throw new IllegalArgumentException("Wrong width.");
@@ -153,11 +214,23 @@ public class Arrays2d {
 		return array[index];
 	}
 	
-	public static void set(
+	public static void setInt(
 			int element,
 			int x, 
 			int y, 
 			int[] array, 
+			int width,
+			int height) {
+		
+		int index = index(x, y, width, height);
+		array[index] = element;
+	}
+	
+	public static void setDouble(
+			double element,
+			int x, 
+			int y, 
+			double[] array, 
 			int width,
 			int height) {
 		
@@ -182,6 +255,19 @@ public class Arrays2d {
 		
 		for (int i = 0; i < height(array, width); i ++) {
 			T[] line = line(i, array, width, height);
+			buffer.append(Arrays.toString(line));
+			buffer.append(System.getProperty("line.separator"));
+		}
+		
+		return buffer.toString();
+	}
+	
+	public static String toStringDouble(double[] array, int width, int height) {
+
+		StringBuffer buffer = new StringBuffer();
+		
+		for (int i = 0; i < heightDouble(array, width); i ++) {
+			double[] line = lineDouble(i, array, width, height);
 			buffer.append(Arrays.toString(line));
 			buffer.append(System.getProperty("line.separator"));
 		}

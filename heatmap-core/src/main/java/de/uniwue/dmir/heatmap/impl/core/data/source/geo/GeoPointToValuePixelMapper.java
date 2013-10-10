@@ -34,7 +34,7 @@ implements IToInternalDataMapper<GeoPoint, ValuePixel> {
 		return new ValuePixel(
 				relativeCoordinates.getX(), 
 				relativeCoordinates.getY(), 
-				1);
+				sourceObject.getValue());
 	}
 	
 }
