@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAlphaVisualizer;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme;
 
 @AllArgsConstructor
 public class RangeFactoryBean implements FactoryBean<double[]> {
@@ -42,7 +42,7 @@ public class RangeFactoryBean implements FactoryBean<double[]> {
 	
 	@Override
 	public double[] getObject() throws Exception {
-		return SumAlphaVisualizer.ranges(this.min, this.max, this.colors);
+		return ImageColorScheme.ranges(this.min, this.max, this.colors);
 	}
 
 	@Override

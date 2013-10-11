@@ -35,8 +35,12 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
+import de.uniwue.dmir.heatmap.core.visualizer.IAlphaScheme;
+import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.WeightedSum;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.EuclidianDistance;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GaussianRdf;
 
 public class RbfVisualizer
 extends AbstractDebuggingVisualizer<WeightedSum[]> {
@@ -44,42 +48,20 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 	public static final double EPSILON = 0.5;
 	
 	private IDistanceFunction<IExternalData> distanceFunction =
-			new IDistanceFunction<IExternalData>() {
+			new EuclidianDistance();
 
-				@Override
-				public double distance(IExternalData o1, IExternalData o2) {
-					return Math.sqrt(
-							 Math.pow(o1.getCoordinates().getX() - o2.getCoordinates().getX(), 2)
-							+ Math.pow(o1.getCoordinates().getY() - o2.getCoordinates().getY(), 2));
-				}
-				
-			};
-
-	private IRadialBasicFunction radialBasicFunction = new IRadialBasicFunction() {
-		
-		@Override
-		public double value(double value, double epsilon) {
-			return Math.exp(-(value * epsilon) * (value * epsilon));
-		}
-	}; 
+	private IRadialBasisFunction radialBasisFunction = 
+			new GaussianRdf(EPSILON);
 	
-	private BufferedImage colorScheme;
-	private double[] ranges;
+	private IColorScheme colorScheme;
+	private IAlphaScheme alphaScheme;
 	
 	public RbfVisualizer(
-			BufferedImage colorScheme,
-			double ranges[]) {
+			IColorScheme colorScheme,
+			IAlphaScheme alphaScheme) {
+		
 		this.colorScheme = colorScheme;
-		this.ranges = ranges;
-	}
-	
-	private int colorIndex(double value) {
-		for (int i = 0; i < this.ranges.length; i ++) {
-			if (value < this.ranges[i]) {
-				return i;
-			}
-		}
-		return this.colorScheme.getHeight() - 1;
+		this.alphaScheme = alphaScheme;
 	}
 	
 	public BufferedImage visualize(
@@ -123,12 +105,8 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 				double distance = 
 						this.distanceFunction.distance(rowPixel, colPixel);
 				
-				System.out.println(rowPixel);
-				System.out.println(colPixel);
-				System.out.println(distance);
-				
 				double value = 
-						this.radialBasicFunction.value(distance, EPSILON);
+						this.radialBasisFunction.value(distance);
 				
 				A.set(row, col, value);
 				
@@ -143,11 +121,6 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		if( !CommonOps.solve(A,b,x) ) {
 			throw new IllegalArgumentException("A was a singular matrix.");
 		}
-		
-
-		System.out.println(A);
-		System.out.println(x);
-		System.out.println(b);
 		
 		// initialize buffered image 
 		
@@ -177,12 +150,11 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 							x.get(index);
 					
 					double value =
-							this.radialBasicFunction.value(distance, EPSILON);
+							this.radialBasisFunction.value(distance);
 					
 					sum += weight * value;
 					
-					int colorIndex = colorIndex(sum);
-					int color = this.colorScheme.getRGB(0, colorIndex);
+					int color = this.colorScheme.getColor(sum);
 					image.setRGB(i, j, color);
 					
 					index ++;
@@ -192,7 +164,7 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 			}
 		}
 		
-		System.out.println(Arrays2d.toStringDouble(values, width, height));
+//		System.out.println(Arrays2d.toStringDouble(values, width, height));
 		
 		// debugging
 		this.addDebugInformation(tileSize, coordinates, image);
@@ -204,8 +176,8 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		double distance(T o1, T o2);
 	}
 	
-	public static interface IRadialBasicFunction {
-		double value(double value, double epsilon);
+	public static interface IRadialBasisFunction {
+		double value(double value);
 	}
 	
 	public static void main(String[] args) throws IOException {
@@ -222,9 +194,11 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 				null, null, null, null, null, null, null, null, null,
 		};
 		
-		BufferedImage colorScheme = ImageIO.read(new File("src/main/resources/color-schemes/classic.png"));
-		double[] ranges = SumAlphaVisualizer.ranges(0, 5, colorScheme.getHeight());
-		RbfVisualizer visualizer = new RbfVisualizer(colorScheme, ranges);
+		BufferedImage colorImage = ImageIO.read(new File("src/main/resources/color-schemes/classic.png"));
+		double[] ranges = ImageColorScheme.ranges(0, 9, colorImage.getHeight());
+		ImageColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
+		
+		RbfVisualizer visualizer = new RbfVisualizer(colorScheme, null);
 		BufferedImage result = visualizer.visualize(weightedSums, new TileSize(9, 9), new TileCoordinates(0, 0, 0));
 		ImageIO.write(result, "png", new File("out/test.png"));
 	}

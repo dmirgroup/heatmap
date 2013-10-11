@@ -48,6 +48,7 @@ import de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumMapper;
 import de.uniwue.dmir.heatmap.impl.core.filter.ImageFilter;
 import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAdder;
 import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumScalarMultiplier;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAlphaVisualizer;
 
 public class HeatmapTest {
@@ -109,7 +110,7 @@ public class HeatmapTest {
 		
 		BufferedImage colorScheme = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_70.png"));
-		double[] ranges = SumAlphaVisualizer.ranges(1, 500, colorScheme.getHeight());
+		double[] ranges = ImageColorScheme.ranges(1, 500, colorScheme.getHeight());
 		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(
 				colorScheme, ranges);
 		visualizer.setAlphaValue(0.5f);

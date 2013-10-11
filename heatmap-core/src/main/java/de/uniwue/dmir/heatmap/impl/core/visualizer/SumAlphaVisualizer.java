@@ -162,19 +162,4 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 		return image;
 	}
 
-	public static double[] ranges(double min, double max, int colors) {
-		
-		double[] ranges = new double[colors - 2];
-		ranges[0] = min;
-		
-		double diff = max - min;
-		double step = diff / (colors - 3);
-		
-		for (int i = 1; i < colors - 2; i ++) {
-			ranges[i] = min + i * step;
-		}
-		
-		return ranges;
-	}
-
 }
