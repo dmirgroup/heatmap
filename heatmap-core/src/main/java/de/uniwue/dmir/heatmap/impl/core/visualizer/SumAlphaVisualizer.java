@@ -27,6 +27,7 @@ import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
+import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
 
 public class SumAlphaVisualizer 
@@ -48,17 +49,12 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 	@Setter
 	private boolean forceAlphaValue = false;
 	
-	private BufferedImage colorScheme;
-	private double[] ranges;
-	
 	private double scalingFactor = DEFAULT_SCALE_FACTOR;
 	
-	public SumAlphaVisualizer(
-			BufferedImage colorScheme, 
-			double[] ranges) {
-
+	private IColorScheme colorScheme;
+	
+	public SumAlphaVisualizer(IColorScheme colorScheme) {
 		this.colorScheme = colorScheme;
-		this.ranges = ranges;
 	}
 	
 	public SumAlphaVisualizer(double scaleFactor) {
@@ -69,15 +65,6 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 		this(DEFAULT_SCALE_FACTOR);
 	}
 	
-	
-	private int colorIndex(double value) {
-		for (int i = 0; i < this.ranges.length; i ++) {
-			if (value < this.ranges[i]) {
-				return i;
-			}
-		}
-		return this.colorScheme.getHeight() - 1;
-	}
 	
 	public BufferedImage visualize(
 			Sum[] data,
@@ -128,10 +115,7 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 					if (object != null) {
 						
 						// get color index
-						int index = this.colorScheme.getHeight() - 1 - colorIndex(object.getSum());
-						
-						// get the color
-						int color = this.colorScheme.getRGB(0, index);
+						int color = this.colorScheme.getColor(object.getSum());
 						
 						// we may want to force a configured alpha value
 						if (this.forceAlphaValue) {

@@ -6,22 +6,31 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="colorScheme"
+	<bean id="colorImage"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
+
 		<constructor-arg name="resource" value="${visualizer.colorscheme}" />
 	</bean>
 	
 	<bean id="ranges"
 			class="de.uniwue.dmir.heatmap.core.util.RangeFactoryBean">
+
 		<constructor-arg name="min" value="${visualizer.range.min}" />
 		<constructor-arg name="max" value="${visualizer.range.max}" />
-		<constructor-arg name="image" ref="colorScheme" />
+		<constructor-arg name="image" ref="colorImage" />
+	</bean>
+	
+	<bean id="colorScheme"
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme">
+
+		<constructor-arg name="image" ref="colorImage" />
+		<constructor-arg name="ranges" ref="ranges" />
 	</bean>
 	
 	<bean id="visualizer"
 			class="de.uniwue.dmir.heatmap.impl.core.visualizer.WeightedSumAlphaVisualizer">
+
 		<constructor-arg name="colorScheme" ref="colorScheme" />
-		<constructor-arg name="ranges" ref="ranges" />
 		
 		<property name="forceAlphaValue" value="true" />
 		<property name="alphaValue" value="${visualizer.alpha}" />

@@ -27,6 +27,7 @@ import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
+import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.WeightedSum;
 
 public class WeightedSumAlphaVisualizer
@@ -48,17 +49,12 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 	@Setter
 	private boolean forceAlphaValue = false;
 	
-	private BufferedImage colorScheme;
-	private double[] ranges;
-	
 	private double scalingFactor = DEFAULT_SCALE_FACTOR;
 	
-	public WeightedSumAlphaVisualizer(
-			BufferedImage colorScheme, 
-			double[] ranges) {
-
+	private IColorScheme colorScheme;
+	
+	public WeightedSumAlphaVisualizer(IColorScheme colorScheme) {
 		this.colorScheme = colorScheme;
-		this.ranges = ranges;
 	}
 	
 	public WeightedSumAlphaVisualizer(double scaleFactor) {
@@ -67,16 +63,6 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 	
 	public WeightedSumAlphaVisualizer() {
 		this(DEFAULT_SCALE_FACTOR);
-	}
-	
-	
-	private int colorIndex(double value) {
-		for (int i = 0; i < this.ranges.length; i ++) {
-			if (value < this.ranges[i]) {
-				return i;
-			}
-		}
-		return this.colorScheme.getHeight() - 1;
 	}
 	
 	private double average(WeightedSum weightedSum) {
@@ -136,11 +122,8 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 					
 					if (object != null) {
 						
-						// get color index
-						int index = this.colorScheme.getHeight() - 1 - colorIndex(average(object));
-						
 						// get the color
-						int color = this.colorScheme.getRGB(0, index);
+						int color = this.colorScheme.getColor(average(object));
 						
 						// we may want to force a configured alpha value
 						if (this.forceAlphaValue) {

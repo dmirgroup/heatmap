@@ -37,6 +37,7 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
+import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
@@ -108,14 +109,15 @@ public class HeatmapTest {
 		
 //		SumAndSizeBinaryVisualizer visualizer = new SumAndSizeBinaryVisualizer();
 		
-		BufferedImage colorScheme = ImageIO.read(
+		BufferedImage colorImage = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_70.png"));
-		double[] ranges = ImageColorScheme.ranges(1, 500, colorScheme.getHeight());
-		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(
-				colorScheme, ranges);
+		double[] ranges = ImageColorScheme.ranges(1, 500, colorImage.getHeight());
+		IColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
+		
+		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(colorScheme);
 		visualizer.setAlphaValue(0.5f);
 		visualizer.setBackgroundColor(
-				new Color(colorScheme.getRGB(0, colorScheme.getHeight() - 1), true));
+				new Color(colorImage.getRGB(0, colorImage.getHeight() - 1), true));
 		visualizer.setForceAlphaValue(true);
 
 		VisualizationFileWriter<Sum[]> heatmapFileWriter =

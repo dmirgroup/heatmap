@@ -38,6 +38,7 @@ import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
 import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
+import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
@@ -97,15 +98,17 @@ public class SpringTest2 {
 				filter, 
 				settings);
 		
-		BufferedImage colorScheme = ImageIO.read(
+		BufferedImage colorImage = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic_alpha70.png"));
 		
-		double[] ranges = ImageColorScheme.ranges(1, 500, colorScheme.getHeight());
-//		System.out.println(Arrays.toString(ranges));
+		double[] ranges = ImageColorScheme.ranges(1, 500, colorImage.getHeight());
+
+		IColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
+		
+		//		System.out.println(Arrays.toString(ranges));
 		
 //		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeBinaryVisualizer(),
-		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(
-				colorScheme, ranges);
+		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(colorScheme);
 		visualizer.setAlphaValue(0.2f);
 		visualizer.setForceAlphaValue(true);
 
