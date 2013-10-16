@@ -29,9 +29,13 @@ implements IAdder<Sum> {
 
 	public Sum add(Sum o1, Sum o2) {
 		
-		return new Sum(
+		Sum sum = new Sum(
 				o1.getSize() + o2.getSize(),
 				o1.getSum() + o2.getSum());
+		
+		sum.setCoordinateValues(o1.getCoordinates());
+		
+		return sum;
 	}
 	
 }

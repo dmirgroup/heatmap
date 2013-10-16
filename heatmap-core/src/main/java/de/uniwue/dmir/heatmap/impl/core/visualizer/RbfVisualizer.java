@@ -145,7 +145,6 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		super.logger.debug("Writing image values.");
 		
 		ValuePixel tmpValuePixel = new ValuePixel(0, 0, Double.NaN);
-		double[] values = new double[width * height];
 		for (int i = 0; i < width; i ++) {
 			for (int j = 0; j < height; j ++) {
 				
@@ -167,13 +166,12 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 					
 					sum += weight * value;
 					
-					int color = this.colorScheme.getColor(sum);
-					image.setRGB(i, j, color);
-					
 					index ++;
 				}
 				
-				Arrays2d.setDouble(sum, i, j, values, width, height);
+				int color = this.colorScheme.getColor(sum);
+				image.setRGB(i, j, color);
+				
 			}
 		}
 		

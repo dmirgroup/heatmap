@@ -28,6 +28,8 @@ public class ValuePixelToSumMapper
 implements IMapper<ValuePixel, Sum> {
 	
 	public Sum map(ValuePixel object) {
-		return new Sum(1, object.getValue());
+		Sum sum = new Sum(1, object.getValue());
+		sum.setCoordinateValues(object.getCoordinates());
+		return sum;
 	}
 }

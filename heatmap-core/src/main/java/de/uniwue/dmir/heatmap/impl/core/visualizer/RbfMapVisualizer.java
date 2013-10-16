@@ -50,7 +50,7 @@ import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IRadialBasisFunction;
 public class RbfMapVisualizer<T extends IExternalData>
 extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 	
-	public static final double EPSILON = 0.1;
+	public static final double EPSILON = 0.2;
 	
 	private IToDoubleMapper<T> toValueMapper;
 	private IToDoubleMapper<T> toAlphaMapper;
@@ -106,6 +106,7 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 			
 			double bValue = this.toValueMapper.map(rowPixel);
 			b.set(row, bValue);
+			System.out.println(bValue);
 			
 			int col = 0;
 			for (T colPixel : data.values()) {
@@ -147,9 +148,9 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		// write image values
 
 		super.logger.debug("Writing image values.");
-		
+
+		double max = Double.MIN_VALUE;
 		ValuePixel tmp = new ValuePixel(0, 0, Double.NaN);
-		double[] values = new double[width * height];
 		for (int i = 0; i < width; i ++) {
 			for (int j = 0; j < height; j ++) {
 				
@@ -157,27 +158,26 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				int index = 0;
 				for (T p : data.values()) {
 					
-					tmp.getCoordinates().setX(i);
-					tmp.getCoordinates().setY(j);
+					tmp.setCoordinateValues(i, j);
 					
 					double distance = this.distanceFunction.distance(tmp, p);
-					double weight = x.get(index);
 					double value = this.radialBasisFunction.value(distance);
+
+					double weight = x.get(index);
 					
 					sum += weight * value;
-					
-					int color = this.colorScheme.getColor(sum);
-					image.setRGB(i, j, color);
 					
 					index ++;
 				}
 				
-				Arrays2d.setDouble(sum, i, j, values, width, height);
+				max = Math.max(max, sum);
+				int color = this.colorScheme.getColor(sum);
+				image.setRGB(i, j, color);
 			}
 		}
 		
 
-		super.logger.debug("Done writing image values.");
+		super.logger.debug("Done writing image values. Max Value: {}", max);
 		
 //		System.out.println(Arrays2d.toStringDouble(values, width, height));
 		
