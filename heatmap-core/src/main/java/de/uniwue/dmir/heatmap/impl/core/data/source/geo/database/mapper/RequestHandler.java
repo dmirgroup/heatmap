@@ -25,21 +25,27 @@ import org.apache.ibatis.jdbc.SQL;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsBasic;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsTime;
+import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsValue;
 
 public final class RequestHandler {
+
+	public static final String LONGITUDE = "longitude";
+	public static final String LATITUDE = "latitude";
+	public static final String VALUE = "value";
 	
 	public String sql(RequestGeo request) {
 		SQL sql = new SQL();
 		basic(request, sql);
 		time(request, sql);
 		geo(request, sql);
+		value(request, sql);
 		return sql.toString();
 	}
 	
 	public void basic(RequestSettingsBasic request, SQL sql) {
 		sql
-			.SELECT(request.getLongitudeAttribute() + " AS longitude")
-			.SELECT(request.getLatitudeAttribute() + " AS latitude")
+			.SELECT(request.getLongitudeAttribute() + " AS " + LONGITUDE)
+			.SELECT(request.getLatitudeAttribute() + " AS " + LATITUDE)
 			.FROM(request.getTable());
 	}
 	
@@ -57,7 +63,14 @@ public final class RequestHandler {
 						+ " <= #{maximumTimestamp}");
 		}
 	}
-	
+
+	public void value(RequestSettingsValue request, SQL sql) {
+		if (request.getValueAttribute() != null) {
+			sql.SELECT(request.getValueAttribute() + " AS " + VALUE);
+		} else {
+			sql.SELECT(request.getDefaultValue() + " AS " + VALUE);
+		}
+	}
 	public void geo(RequestGeo request, SQL sql) {
 		
 		sql.WHERE(request.getLongitudeAttribute() 

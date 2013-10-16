@@ -20,10 +20,15 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.data.type.internal;
 
+import de.uniwue.dmir.heatmap.core.data.type.AbstactExternalData;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
-public class WeightedSize {
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class WeightedSize extends AbstactExternalData {
 	
 	protected double size;
 	protected double sumOfWeights;
@@ -37,6 +42,7 @@ public class WeightedSize {
 	}
 	
 	public WeightedSize(double size, double sumOfWeights) {
+		super();
 		this.size = size;
 		this.sumOfWeights = sumOfWeights;
 	}

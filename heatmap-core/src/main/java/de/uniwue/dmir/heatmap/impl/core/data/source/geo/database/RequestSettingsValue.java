@@ -22,24 +22,21 @@ package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class RequestGeo extends RequestSettingsValue {
+public class RequestSettingsValue extends RequestSettingsTime {
 
-	private double lonWest;
-	private double lonEast;
-	private double latNorth;
-	private double latSouth;
-	
-	public RequestGeo(
-			String table, 
-			String longitudeAttribute, 
+	public RequestSettingsValue(
+			String table,
+			String longitudeAttribute,
 			String latitudeAttribute) {
-
 		super(table, longitudeAttribute, latitudeAttribute);
+		this.defaultValue = 0;
 	}
-
+	
+	private String valueAttribute;
+	private double defaultValue;
+	
 }

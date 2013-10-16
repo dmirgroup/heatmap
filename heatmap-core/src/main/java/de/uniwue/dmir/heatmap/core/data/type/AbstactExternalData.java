@@ -31,9 +31,23 @@ import lombok.Data;
 @Data
 public abstract class AbstactExternalData implements IExternalData {
 	
+	public AbstactExternalData() {
+		this(Integer.MIN_VALUE, Integer.MIN_VALUE);
+	}
+	
 	public AbstactExternalData(int x, int y) {
 		this.coordinates = new RelativeCoordinates(x, y);
 	}
 	
 	private RelativeCoordinates coordinates;
+	
+	public void setCoordinateValues(int x, int y) {
+		this.coordinates.setX(x);
+		this.coordinates.setY(y);
+	}
+	
+	public void setCoordinateValues(RelativeCoordinates coordinates) {
+		this.coordinates.setX(coordinates.getX());
+		this.coordinates.setY(coordinates.getY());
+	}
 }

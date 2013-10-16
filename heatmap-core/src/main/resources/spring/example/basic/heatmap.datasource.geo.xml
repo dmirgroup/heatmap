@@ -67,6 +67,8 @@
 		<constructor-arg name="table" value="data_airprobe" />
 		<constructor-arg name="longitudeAttribute" value="geo_lon" />
 		<constructor-arg name="latitudeAttribute" value="geo_lat" />
+		
+		<property name="valueAttribute" value="data_no2_1" />
 	</bean>
 	
 	<bean id="request" parent="abstractRequest" />

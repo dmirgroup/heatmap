@@ -11,7 +11,7 @@
 		<constructor-arg name="processors">
 			<list>
 				<ref bean="tileWriter" />
-				<ref bean="dataWriter" />
+			<!-- 	<ref bean="dataWriter" /> -->
 			</list>
 		</constructor-arg>
 	</bean>

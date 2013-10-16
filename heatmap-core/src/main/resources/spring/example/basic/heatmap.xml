@@ -19,8 +19,7 @@
 	<!-- Defining heat map. -->
 	
 	<bean id="tileFactory"
-			class="de.uniwue.dmir.heatmap.core.ArrayTileFactory">
-		<constructor-arg name="clazz" value="de.uniwue.dmir.heatmap.impl.core.data.type.internal.WeightedSquaredSum" />
+			class="de.uniwue.dmir.heatmap.core.MapTileFactory">
 	</bean>
 	
 	<bean id="heatmap"

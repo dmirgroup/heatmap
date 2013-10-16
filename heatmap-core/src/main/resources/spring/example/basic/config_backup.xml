@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--Loading properties. -->
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>#{systemProperties.workdir}/config.default.properties</value>
+				<value>#{systemProperties.workdir}/config.properties</value>
+			</list>
+		</property>
+		<property name="order" value="150" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+
+	<bean id="zoomLevelRange"
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
+		<constructor-arg name="min" value="${zoom.min}" />
+		<constructor-arg name="max" value="${zoom.max}" />
+	</bean>
+
+	<bean id="heatmapSettings"
+			class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" >
+		<property name="zoomLevelRange" ref="zoomLevelRange" />
+	</bean>
+	
+	<import resource="heatmap.datasource.geo.csv.xml"/>
+	<import resource="heatmap.datasource.tiles.xml"/>
+	<import resource="heatmap.filter.xml"/>
+	<import resource="heatmap.seed.xml"/>
+	<import resource="heatmap.xml"/>
+	
+	<import resource="processor.writer.data.xml"/>
+	<import resource="processor.writer.tiles.visualizer.xml"/>
+	<import resource="processor.writer.tiles.xml"/>
+	<import resource="processor.xml"/>
+
+</beans>

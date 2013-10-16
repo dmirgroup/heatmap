@@ -18,28 +18,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database;
+package de.uniwue.dmir.heatmap.core;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import java.util.HashMap;
+import java.util.Map;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class RequestGeo extends RequestSettingsValue {
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
-	private double lonWest;
-	private double lonEast;
-	private double latNorth;
-	private double latSouth;
+
+public class MapTileFactory<I>
+implements ITileFactory<Map<RelativeCoordinates, I>> {
 	
-	public RequestGeo(
-			String table, 
-			String longitudeAttribute, 
-			String latitudeAttribute) {
-
-		super(table, longitudeAttribute, latitudeAttribute);
+	@Override
+	public Map<RelativeCoordinates, I> newInstance(TileSize size, TileCoordinates coordinates) {
+		return new HashMap<RelativeCoordinates, I>();
 	}
 
 }

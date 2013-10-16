@@ -20,7 +20,6 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.visualizer.rbf;
 
-import de.uniwue.dmir.heatmap.impl.core.visualizer.RbfVisualizer.IRadialBasisFunction;
 
 public class GaussianRdf implements IRadialBasisFunction {
 

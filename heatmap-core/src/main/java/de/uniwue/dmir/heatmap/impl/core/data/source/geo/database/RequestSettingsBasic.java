@@ -28,7 +28,7 @@ import lombok.Data;
 public class RequestSettingsBasic {
 	
 	private String table;
+	
 	private String longitudeAttribute;
 	private String latitudeAttribute;
-	
 }

@@ -24,6 +24,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
@@ -31,6 +34,8 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 public abstract class AbstractDebuggingVisualizer<I> implements IVisualizer<I> {
+	
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Getter
 	@Setter

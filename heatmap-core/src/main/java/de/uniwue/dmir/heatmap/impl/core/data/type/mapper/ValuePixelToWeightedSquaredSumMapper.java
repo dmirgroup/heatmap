@@ -28,6 +28,8 @@ public class ValuePixelToWeightedSquaredSumMapper
 implements IMapper<ValuePixel, WeightedSquaredSum> {
 	
 	public WeightedSquaredSum map(ValuePixel object) {
-		return new WeightedSquaredSum(object.getValue());
+		WeightedSquaredSum sum = new WeightedSquaredSum(object.getValue());
+		sum.setCoordinateValues(object.getCoordinates());
+		return sum;
 	}
 }

@@ -20,33 +20,52 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.util.Arrays2d;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 
 @AllArgsConstructor
-public class AddingFilter<T extends IExternalData, P> 
-extends AbstractFilter<T, P[]> {
+public class AddingMapFilter<T extends IExternalData, P extends IExternalData> 
+extends AbstractFilter<T, Map<RelativeCoordinates, P>> {
 
 	private IMapper<T, P> mapper;
 	private IAdder<P> adder;
 	
-	public void filter(T dataPoint, P[] tileData, TileSize tileSize) {
-		
-		int tileWidth = tileSize.getWidth();
-		int tileHeight = tileSize.getHeight();
-		
+	@Getter
+	@Setter
+	private int width;
+	
+	@Getter
+	@Setter
+	private int height;
+
+	@Getter
+	@Setter
+	private int centerX;
+
+	@Getter
+	@Setter
+	private int centerY;
+	
+	public AddingMapFilter(IMapper<T, P> mapper, IAdder<P> adder) {
+		this(mapper, adder, 1, 1, 0, 0);
+	}
+	
+	public void filter(
+			T dataPoint, 
+			Map<RelativeCoordinates, P> tileData, 
+			TileSize tileSize) {
+
 		P addable = this.mapper.map(dataPoint);
 		
-		P currentValue = Arrays2d.get(
-				dataPoint.getCoordinates().getX(), 
-				dataPoint.getCoordinates().getY(), 
-				tileData,
-				tileWidth, 
-				tileHeight);
+		P currentValue = tileData.get(addable.getCoordinates());
 		
 		P sum;
 		if (currentValue == null) {
@@ -55,29 +74,8 @@ extends AbstractFilter<T, P[]> {
 			sum = this.adder.add(addable, currentValue);
 		}
 		
-		Arrays2d.set(
-				sum, 
-				dataPoint.getCoordinates().getX(), 
-				dataPoint.getCoordinates().getY(), 
-				tileData, 
-				tileWidth,
-				tileHeight);
-	}
-
-	public int getWidth() {
-		return 1;
-	}
-
-	public int getHeight() {
-		return 1;
-	}
-
-	public int getCenterX() {
-		return 0;
-	}
-
-	public int getCenterY() {
-		return 0;
+		tileData.put(addable.getCoordinates(), sum);
+		
 	}
 	
 }

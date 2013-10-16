@@ -21,7 +21,6 @@
 package de.uniwue.dmir.heatmap.impl.core.visualizer.rbf;
 
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.RbfVisualizer.IDistanceFunction;
 
 public class EuclidianDistance implements IDistanceFunction<IExternalData> {
 

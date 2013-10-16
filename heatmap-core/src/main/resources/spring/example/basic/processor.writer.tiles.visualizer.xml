@@ -27,13 +27,21 @@
 		<constructor-arg name="ranges" ref="ranges" />
 	</bean>
 	
-	<bean id="visualizer"
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.WeightedSumAlphaVisualizer">
-
-		<constructor-arg name="colorScheme" ref="colorScheme" />
-		
-		<property name="forceAlphaValue" value="true" />
-		<property name="alphaValue" value="${visualizer.alpha}" />
+	<bean id="valueMapper"
+			class="de.uniwue.dmir.heatmap.core.processing.WeightedSumToAverageMapper">
 	</bean>
+	
+	<bean id="visualizer"
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.RbfMapVisualizer">
 
+		<constructor-arg name="valueMapper" ref="valueMapper" />
+		<constructor-arg name="alphaMapper" >
+			<null />
+		</constructor-arg>
+		<constructor-arg name="colorScheme" ref="colorScheme" />
+		<constructor-arg name="alphaScheme" >
+			<null />
+		</constructor-arg>
+	</bean>
+	
 </beans>

@@ -14,22 +14,11 @@
 	<bean id="adder"
 			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.WeightedSquaredSumAdder" />
 			
-	<bean id="multiplier"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.WeightedSquaredSumScalarMultiplier" />
-	
-	<bean id="image"
-			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
-		<constructor-arg name="resource" value="${filter.image}" />
-	</bean>
-	
 	<bean id="filter"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.ImageFilter">
+			class="de.uniwue.dmir.heatmap.impl.core.filter.AddingMapFilter">
 	
-		<constructor-arg name="internalMapper" ref="internalMapper" />
+		<constructor-arg name="mapper" ref="internalMapper" />
 		<constructor-arg name="adder" ref="adder" />
-		<constructor-arg name="multiplier" ref="multiplier" />
-		<constructor-arg name="image" ref="image" />
-		<constructor-arg name="useAlpha" value="true" />
 	</bean>
-
+	
 </beans>
