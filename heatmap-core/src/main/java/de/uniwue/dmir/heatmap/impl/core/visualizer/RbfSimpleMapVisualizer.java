@@ -28,16 +28,12 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.CommonOps;
-
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.processing.IToDoubleMapper;
 import de.uniwue.dmir.heatmap.core.processing.WeightedSumToAverageMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 import de.uniwue.dmir.heatmap.core.visualizer.IAlphaScheme;
 import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
@@ -47,10 +43,10 @@ import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GaussianRbf;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IRadialBasisFunction;
 
-public class RbfMapVisualizer<T extends IExternalData>
+public class RbfSimpleMapVisualizer<T extends IExternalData>
 extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 	
-	public static final double EPSILON = 0.1;
+	public static final double EPSILON = 10;
 	
 	private IToDoubleMapper<T> toValueMapper;
 	private IToDoubleMapper<T> toAlphaMapper;
@@ -64,7 +60,7 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 	private IColorScheme colorScheme;
 	private IAlphaScheme alphaScheme;
 	
-	public RbfMapVisualizer(
+	public RbfSimpleMapVisualizer(
 			IToDoubleMapper<T> valueMapper,
 			IToDoubleMapper<T> alphaMapper,
 			IColorScheme colorScheme,
@@ -93,46 +89,6 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		
 		// create matrices
 		
-		DenseMatrix64F A = new DenseMatrix64F(data.size(), data.size());
-		DenseMatrix64F x = new DenseMatrix64F(data.size(), 1);
-		DenseMatrix64F b = new DenseMatrix64F(data.size(), 1);
-		
-		// setting A and b
-		
-		super.logger.debug("Building matrices for linear equation.");
-		
-		int row = 0;
-		for (T rowPixel : data.values()) {
-			
-			double bValue = this.toValueMapper.map(rowPixel);
-			b.set(row, bValue);
-			System.out.println(bValue);
-			
-			int col = 0;
-			for (T colPixel : data.values()) {
-				
-				double distance = this.distanceFunction.distance(rowPixel, colPixel);
-				
-				double value = this.radialBasisFunction.value(distance);
-				
-				A.set(row, col, value);
-				
-				col ++;
-			}
-			
-			row ++;
-		}
-		
-		// solve linear equation system
-		
-		super.logger.debug("Solving linear equation.");
-		
-		if( !CommonOps.solve(A,b,x) ) {
-			throw new IllegalArgumentException("A was a singular matrix.");
-		}
-		
-		// width and height shortcuts
-		
 		int width = tileSize.getWidth();
 		int height = tileSize.getHeight();
 		
@@ -154,24 +110,39 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		for (int i = 0; i < width; i ++) {
 			for (int j = 0; j < height; j ++) {
 				
-				double sum = 0;
-				int index = 0;
+				double sumOfValues = 0;
+				double sumOfWeights = 0;
+//				double sumOfSizes = 0;
 				for (T p : data.values()) {
 					
 					tmp.setCoordinateValues(i, j);
-					
-					double distance = this.distanceFunction.distance(tmp, p);
-					double value = this.radialBasisFunction.value(distance);
 
-					double weight = x.get(index);
+					double distance = this.distanceFunction.distance(tmp, p);
+//					System.out.println(tmp.getCoordinates());
+//					System.out.println(p.getCoordinates());
+//					System.out.println("distance:       " + distance);
 					
-					sum += weight * value;
+					double weight = this.radialBasisFunction.value(distance);
+//					System.out.println("weight:         " + weight);
 					
-					index ++;
+					double value = this.toValueMapper.map(p);
+//					System.out.println("value of point: " + value);
+					
+					double size = ((WeightedSum) p).getSize();
+
+//					System.out.println("size:           " + size);
+					sumOfValues += value * weight * weight * size;
+					sumOfWeights += weight * size;
 				}
 				
-				max = Math.max(max, sum);
-				int color = this.colorScheme.getColor(sum);
+				double value = sumOfWeights == 0 ? 0 : sumOfValues / sumOfWeights;
+				
+//				System.out.println(sumOfValues + "/" + sumOfWeights);
+//				System.out.println(value);
+//				System.out.println("---");
+				max = Math.max(max, sumOfValues);
+				
+				int color = this.colorScheme.getColor(value);
 				image.setRGB(i, j, color);
 			}
 		}
@@ -194,13 +165,14 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		Map<RelativeCoordinates, WeightedSum> map = 
 				new HashMap<RelativeCoordinates, WeightedSum>();
 		
-		WeightedSum s1 = new WeightedSum(9);
+		WeightedSum s1 = new WeightedSum(9 * 10);
+		s1.setSize(10);
 		s1.getCoordinates().setX(3);
 		s1.getCoordinates().setY(3);
 		map.put(s1.getCoordinates(), s1);
 		
-		WeightedSum s2 = new WeightedSum(5);
-		s2.getCoordinates().setX(5);
+		WeightedSum s2 = new WeightedSum(2);
+		s2.getCoordinates().setX(6);
 		s2.getCoordinates().setY(7);
 		map.put(s2.getCoordinates(), s2);
 		
@@ -208,13 +180,14 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		double[] ranges = ImageColorScheme.ranges(0, 9, colorImage.getHeight());
 		ImageColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
 		
-		RbfMapVisualizer<WeightedSum> visualizer = new RbfMapVisualizer<WeightedSum>(
+		RbfSimpleMapVisualizer<WeightedSum> visualizer = new RbfSimpleMapVisualizer<WeightedSum>(
 				new WeightedSumToAverageMapper(),
 				null, 
 				colorScheme, 
 				null);
 		BufferedImage result = visualizer.visualize(map, new TileSize(9, 9), new TileCoordinates(0, 0, 0));
 		ImageIO.write(result, "png", new File("out/test.png"));
+		
 	}
 
 }

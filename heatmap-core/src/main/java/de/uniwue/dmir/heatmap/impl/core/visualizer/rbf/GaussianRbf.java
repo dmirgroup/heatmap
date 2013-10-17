@@ -21,26 +21,32 @@
 package de.uniwue.dmir.heatmap.impl.core.visualizer.rbf;
 
 
-public class GaussianRdf implements IRadialBasisFunction {
+public class GaussianRbf implements IRadialBasisFunction {
 
-	public static final double EPSILON = 0.5;
+	public static final double EPSILON = 10;
 	
 	private double epsilon;
 	
-	public GaussianRdf(double epsilon) {
+	public GaussianRbf(double epsilon) {
 		this.epsilon = epsilon;
 	}
 	
-	public GaussianRdf() {
+	public GaussianRbf() {
 		this(EPSILON);
 	}
 	
 	@Override
 	public double value(double value) {
 		
-		double weightedValue = value * this.epsilon;
+		double weightedValue = value / this.epsilon;
 		
 		return Math.exp(-weightedValue * weightedValue);
+	}
+	
+	public static void main(String[] args) {
+		GaussianRbf rbf = new GaussianRbf();
+		double v = rbf.value(1);
+		System.out.println(v);
 	}
 
 }

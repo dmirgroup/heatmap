@@ -40,7 +40,7 @@ import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.WeightedSum;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.EuclidianDistance;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GaussianRdf;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GaussianRbf;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IRadialBasisFunction;
 
@@ -53,7 +53,7 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 			new EuclidianDistance();
 
 	private IRadialBasisFunction radialBasisFunction = 
-			new GaussianRdf(EPSILON);
+			new GaussianRbf(EPSILON);
 	
 	private IColorScheme colorScheme;
 	private IAlphaScheme alphaScheme;

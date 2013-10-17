@@ -32,7 +32,7 @@
 	</bean>
 	
 	<bean id="visualizer"
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.RbfMapVisualizer">
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.RbfSimpleMapVisualizer">
 
 		<constructor-arg name="valueMapper" ref="valueMapper" />
 		<constructor-arg name="alphaMapper" >

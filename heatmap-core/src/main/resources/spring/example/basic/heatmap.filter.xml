@@ -19,6 +19,11 @@
 	
 		<constructor-arg name="mapper" ref="internalMapper" />
 		<constructor-arg name="adder" ref="adder" />
+		
+		<property name="width" value="120" />
+		<property name="height" value="120" />
+		<property name="centerX" value="60" />
+		<property name="centerY" value="60" />
 	</bean>
 	
 </beans>
