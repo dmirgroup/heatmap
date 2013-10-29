@@ -38,15 +38,31 @@ implements IHeatmap<I> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
+	/**
+	 * Factory to create empty tiles.
+	 */
 	private ITileFactory<I> tileFactory;
 
+	/**
+	 * Data source providing the data points for the tiles.
+	 */
 	private IExternalDataSource<E> dataSource;
+	
+	/**
+	 * Filter used to add points to tiles.
+	 */
 	private IFilter<E, I> filter;
 	
+	/**
+	 * Heatmap providing tile seeds.
+	 */
 	@Getter
 	@Setter
 	private IHeatmap<I> seed;
 	
+	/**
+	 * Heatmap settings.
+	 */
 	@Getter
 	private HeatmapSettings settings;
 	
@@ -79,54 +95,65 @@ implements IHeatmap<I> {
 	}
 	
 	@Override
-	public I getTile(TileCoordinates coordinates) {
+	public I getTile(TileCoordinates tileCoordinates) {
+		
+		// initializing stop watch
+		StopWatch stopWatch = new StopWatch();
 		
 		// tile coordinates to top-left reference system
-		TileCoordinates projectedCoordinates =
+		TileCoordinates projectedTileCoordinates =
 				this.settings.getTileProjection().fromCustomToTopLeft(
-						coordinates,
+						tileCoordinates,
 						this.settings.getZoomLevelMapper());
+		
+		// loading data seed 
+		
+		this.logger.debug("Loading data seed.");
+		
+		stopWatch.reset();
+		stopWatch.start();
+		
+		I tile = this.seed.getTile(projectedTileCoordinates);
+		
+		stopWatch.stop();
+		this.logger.debug(
+				"Done loading data seed: {}", 
+				stopWatch.toString());
 		
 		// get data
 		
-		this.logger.debug("Getting data points for tile.");
+		this.logger.debug("Loading data points.");
 		
-		StopWatch stopWatch = new StopWatch();
+		stopWatch.reset();
 		stopWatch.start();
 		
 		Iterator<E> externalData = this.dataSource.getData(
-				projectedCoordinates, 
+				projectedTileCoordinates, 
 				this.filter);
 		
 		stopWatch.stop();
 		this.logger.debug(
-				"Done getting data points for tile: {}", 
+				"Done loading data points: {}", 
 				stopWatch.toString());
 		
 		// return null if no data was found
-		if (externalData == null || !externalData.hasNext()) {
-			this.logger.debug("Adding data to tile: no data.");
+		if (tile == null && (externalData == null || !externalData.hasNext())) {
+			this.logger.debug("No data for this tile: returning null.");
 			return null;
 		}
 		
 		// initialize tile
 		
-		this.logger.debug("Loading data seed.");
-		I tile = this.seed.getTile(projectedCoordinates);
-		
 		if (tile == null) {
 			this.logger.debug("No data seed available; initializing empty tile.");
 			tile = this.tileFactory.newInstance(
 					this.settings.getTileSize(), 
-					projectedCoordinates);
+					projectedTileCoordinates);
 		}
 
-		this.logger.debug("Done loading data seed.");
-		
 		// add external data to tile
 
-
-		this.logger.debug("Adding data points to tile: {}", coordinates);
+		this.logger.debug("Adding data points to tile: {}", tileCoordinates);
 		
 		stopWatch.reset();
 		stopWatch.start();
@@ -134,7 +161,11 @@ implements IHeatmap<I> {
 		int externalDataPointCount = 0;
 		while(externalData.hasNext()) {
 			E externalDataPoint = externalData.next();
-			this.filter.filter(externalDataPoint, tile, this.settings.getTileSize());
+			this.filter.filter(
+					externalDataPoint, 
+					tile, 
+					this.settings.getTileSize(),
+					tileCoordinates);
 			externalDataPointCount ++;
 		}
 		

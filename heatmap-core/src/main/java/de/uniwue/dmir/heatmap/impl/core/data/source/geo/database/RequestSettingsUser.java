@@ -18,19 +18,26 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.filter;
+package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database;
 
-import java.util.Map;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
-import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 
-public class AddingMapFilter<E extends IExternalData, I> 
-extends AddingFilter<E, I, Map<RelativeCoordinates, I>> {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class RequestSettingsUser extends RequestSettingsValue {
+	
+	private String userAttribute;
+	private String defaultUser;
 
-	public AddingMapFilter(IMapper<E, I> mapper, IAdder<I> adder) {
-		super(new MapPixelAccess<I>(), mapper, adder);
+	public RequestSettingsUser(
+			String table,
+			String longitudeAttribute,
+			String latitudeAttribute) {
+
+		super(table, longitudeAttribute, latitudeAttribute);
+		this.defaultUser = null;
 	}
+	
 }

@@ -28,15 +28,16 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class RequestSettingsValue extends RequestSettingsTime {
 
+	private String valueAttribute;
+	private double defaultValue;
+	
 	public RequestSettingsValue(
 			String table,
 			String longitudeAttribute,
 			String latitudeAttribute) {
+
 		super(table, longitudeAttribute, latitudeAttribute);
 		this.defaultValue = 0;
 	}
-	
-	private String valueAttribute;
-	private double defaultValue;
 	
 }

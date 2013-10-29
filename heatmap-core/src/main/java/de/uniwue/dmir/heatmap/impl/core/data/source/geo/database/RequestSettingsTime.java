@@ -29,15 +29,15 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class RequestSettingsTime extends RequestSettingsBasic {
 
+	private String timestampAttribute;
+	private Date minimumTimestamp;
+	private Date maximumTimestamp;
+	
 	public RequestSettingsTime(
 			String table,
 			String longitudeAttribute,
 			String latitudeAttribute) {
 		super(table, longitudeAttribute, latitudeAttribute);
 	}
-	
-	private String timestampAttribute;
-	private Date minimumTimestamp;
-	private Date maximumTimestamp;
 	
 }

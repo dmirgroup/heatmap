@@ -25,6 +25,7 @@ import org.apache.ibatis.jdbc.SQL;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsBasic;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsTime;
+import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsUser;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsValue;
 
 public final class RequestHandler {
@@ -32,6 +33,7 @@ public final class RequestHandler {
 	public static final String LONGITUDE = "longitude";
 	public static final String LATITUDE = "latitude";
 	public static final String VALUE = "value";
+	public static final String USER = "user";
 	
 	public String sql(RequestGeo request) {
 		SQL sql = new SQL();
@@ -39,6 +41,7 @@ public final class RequestHandler {
 		time(request, sql);
 		geo(request, sql);
 		value(request, sql);
+		user(request, sql);
 		return sql.toString();
 	}
 	
@@ -71,6 +74,15 @@ public final class RequestHandler {
 			sql.SELECT(request.getDefaultValue() + " AS " + VALUE);
 		}
 	}
+	
+	public void user(RequestSettingsUser request, SQL sql) {
+		if (request.getUserAttribute() != null) {
+			sql.SELECT(request.getUserAttribute() + " AS " + USER);
+		} else {
+			sql.SELECT(request.getDefaultUser() + " AS " + USER);
+		}
+	}
+
 	public void geo(RequestGeo request, SQL sql) {
 		
 		sql.WHERE(request.getLongitudeAttribute() 

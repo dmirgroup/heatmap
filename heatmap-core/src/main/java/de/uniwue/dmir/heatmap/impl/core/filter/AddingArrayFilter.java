@@ -20,73 +20,14 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
-import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
-@AllArgsConstructor
-public class AddingArrayFilter<T extends IExternalData, P> 
-extends AbstractFilter<T, P[]> {
+public class AddingArrayFilter<E extends IExternalData, I> 
+extends AddingFilter<E, I, I[]> {
 
-	private IMapper<T, P> mapper;
-	private IAdder<P> adder;
-	
-	public void filter(T dataPoint, P[] tileData, TileSize tileSize) {
-
-		
-		int tileWidth = tileSize.getWidth();
-		int tileHeight = tileSize.getHeight();
-		
-		if (dataPoint.getCoordinates().getX() < 0 
-				|| dataPoint.getCoordinates().getX() >= tileWidth
-				|| dataPoint.getCoordinates().getY() < 0 
-				|| dataPoint.getCoordinates().getY() >= tileHeight) {
-			
-			return;
-		}
-
-		P addable = this.mapper.map(dataPoint);
-		
-		P currentValue = Arrays2d.get(
-				dataPoint.getCoordinates().getX(), 
-				dataPoint.getCoordinates().getY(), 
-				tileData,
-				tileWidth, 
-				tileHeight);
-		
-		P sum;
-		if (currentValue == null) {
-			sum = addable;
-		} else {
-			sum = this.adder.add(addable, currentValue);
-		}
-		
-		Arrays2d.set(
-				sum, 
-				dataPoint.getCoordinates().getX(), 
-				dataPoint.getCoordinates().getY(), 
-				tileData, 
-				tileWidth,
-				tileHeight);
+	public AddingArrayFilter(IMapper<E, I> mapper, IAdder<I> adder) {
+		super(new ArrayPixelAccess<I>(), mapper, adder);
 	}
-
-	public int getWidth() {
-		return 1;
-	}
-
-	public int getHeight() {
-		return 1;
-	}
-
-	public int getCenterX() {
-		return 0;
-	}
-
-	public int getCenterY() {
-		return 0;
-	}
-	
 }

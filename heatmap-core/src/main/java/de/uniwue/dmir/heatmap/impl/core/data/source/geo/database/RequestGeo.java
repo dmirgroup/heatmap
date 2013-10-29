@@ -27,10 +27,11 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class RequestGeo extends RequestSettingsValue {
+public class RequestGeo extends RequestSettingsUser {
 
 	private double lonWest;
 	private double lonEast;
+
 	private double latNorth;
 	private double latSouth;
 	

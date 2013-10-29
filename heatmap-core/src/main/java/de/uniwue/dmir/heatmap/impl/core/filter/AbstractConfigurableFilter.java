@@ -20,17 +20,18 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
-import java.util.Map;
-
+import lombok.Setter;
+import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
-import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 
-public class AddingMapFilter<E extends IExternalData, I> 
-extends AddingFilter<E, I, Map<RelativeCoordinates, I>> {
+@Getter
+@Setter
+public abstract class AbstractConfigurableFilter<E extends IExternalData, I> 
+extends AbstractFilter<E, I> {
 
-	public AddingMapFilter(IMapper<E, I> mapper, IAdder<I> adder) {
-		super(new MapPixelAccess<I>(), mapper, adder);
-	}
+	private int width = 1;
+	private int height = 1;
+	private int centerX = 0;
+	private int centerY = 0;
+	
 }

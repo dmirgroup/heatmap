@@ -20,6 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.visualizer;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +44,18 @@ import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GaussianRbf;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IRadialBasisFunction;
 
+/**
+ * TODO: add r-tree and only consider points in a vicinity to calculate point 
+ * value
+ * 
+ * @author Martin Becker
+ *
+ * @param <T>
+ */
 public class RbfSimpleMapVisualizer<T extends IExternalData>
 extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 	
-	public static final double EPSILON = 10;
+	public static final double EPSILON = 3;
 	
 	private IToDoubleMapper<T> toValueMapper;
 	private IToDoubleMapper<T> toAlphaMapper;
@@ -112,7 +121,9 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				
 				double sumOfValues = 0;
 				double sumOfWeights = 0;
-//				double sumOfSizes = 0;
+				
+				double sumOfSizes = 0;
+				double sumOfSizeWeights = 0;
 				for (T p : data.values()) {
 					
 					tmp.setCoordinateValues(i, j);
@@ -131,11 +142,16 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 					double size = ((WeightedSum) p).getSize();
 
 //					System.out.println("size:           " + size);
-					sumOfValues += value * weight * weight * size;
+					sumOfValues += value * weight * size;
 					sumOfWeights += weight * size;
+					
+					sumOfSizes += weight * weight * size;
+					sumOfSizeWeights += weight;
 				}
 				
 				double value = sumOfWeights == 0 ? 0 : sumOfValues / sumOfWeights;
+				double alpha = sumOfSizes / sumOfSizeWeights;
+				System.out.println(alpha);
 				
 //				System.out.println(sumOfValues + "/" + sumOfWeights);
 //				System.out.println(value);
@@ -143,7 +159,11 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				max = Math.max(max, sumOfValues);
 				
 				int color = this.colorScheme.getColor(value);
-				image.setRGB(i, j, color);
+				Color c = new Color(color);
+				c = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) Math.min(alpha * 255, 255));
+				
+				
+				image.setRGB(i, j, c.getRGB());
 			}
 		}
 		
@@ -167,14 +187,18 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		
 		WeightedSum s1 = new WeightedSum(9 * 10);
 		s1.setSize(10);
-		s1.getCoordinates().setX(3);
-		s1.getCoordinates().setY(3);
+		s1.getCoordinates().setX(2);
+		s1.getCoordinates().setY(2);
 		map.put(s1.getCoordinates(), s1);
 		
-		WeightedSum s2 = new WeightedSum(2);
-		s2.getCoordinates().setX(6);
-		s2.getCoordinates().setY(7);
+		WeightedSum s2 = new WeightedSum(5);
+		s2.getCoordinates().setX(2);
+		s2.getCoordinates().setY(8);
 		map.put(s2.getCoordinates(), s2);
+		
+		WeightedSum s3 = new WeightedSum(1);
+		s3.setCoordinateValues(5, 2);
+		map.put(s3.getCoordinates(), s3);
 		
 		BufferedImage colorImage = ImageIO.read(new File("src/main/resources/color-schemes/classic.png"));
 		double[] ranges = ImageColorScheme.ranges(0, 9, colorImage.getHeight());

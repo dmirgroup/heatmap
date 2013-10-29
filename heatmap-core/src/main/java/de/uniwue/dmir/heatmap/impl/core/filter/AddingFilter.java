@@ -20,31 +20,56 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
-import java.util.Collection;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
+import de.uniwue.dmir.heatmap.core.filter.IPixelAccess;
+import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
+import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
-public abstract class AbstractFilter<E extends IExternalData, I> 
-implements IFilter<E, I> {
+public class AddingFilter<E extends IExternalData, I, T> 
+extends AbstractConfigurableFilter<E, T> {
 
-	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private IPixelAccess<I, T> pixelAccess;
 	
-	@Override
+	private IMapper<E, I> mapper;
+	private IAdder<I> adder;
+	
+	public AddingFilter(
+			IPixelAccess<I, T> pixelAccess, 
+			IMapper<E, I> mapper, 
+			IAdder<I> adder) {
+		
+		this.pixelAccess = pixelAccess;
+		this.mapper = mapper;
+		this.adder = adder;
+	}
+	
 	public void filter(
-			Collection<E> dataPoints, 
-			I tile, 
+			E dataPoint, 
+			T tileData, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
+
+		I addable = this.mapper.map(dataPoint);
 		
-		for (E dataPoint : dataPoints) {
-			this.filter(dataPoint, tile, tileSize, tileCoordinates);
+		I currentValue = this.pixelAccess.get(
+				dataPoint.getCoordinates(),
+				tileData,
+				tileSize);
+		
+		I sum;
+		if (currentValue == null) {
+			sum = addable;
+		} else {
+			sum = this.adder.add(addable, currentValue);
 		}
+		
+		this.pixelAccess.set(
+				sum, 
+				dataPoint.getCoordinates(), 
+				tileData, 
+				tileSize);
 	}
 	
 }

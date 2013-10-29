@@ -26,6 +26,7 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @AllArgsConstructor
@@ -42,7 +43,11 @@ extends AbstractFilter<T, P[]> {
 	private int centerX;
 	private int centerY;
 
-	public void filter(T dataPoint, P[] tileData, TileSize tileSize) {
+	public void filter(
+			T dataPoint, 
+			P[] tileData, 
+			TileSize tileSize,
+			TileCoordinates tileCoordinates) {
 		
 		int startX = dataPoint.getCoordinates().getX();
 		int startY = dataPoint.getCoordinates().getY();

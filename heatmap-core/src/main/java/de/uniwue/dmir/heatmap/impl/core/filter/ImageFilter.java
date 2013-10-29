@@ -28,6 +28,7 @@ import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 import de.uniwue.dmir.heatmap.core.filter.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.filter.operators.IScalarMultiplier;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @Getter
@@ -135,7 +136,11 @@ extends AbstractFilter<E, P[]> {
 		}
 	}
 	
-	public void filter(E dataPoint, P[] tile, TileSize tileSize) {
+	public void filter(
+			E dataPoint, 
+			P[] tile, 
+			TileSize tileSize,
+			TileCoordinates tileCoordinates) {
 		
 		int startX = dataPoint.getCoordinates().getX();
 		int startY = dataPoint.getCoordinates().getY();
