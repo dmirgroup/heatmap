@@ -12,78 +12,84 @@
 </style>
 </head>
 <body>
-	<div style="width: 500px; height: 500px" id="map"></div>
+	<div style="width: 256px; height: 256px" id="map"></div>
 	<div>Zoom level: <span id="zoomlevel"></span></div>
 	<script defer='defer' type='text/javascript'>
 
-	var map = new OpenLayers.Map({
-		div: "map",
-		projection: "EPSG:900913",
-		displayProjection: "EPSG:4326",
-		numZoomLevels: 18,
-		
-		// approximately match Google's zoom animation
-		zoomDuration: 10
+var map = new OpenLayers.Map({
+	div: "map",
+	projection: "EPSG:900913",
+	displayProjection: "EPSG:4326",
+	numZoomLevels: 18,
+	
+	// approximately match Google's zoom animation
+	zoomDuration: 10
+});
+
+// google streets layer
+
+var gmap = new OpenLayers.Layer.Google(
+	"Google Streets", // the default
+	{
+		numZoomLevels: 20
+	}
+);
+map.addLayer(gmap);
+
+var ghyb = new OpenLayers.Layer.Google(
+	"Google Hybrid", 
+	{
+		type : google.maps.MapTypeId.HYBRID,
+		numZoomLevels : 20
 	});
-	
-	// google streets layer
-	
-	var gmap = new OpenLayers.Layer.Google(
-		"Google Streets", // the default
-		{numZoomLevels: 20}
-	);
-	map.addLayer(gmap);
-	
-	// zoom level info box
-	
-	map.events.register('zoomend', map, function() {
-		var zoomInfo = map.getZoom() + ' / ' + map.numZoomLevels;
-		document.getElementById('zoomlevel').innerHTML = zoomInfo;
-	});
+map.addLayer(ghyb);
 
+// zoom level info box
 
-	// This is the layer that uses the locally stored tiles
-	var newLayer = new OpenLayers.Layer.XYZ(
-			"Custom Tiles", "../../../out/tiles/${z}/${x}/${y}.png", 
-			{
-					numZoomLevels: 19, 
-					alpha: true, 
-					isBaseLayer: false
-			});
-	map.addLayer(newLayer);
+map.events.register('zoomend', map, function() {
+	var zoomInfo = map.getZoom() + ' / ' + map.numZoomLevels;
+	document.getElementById('zoomlevel').innerHTML = zoomInfo;
+});
 
+// This is the layer that uses the locally stored tiles
+var newLayer = new OpenLayers.Layer.XYZ("Custom Tiles",
+		"../../../out/tiles/${z}/${x}/${y}.png", {
+			numZoomLevels : 19,
+			alpha : true,
+			isBaseLayer : false
+		});
+map.addLayer(newLayer);
 
 /* 	
 
-	function get_my_url (bounds) {
-		var res = this.map.getResolution();
-		var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-		var y = Math.round ((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
-		var z = this.map.getZoom();
+ function get_my_url (bounds) {
+ var res = this.map.getResolution();
+ var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+ var y = Math.round ((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+ var z = this.map.getZoom();
 
-		var path = z + "/" + x + "/" + y + "." + this.type; 
-		var url = this.url;
-		if (url instanceof Array) {
-				url = this.selectUrl(path, url);
-		}
-		return url + path; 
-	}
+ var path = z + "/" + x + "/" + y + "." + this.type; 
+ var url = this.url;
+ if (url instanceof Array) {
+ url = this.selectUrl(path, url);
+ }
+ return url + path; 
+ }
 
-	var l = new OpenLayers.Layer.TMS("Name", "/", { 'type':'png', 'getURL':get_my_url });
-	map.addLayer(l); 
+ var l = new OpenLayers.Layer.TMS("Name", "/", { 'type':'png', 'getURL':get_my_url });
+ map.addLayer(l); 
 
-*/
+ */
 
-	// layer switcher
+// layer switcher
+var switcherControl = new OpenLayers.Control.LayerSwitcher();
+map.addControl(switcherControl);
+switcherControl.maximizeControl();
 
-	var switcherControl = new OpenLayers.Control.LayerSwitcher();
-	map.addControl(switcherControl);
-	switcherControl.maximizeControl();
+// zoom
 
-	// zoom
+map.zoomToMaxExtent();
 
-	map.zoomToMaxExtent();
-
-</script>
+	</script>
 </body>
 </html>

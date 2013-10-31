@@ -133,7 +133,7 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 //					System.out.println(p.getCoordinates());
 //					System.out.println("distance:       " + distance);
 					
-					double weight = this.radialBasisFunction.value(distance);
+					double distanceWeight = this.radialBasisFunction.value(distance);
 //					System.out.println("weight:         " + weight);
 					
 					double value = this.toValueMapper.map(p);
@@ -142,16 +142,17 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 					double size = ((WeightedSum) p).getSize();
 
 //					System.out.println("size:           " + size);
-					sumOfValues += value * weight * size;
-					sumOfWeights += weight * size;
+					sumOfValues += value * distanceWeight * size;
+					sumOfWeights += distanceWeight * size;
 					
-					sumOfSizes += weight * weight * size;
-					sumOfSizeWeights += weight;
+					sumOfSizes += distanceWeight * distanceWeight * size;
+					sumOfSizeWeights += distanceWeight;
 				}
 				
 				double value = sumOfWeights == 0 ? 0 : sumOfValues / sumOfWeights;
 				double alpha = sumOfSizes / sumOfSizeWeights;
-				System.out.println(alpha);
+//				System.out.println(value);
+//				System.out.println(alpha);
 				
 //				System.out.println(sumOfValues + "/" + sumOfWeights);
 //				System.out.println(value);
@@ -161,7 +162,6 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				int color = this.colorScheme.getColor(value);
 				Color c = new Color(color);
 				c = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) Math.min(alpha * 255, 255));
-				
 				
 				image.setRGB(i, j, c.getRGB());
 			}

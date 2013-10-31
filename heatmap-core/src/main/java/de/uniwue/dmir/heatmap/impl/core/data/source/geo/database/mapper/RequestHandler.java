@@ -33,6 +33,7 @@ public final class RequestHandler {
 	public static final String LONGITUDE = "longitude";
 	public static final String LATITUDE = "latitude";
 	public static final String VALUE = "value";
+	public static final String TIMESTAMP = "timestamp";
 	public static final String USER = "user";
 	
 	public String sql(RequestGeo request) {
@@ -54,16 +55,28 @@ public final class RequestHandler {
 	
 	public void time(RequestSettingsTime request, SQL sql) {
 		if (request.getTimestampAttribute() != null) {
+
+			sql.SELECT(request.getTimestampAttribute() + " AS " + TIMESTAMP);
+			
 			if (request.getMinimumTimestamp() != null) {
 				sql.WHERE(
 						request.getTimestampAttribute() 
 						+ " > #{minimumTimestamp}");
 			}
 			
-			if (request.getMaximumTimestamp() != null)
+			if (request.getMaximumTimestamp() != null) {
 				sql.WHERE(
 						request.getTimestampAttribute() 
 						+ " <= #{maximumTimestamp}");
+			}
+			
+			if (request.getOrderAsc() != null) {
+				if (request.getOrderAsc()) {
+					sql.ORDER_BY(request.getTimestampAttribute() + " ASC");
+				} else {
+					sql.ORDER_BY(request.getTimestampAttribute() + " DESC");
+				}
+			}
 		}
 	}
 

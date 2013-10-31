@@ -20,6 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.data.source.geo;
 
+import java.util.Date;
+
 import lombok.Data;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 
@@ -28,13 +30,23 @@ public class GeoPoint {
 	
 	private GeoCoordinates geoCoordinates;
 	private double value;
+	private Date timestamp;
+	private String groupId;
 	
 	public GeoPoint() {
-		this(0, 0, 0);
+		this(0, 0, 0, null, null);
 	}
 	
-	public GeoPoint(double longitude, double latitude, double value) {
+	public GeoPoint(
+			double longitude, 
+			double latitude, 
+			double value,
+			Date timestamp,
+			String groupId) {
+
 		this.geoCoordinates = new GeoCoordinates(longitude, latitude);
 		this.value = value;
+		this.timestamp = timestamp;
+		this.groupId = groupId;
 	}
 }

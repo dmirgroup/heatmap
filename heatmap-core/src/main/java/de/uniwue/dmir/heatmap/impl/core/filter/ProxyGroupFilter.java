@@ -24,11 +24,11 @@ import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalUserData;
+import de.uniwue.dmir.heatmap.core.filter.IGroupAccess;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.impl.core.data.type.tile.UserTile;
 
 /**
- * Allows to create tiles which contain data grouped by user.
+ * Allows to create tiles which contain grouped data.
  * 
  * @author Martin Becker
  *
@@ -36,30 +36,45 @@ import de.uniwue.dmir.heatmap.impl.core.data.type.tile.UserTile;
  * @param <I>
  */
 @AllArgsConstructor
-public class ProxyUserFilter<E extends IExternalUserData, I> 
-extends AbstractProxyFilter<E, UserTile<I>>
-implements IFilter<E, UserTile<I>> {
+public class ProxyGroupFilter<E extends IExternalUserData, I, T> 
+extends AbstractProxyFilter<E, T>
+implements IFilter<E, T> {
 
+	private IGroupAccess<I, T> groupAccess;
 	private IFilter<E, I> filter;
 	private String defaultUser;
 
-	public ProxyUserFilter(IFilter<E, I> filter) {
-		this(filter, null);;
+	public ProxyGroupFilter(
+			IGroupAccess<I, T> groupAccess, 
+			IFilter<E, I> filter) {
+		this(groupAccess, filter, null);
 	}
 	
 	@Override
 	public void filter(
 			E dataPoint, 
-			UserTile<I> tile, 
+			T tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		String userId = dataPoint.getUserId();
-		I userData = tile.getUserData(userId);
-		this.filter.filter(dataPoint, userData, tileSize, tileCoordinates);
+		I userData = this.groupAccess.get(
+				userId, 
+				tile, 
+				tileSize, 
+				tileCoordinates);
+		this.filter.filter(
+				dataPoint, 
+				userData, 
+				tileSize, 
+				tileCoordinates);
 		
 		if (this.defaultUser != null) {
-			I defaultData = tile.getUserData(this.defaultUser);
+			I defaultData = this.groupAccess.get(
+					this.defaultUser, 
+					tile, 
+					tileSize, 
+					tileCoordinates);
 			this.filter.filter(
 					dataPoint, 
 					defaultData, 

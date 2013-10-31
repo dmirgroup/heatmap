@@ -33,7 +33,7 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 public interface ITileFactory<I> {
 	
 	I newInstance(
-			TileSize size, 
-			TileCoordinates coordinates);
+			TileSize tileSize, 
+			TileCoordinates tileCoordinates);
 	
 }

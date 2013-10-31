@@ -24,10 +24,21 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
 
 public class CsvGeoDataSource 
 extends ListGeoDataSource {
 
+	@Getter
+	@Setter
+	private SimpleDateFormat dateFormat = 
+		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	
 	public CsvGeoDataSource(
 			File file, 
 			String separator, 
@@ -43,13 +54,39 @@ extends ListGeoDataSource {
 		
 		String line = bufferedReader.readLine();
 		while (line != null) {
-			
+
 			String[] split = line.split(separator);
-			double longitude = Double.parseDouble(split[0]);
-			double latitude = Double.parseDouble(split[1]);
-			double value = Double.parseDouble(split[2]);
 			
-			GeoPoint geoPoint = new GeoPoint(longitude, latitude, value);
+			GeoPoint geoPoint = new GeoPoint();
+			
+			double longitude = Double.parseDouble(split[0]);
+			geoPoint.getGeoCoordinates().setLongitude(longitude);
+			
+			double latitude = Double.parseDouble(split[1]);
+			geoPoint.getGeoCoordinates().setLatitude(latitude);
+			
+			
+			if (split.length > 2) {
+				double value = Double.parseDouble(split[2]);
+				geoPoint.setValue(value);
+			}
+			
+			if (split.length > 3) {
+				Date timestamp;
+				try {
+					timestamp = this.dateFormat.parse(split[3]);
+				} catch (ParseException e) {
+					bufferedReader.close();
+					throw new IOException(e);
+				}
+				geoPoint.setTimestamp(timestamp);
+			}
+			
+			if (split.length > 4) {
+				String groupId = split[4];
+				geoPoint.setGroupId(groupId);
+			}
+			
 			this.getList().add(geoPoint);
 			
 			line = bufferedReader.readLine();

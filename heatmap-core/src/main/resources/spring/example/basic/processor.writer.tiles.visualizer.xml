@@ -42,6 +42,8 @@
 		<constructor-arg name="alphaScheme" >
 			<null />
 		</constructor-arg>
+		
+		<property name="debug" value="true" />
 	</bean>
 	
 </beans>

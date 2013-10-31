@@ -32,6 +32,7 @@ public class RequestSettingsTime extends RequestSettingsBasic {
 	private String timestampAttribute;
 	private Date minimumTimestamp;
 	private Date maximumTimestamp;
+	private Boolean orderAsc;
 	
 	public RequestSettingsTime(
 			String table,

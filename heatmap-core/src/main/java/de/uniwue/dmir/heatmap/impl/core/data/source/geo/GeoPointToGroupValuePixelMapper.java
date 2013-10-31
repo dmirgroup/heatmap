@@ -18,12 +18,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.data.type.tile;
+package de.uniwue.dmir.heatmap.impl.core.data.source.geo;
 
+import de.uniwue.dmir.heatmap.core.data.type.IToInternalDataMapper;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.impl.core.data.type.external.GroupValuePixel;
 
-public interface UserTile<I> {
+public class GeoPointToGroupValuePixelMapper
+implements IToInternalDataMapper<GeoPoint, GroupValuePixel> {
 
-	public I getUserData(String userId);
-	public void setUserData(String userId, I userData);
+	public GroupValuePixel map(
+			GeoPoint sourceObject,
+			RelativeCoordinates relativeCoordinates) {
+		
+		return new GroupValuePixel(
+				relativeCoordinates.getX(), 
+				relativeCoordinates.getY(), 
+				sourceObject.getValue(),
+				sourceObject.getTimestamp(),
+				sourceObject.getGroupId());
+	}
 	
 }

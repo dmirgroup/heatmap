@@ -40,7 +40,7 @@ public interface IFilter<E extends IExternalData, I> {
 	 * Merges a given data point into the given tile.
 	 * 
 	 * @param dataPoint data point to merge into the tile
-	 * @param tile tile to merge data into
+	 * @param tile tile to merge data into; if this is <code>null</code> nothing will happen
 	 * @param tileSize size of the tile
 	 */
 	void filter(
@@ -53,7 +53,7 @@ public interface IFilter<E extends IExternalData, I> {
 	 * Merges given data points into the given tile.
 	 * 
 	 * @param dataPoints data to merge into the tile
-	 * @param tile tile to merge data into
+	 * @param tile tile to merge data into; if this is <code>null</code> nothing will happen
 	 */
 	void filter(
 			Collection<E> dataPoints, 

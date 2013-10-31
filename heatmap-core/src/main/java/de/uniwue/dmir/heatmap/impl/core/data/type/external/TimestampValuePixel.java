@@ -20,6 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.data.type.external;
 
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -27,17 +29,17 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class UserValuePixel extends ValuePixel {
+public class TimestampValuePixel extends ValuePixel {
 
-	private String user;
+	private Date timestamp;
 	
-	public UserValuePixel(
+	public TimestampValuePixel(
 			int x, int y, 
 			double value,
-			String user) {
+			Date timestamp) {
 		
 		super(x, y, value);
-		this.user = user;
+		this.timestamp = timestamp;
 	}
 	
 }

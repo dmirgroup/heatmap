@@ -18,28 +18,29 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.filter;
+package de.uniwue.dmir.heatmap.impl.core.data.type.external;
 
-import java.util.Map;
+import java.util.Date;
 
-import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-public class ProxyMapFilter<E extends IExternalData, I> 
-extends AbstractProxyFilter<E, Map<RelativeCoordinates, I>>
-implements IFilter<E, Map<RelativeCoordinates, I>> {
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class GroupValuePixel extends TimestampValuePixel {
 
-	@Override
-	public void filter(
-			E dataPoint, 
-			Map<RelativeCoordinates, I> tile,
-			TileSize tileSize, 
-			TileCoordinates tileCoordinates) {
+	private String groupId;
+	
+	public GroupValuePixel(
+			int x, int y, 
+			double value, 
+			Date timestamp,
+			String groupId) {
 		
-		
+		super(x, y, value, timestamp);
+		this.groupId = groupId;
 	}
-
+	
 }
