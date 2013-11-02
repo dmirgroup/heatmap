@@ -43,6 +43,9 @@ implements ITileProcessor<I> {
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
+	@Getter
+	@Setter
+	private String parentFolder;
 	protected IFileStrategy fileStrategy;
 	protected String fileFormat;
 	
@@ -53,16 +56,25 @@ implements ITileProcessor<I> {
 	/**
 	 * Gets the file and creates the necessary folders if need be.
 	 * 
-	 * @param coordinates coordinates of the tile to create a file for
+	 * @param tileCoordinates coordinates of the tile to create a file for
 	 * @return the file for the given tile coordinates
 	 * @throws IOException 
 	 */
-	protected OutputStream getOutputStream(TileCoordinates coordinates) 
+	protected OutputStream getOutputStream(TileCoordinates tileCoordinates) 
 	throws IOException {
 		
 		String extension = this.fileFormat + (this.gzip ? GZIP_EXTENSION : "");
 		
-		File file = this.fileStrategy.getFile(coordinates, extension);
+		File parentFolder = this.getParentFolder();
+		String fileName = this.fileStrategy.getFileName(tileCoordinates, extension);
+		
+		File file;
+		if (parentFolder == null) {
+			file = new File(fileName);
+		} else {
+			file = new File(parentFolder, fileName);
+		}
+		
 		file.getParentFile().mkdirs();
 		
 		OutputStream outputStream = new FileOutputStream(file);
@@ -71,6 +83,10 @@ implements ITileProcessor<I> {
 		}
 		return outputStream;
 		
+	}
+	
+	protected File getParentFolder() {
+		return this.parentFolder == null ? null : new File(this.parentFolder);
 	}
 	
 }

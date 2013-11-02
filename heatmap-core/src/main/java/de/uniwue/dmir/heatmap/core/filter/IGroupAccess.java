@@ -4,7 +4,7 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 
-public interface IGroupAccess<I, T> {
+public interface IGroupAccess<IInner, IOuter> {
 	
 	/**
 	 * This method never returns <code>null</code>.
@@ -16,9 +16,9 @@ public interface IGroupAccess<I, T> {
 	 * 
 	 * @return the tile data related to the group (never <code>null</code>)
 	 */
-	public I get(
+	public IInner get(
 			String groupId, 
-			T tile, 
+			IOuter tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 }

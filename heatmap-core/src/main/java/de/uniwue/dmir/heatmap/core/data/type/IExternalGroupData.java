@@ -18,26 +18,8 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processing;
+package de.uniwue.dmir.heatmap.core.data.type;
 
-import lombok.Data;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-
-@Data
-public class DefaultFileStrategy implements IFileStrategy {
-
-	@Override
-	public String getFileName(TileCoordinates coordinates, String extension) {
-		
-		String file = String.format("%d%s%d%s%d.%s",
-				coordinates.getZoom(),
-				System.getProperty("file.separator"),
-				coordinates.getX(),
-				System.getProperty("file.separator"),
-				coordinates.getY(),
-				extension);
-		
-		return file;
-	}
-
+public interface IExternalGroupData extends IExternalData {
+	public String getGroupId();
 }

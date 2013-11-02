@@ -31,10 +31,10 @@ import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
 @NoArgsConstructor
 @Getter
 @Setter
-public abstract class AbstractProxyFilter<E extends IExternalData, I> 
-extends AbstractFilter<E, I>{
+public abstract class AbstractProxyFilter<E extends IExternalData, IInner, IOuter> 
+extends AbstractFilter<E, IOuter> {
 
-	private IFilter<E, I> filter;
+	protected IFilter<E, IInner> filter;
 
 	@Override
 	public int getWidth() {

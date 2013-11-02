@@ -35,8 +35,11 @@ extends AbstractFileWriter<I> {
 
 	private ObjectMapper mapper;
 	
-	public DataFileWriter(IFileStrategy fileStrategy, boolean gzip) {
-		super(fileStrategy, "json", gzip);
+	public DataFileWriter(
+			String parentFolder,
+			IFileStrategy fileStrategy, 
+			boolean gzip) {
+		super(parentFolder, fileStrategy, "json", gzip);
 		this.mapper = new ObjectMapper();
 	}
 

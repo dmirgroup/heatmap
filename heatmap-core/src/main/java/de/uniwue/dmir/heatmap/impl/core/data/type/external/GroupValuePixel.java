@@ -22,6 +22,7 @@ package de.uniwue.dmir.heatmap.impl.core.data.type.external;
 
 import java.util.Date;
 
+import de.uniwue.dmir.heatmap.core.data.type.IExternalGroupData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -29,7 +30,9 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class GroupValuePixel extends TimestampValuePixel {
+public class GroupValuePixel 
+extends TimestampValuePixel
+implements IExternalGroupData {
 
 	private String groupId;
 	

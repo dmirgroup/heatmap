@@ -116,9 +116,11 @@ implements IHeatmap<I> {
 		I tile = this.seed.getTile(projectedTileCoordinates);
 		
 		stopWatch.stop();
-		this.logger.debug(
-				"Done loading data seed: {}", 
-				stopWatch.toString());
+		if (tile == null) {
+			this.logger.debug("No data seed available: {}", stopWatch.toString());
+		} else {
+			this.logger.debug("Done loading data seed: {}", stopWatch.toString());
+		}
 		
 		// get data
 		
@@ -138,12 +140,12 @@ implements IHeatmap<I> {
 		
 		// return null if no data was found
 		if (tile == null && (externalData == null || !externalData.hasNext())) {
-			this.logger.debug("No data for this tile: returning null.");
+			this.logger.debug("No data for this tile and no data seed available: returning null.");
 			return null;
-		}
 		
-		// initialize tile
+		} 
 		
+		// initializing tile if no seed is available
 		if (tile == null) {
 			this.logger.debug("No data seed available; initializing empty tile.");
 			tile = this.tileFactory.newInstance(
@@ -194,7 +196,8 @@ implements IHeatmap<I> {
 			
 			Iterator<TileCoordinates> iterator =
 					this.dataSource.getTileCoordinatesWithContent(
-							zoomLevel, this.filter);
+							zoomLevel, 
+							this.filter);
 			
 			this.logger.debug("Done getting tile coordinates with content.");
 			

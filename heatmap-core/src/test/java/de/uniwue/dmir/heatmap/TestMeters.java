@@ -15,6 +15,7 @@ import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance.Haver
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IDistanceFunction;
 
 public class TestMeters {
+	
 	public static void main(String[] args) {
 		
 		int zoomLevel = 3;

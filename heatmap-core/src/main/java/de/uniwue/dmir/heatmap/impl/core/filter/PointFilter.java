@@ -34,7 +34,6 @@ extends AbstractConfigurableFilter<GroupValuePixel, T> {
 				tile, 
 				tileSize);
 		
-		
 		if (pointSize == null) {
 		
 			// create new point if not point has been created so far

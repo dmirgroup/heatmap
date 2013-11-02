@@ -18,8 +18,21 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.data.type;
+package de.uniwue.dmir.heatmap.core;
 
-public interface IExternalUserData extends IExternalData {
-	public String getUserId();
+import java.util.HashMap;
+import java.util.Map;
+
+import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+
+
+public class MapTileFactory2<K, I>
+implements ITileFactory<Map<K, I>> {
+	
+	@Override
+	public Map<K, I> newInstance(TileSize size, TileCoordinates coordinates) {
+		return new HashMap<K, I>();
+	}
+
 }

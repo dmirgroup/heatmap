@@ -122,7 +122,8 @@ public class HeatmapTest {
 
 		VisualizationFileWriter<Sum[]> heatmapFileWriter =
 				new VisualizationFileWriter<Sum[]>(
-						new DefaultFileStrategy("out/tiles"), 
+						"out/tiles",
+						new DefaultFileStrategy(), 
 						"png",
 						visualizer);
 		

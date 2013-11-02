@@ -41,11 +41,12 @@ extends AbstractFileWriter<I> {
 	private IVisualizer<I> visualizer;
 	
 	public VisualizationFileWriter(
+			String parentFolder,
 			IFileStrategy fileStrategy, 
 			String fileFormat, 
 			IVisualizer<I> visualizer) {
 		
-		super(fileStrategy, fileFormat, false);
+		super(parentFolder, fileStrategy, fileFormat, false);
 		this.visualizer = visualizer;
 	}
 	

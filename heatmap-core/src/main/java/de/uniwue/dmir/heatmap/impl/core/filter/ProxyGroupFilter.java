@@ -20,10 +20,9 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
-import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalUserData;
+import de.uniwue.dmir.heatmap.core.data.type.IExternalGroupData;
 import de.uniwue.dmir.heatmap.core.filter.IGroupAccess;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
@@ -35,46 +34,49 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * @param <E>
  * @param <I>
  */
-@AllArgsConstructor
-public class ProxyGroupFilter<E extends IExternalUserData, I, T> 
-extends AbstractProxyFilter<E, T>
-implements IFilter<E, T> {
+public class ProxyGroupFilter<E extends IExternalGroupData, IInner, IOuter> 
+extends AbstractProxyFilter<E, IInner, IOuter> {
 
-	private IGroupAccess<I, T> groupAccess;
-	private IFilter<E, I> filter;
-	private String defaultUser;
+	private IGroupAccess<IInner, IOuter> groupAccess;
+	private String defaultGroup;
 
 	public ProxyGroupFilter(
-			IGroupAccess<I, T> groupAccess, 
-			IFilter<E, I> filter) {
-		this(groupAccess, filter, null);
+			IGroupAccess<IInner, IOuter> groupAccess, 
+			IFilter<E, IInner> filter) {
+		
+		super(filter);
+		this.groupAccess = groupAccess;
+		this.defaultGroup = null;
 	}
 	
 	@Override
 	public void filter(
 			E dataPoint, 
-			T tile, 
+			IOuter tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
-		String userId = dataPoint.getUserId();
-		I userData = this.groupAccess.get(
-				userId, 
+		String groupId = dataPoint.getGroupId();
+		IInner groupData = this.groupAccess.get(
+				groupId, 
 				tile, 
 				tileSize, 
 				tileCoordinates);
-		this.filter.filter(
+		
+		super.filter.filter(
 				dataPoint, 
-				userData, 
+				groupData, 
 				tileSize, 
 				tileCoordinates);
 		
-		if (this.defaultUser != null) {
-			I defaultData = this.groupAccess.get(
-					this.defaultUser, 
+		if (this.defaultGroup != null) {
+			
+			IInner defaultData = this.groupAccess.get(
+					this.defaultGroup, 
 					tile, 
 					tileSize, 
 					tileCoordinates);
+			
 			this.filter.filter(
 					dataPoint, 
 					defaultData, 

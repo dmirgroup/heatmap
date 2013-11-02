@@ -44,7 +44,7 @@ implements IHeatmap<I> {
 	private HeatmapSettings settings;
 	private Class<I> clazz;
 	
-	private String folder;
+	private String parentFolder;
 	private IFileStrategy fileStrategy;
 	private boolean gzip;
 
@@ -53,13 +53,13 @@ implements IHeatmap<I> {
 	public FilesystemHeatmap(
 			HeatmapSettings settings,
 			Class<I> clazz,
-			String folder,
+			String parentFolder,
 			boolean gzip) {
 
 		this.settings = settings;
 		this.clazz = clazz;
-		this.folder = folder;
-		this.fileStrategy = new DefaultFileStrategy(folder);
+		this.parentFolder = parentFolder;
+		this.fileStrategy = new DefaultFileStrategy();
 		this.gzip = gzip;
 		
 		this.mapper = new ObjectMapper();
@@ -77,8 +77,9 @@ implements IHeatmap<I> {
 				FILE_EXTENSION 
 				+ (this.gzip ? AbstractFileWriter.GZIP_EXTENSION : "");
 		
-		File file = this.fileStrategy.getFile(coordinates, extension);
-
+		String fileName = this.fileStrategy.getFileName(coordinates, extension);
+		File file = new File(this.parentFolder, fileName);
+		
 		try {
 			
 			if (!file.exists()) {
@@ -105,7 +106,7 @@ implements IHeatmap<I> {
 	public void processTiles(ITileProcessor<I> processor) {
 		
 		TileCoordinates coordinates = new TileCoordinates(0, 0, 0);
-		File folder = new File(this.folder);
+		File folder = new File(this.parentFolder);
 		
 		for (File zoomFolder : folder.listFiles()) {
 			

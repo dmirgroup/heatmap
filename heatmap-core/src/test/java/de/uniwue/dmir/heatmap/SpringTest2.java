@@ -114,7 +114,8 @@ public class SpringTest2 {
 
 		VisualizationFileWriter<Sum[]> heatmapFileWriter =
 				new VisualizationFileWriter<Sum[]>(
-						new DefaultFileStrategy("out/tiles"), 
+						"out/tiles",
+						new DefaultFileStrategy(), 
 						"png",
 						visualizer);
 		

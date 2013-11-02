@@ -24,5 +24,5 @@ import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 
 public interface ITileProcessor<I> {
-	void process(I tile, TileSize tileSize, TileCoordinates coordinates);
+	void process(I tile, TileSize tileSize, TileCoordinates tileCoordinates);
 }

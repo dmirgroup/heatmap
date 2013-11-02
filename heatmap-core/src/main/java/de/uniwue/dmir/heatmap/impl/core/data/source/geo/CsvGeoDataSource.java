@@ -90,6 +90,7 @@ extends ListGeoDataSource {
 			this.getList().add(geoPoint);
 			
 			line = bufferedReader.readLine();
+			System.out.println(geoPoint);
 		}
 		
 		bufferedReader.close();

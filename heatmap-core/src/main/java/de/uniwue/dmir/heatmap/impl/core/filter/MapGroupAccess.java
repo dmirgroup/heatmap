@@ -23,6 +23,7 @@ extends AbstractGroupAccess<I, Map<String, I>> {
 		I groupData = tile.get(groupId);
 		if (groupData == null) {
 			groupData = super.tileFactory.newInstance(tileSize, tileCoordinates);
+			tile.put(groupId, groupData);
 		}
 		return groupData;
 	}
