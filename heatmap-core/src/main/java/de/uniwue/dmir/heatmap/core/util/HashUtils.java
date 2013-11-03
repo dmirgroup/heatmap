@@ -107,7 +107,13 @@ public class HashUtils {
 	public static final String toHexString(byte[] bytes) {
 		StringBuffer stringBuffer = new StringBuffer();
 		for (byte b : bytes) {
+
 			String part = Integer.toHexString((int) (b & 0xff));
+			
+			if(part.length() < 2) {
+				stringBuffer.append(0);
+			}
+			
 			stringBuffer.append(part);
 		}
 		return stringBuffer.toString();
