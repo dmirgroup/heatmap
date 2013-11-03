@@ -34,14 +34,19 @@ import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.processing.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.HashUtils;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.PointSize;
 
-public class PointProcessor implements ITileProcessor<Map<String, Map<RelativeCoordinates, PointSize>>> {
+public class PointProcessor<TTile, TGroupTile>
+implements ITileProcessor<TTile> {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+
+	private IKeyValueIteratorFactory<TTile, String, TGroupTile> groupIteratorFactory;
+	private IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSize> pixelIteratorFactory;
 	
 	private String file;
 	private String hashAlgorithm;
@@ -50,22 +55,35 @@ public class PointProcessor implements ITileProcessor<Map<String, Map<RelativeCo
 	@Setter
 	private String nullGroup = "NULL";
 	
-	public PointProcessor(String file, String hashAlgorithm) {
+	public PointProcessor(
+			String file, 
+			String hashAlgorithm,
+			IKeyValueIteratorFactory<TTile, String, TGroupTile> groupIteratorFactory,
+			IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSize> pixelIteratorFactory) {
+		
 		this.file = file;
 		this.hashAlgorithm = hashAlgorithm;
+		
+		this.groupIteratorFactory = groupIteratorFactory;
+		this.pixelIteratorFactory = pixelIteratorFactory;
 	}
 	
 	@Override
 	public void process(
-			Map<String, Map<RelativeCoordinates, PointSize>> tile,
+			TTile tile,
 			TileSize tileSize, 
 			TileCoordinates coordinates) {
 		
 		Map<String, PointContainer> points = new HashMap<String, PointContainer>();
 		
-		for (Map.Entry<String, Map<RelativeCoordinates, PointSize>> groupEntry : tile.entrySet()) {
+		IKeyValueIterator<String, TGroupTile> groupIterator = 
+				this.groupIteratorFactory.iterator(tile);
+		
+		while(groupIterator.hasNext()) {
+		
+			groupIterator.next();
 			
-			String groupId = groupEntry.getKey();
+			String groupId = groupIterator.getKey();
 			if (this.hashAlgorithm != null && groupId != null) {
 				try {
 					groupId = HashUtils.digest(groupId, this.hashAlgorithm);
@@ -82,10 +100,18 @@ public class PointProcessor implements ITileProcessor<Map<String, Map<RelativeCo
 				points.put(groupId, pointContainer);
 			}
 			
-			for (Map.Entry<RelativeCoordinates, PointSize> pointEntry : groupEntry.getValue().entrySet()) {
+			TGroupTile groupTile = groupIterator.getValue();
+			IKeyValueIterator<RelativeCoordinates, PointSize> pixelIterator = 
+					this.pixelIteratorFactory.iterator(groupTile);
+			
+			while(pixelIterator.hasNext()) {
 				
-				pointContainer.setPoints(pointContainer.getPoints() + pointEntry.getValue().getPoints());
-				pointContainer.setSize(pointContainer.getSize() + pointEntry.getValue().getSize());
+				pixelIterator.next();
+				
+				PointSize pointSize = pixelIterator.getValue();
+			
+				pointContainer.setPoints(pointContainer.getPoints() + pointSize.getPoints());
+				pointContainer.setSize(pointContainer.getSize() + pointSize.getSize());
 				pointContainer.setPixels(pointContainer.getPixels() + 1);
 				
 			}

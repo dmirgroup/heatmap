@@ -20,6 +20,7 @@
  */
 package de.uniwue.dmir.heatmap;
 
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -41,9 +42,12 @@ import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
 import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory.CombinedKeyValueFilter;
 import de.uniwue.dmir.heatmap.core.processing.GroupProxyFileWriter;
 import de.uniwue.dmir.heatmap.core.processing.IToDoubleMapper;
 import de.uniwue.dmir.heatmap.core.processing.PointProcessor;
+import de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter;
 import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
@@ -62,6 +66,7 @@ import de.uniwue.dmir.heatmap.impl.core.filter.ProxyGroupFilter;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.SimpleVisualizer;
+import de.uniwue.dmir.heatmap.impl.core.visualizer.StaticPolygonProxyVisualizer;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.colors.CombinedColorPipe;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.colors.SimpleColorPipe;
 import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance;
@@ -72,15 +77,14 @@ public class PointTest {
 			new GeoCoordinates(-30,  30), 
 			new GeoCoordinates( 30, -30));
 	
-			
-	
 	@Test
 	public void testHeatmap() throws IOException {
 		
 		HeatmapSettings settings = new HeatmapSettings();
 		settings.getZoomLevelRange().setMax(0);
 		
-		GeoPolygon geoPolygon = GeoPolygon.load("src/main/resources/spring/example/points/polygon-london.json");
+		GeoPolygon geoPolygon = GeoPolygon.load(
+				"src/main/resources/spring/example/points/polygon-london.json");
 		GeoBoundingBox gbb = geoPolygon.getGeoBoundingBox();
 		System.out.println(gbb);
 		
@@ -98,6 +102,8 @@ public class PointTest {
 				gbb, 
 				new GreatCircleDistance.Haversine());
 		System.out.println(tileSize);
+		
+		settings.setTileSize(tileSize);
 		
 		EquidistantProjection projection = new EquidistantProjection(
 				gbb,
@@ -127,9 +133,7 @@ public class PointTest {
 		
 		IFilter<GroupValuePixel, Map<RelativeCoordinates, PointSize>> filter = 
 				new PointFilter<Map<RelativeCoordinates,PointSize>>(
-						new MapPixelAccess<PointSize>(), 
-						geoPolygon, 
-						tileSize);
+						new MapPixelAccess<PointSize>());
 
 		ITileFactory<Map<RelativeCoordinates, PointSize>> tileFactory = 
 				new MapTileFactory<PointSize>();
@@ -155,7 +159,24 @@ public class PointTest {
 				heatmap.getTile(new TileCoordinates(0, 0, 0));
 		System.out.println(tile);
 		
-		PointProcessor pointProcessor = new PointProcessor("out/points.json", "MD5");
+		Polygon polygon = PolygonRelativeCoordinatesFilter.fromGeoPolygon(
+				geoPolygon, 
+				null, 
+				projection);
+		
+		FilteredProxyKeyValueIteratorFactory<Map<RelativeCoordinates, PointSize>, RelativeCoordinates, PointSize> pixelIterator = 
+				new FilteredProxyKeyValueIteratorFactory<Map<RelativeCoordinates, PointSize>, RelativeCoordinates, PointSize>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, PointSize>(),
+						new CombinedKeyValueFilter<RelativeCoordinates, PointSize>(
+									new PolygonRelativeCoordinatesFilter(
+											polygon)));
+		
+		PointProcessor<Map<String, Map<RelativeCoordinates, PointSize>>, Map<RelativeCoordinates, PointSize>> pointProcessor = 
+				new PointProcessor<Map<String, Map<RelativeCoordinates, PointSize>>, Map<RelativeCoordinates, PointSize>>(
+						"out/points.json", 
+						"MD5",
+						new MapKeyValueIteratorFactory<String, Map<RelativeCoordinates, PointSize>>(),
+						pixelIterator);
 		
 		BufferedImage colorImage = ImageIO.read(
 				new File("src/main/resources/color-schemes/classic.png"));
@@ -163,7 +184,7 @@ public class PointTest {
 		
 		SimpleVisualizer<Map<RelativeCoordinates, PointSize>, PointSize> simpleVisualizer = 
 				new SimpleVisualizer<Map<RelativeCoordinates,PointSize>, PointSize>(
-						new MapKeyValueIteratorFactory<RelativeCoordinates, PointSize>(),
+						pixelIterator,
 						new CombinedColorPipe<PointSize>(
 								new SimpleColorPipe<PointSize>(
 										new IToDoubleMapper<PointSize>() {
@@ -175,8 +196,15 @@ public class PointTest {
 										new ImageColorScheme(colorImage, ranges)),
 								null));
 		
+		StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSize>> visualizer =
+				new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSize>>(simpleVisualizer, polygon);
+		
 		VisualizationFileWriter<Map<RelativeCoordinates, PointSize>> fileWriter =
-				new VisualizationFileWriter<Map<RelativeCoordinates,PointSize>>("", new DefaultFileStrategy(), "png", simpleVisualizer);
+				new VisualizationFileWriter<Map<RelativeCoordinates,PointSize>>(
+						"", 
+						new DefaultFileStrategy(), 
+						"png", 
+						visualizer);
 		
 		GroupProxyFileWriter<Map<RelativeCoordinates, PointSize>, Map<String, Map<RelativeCoordinates, PointSize>>> groupProxyFileWriter =
 				new GroupProxyFileWriter<Map<RelativeCoordinates,PointSize>, Map<String,Map<RelativeCoordinates,PointSize>>>(

@@ -191,14 +191,47 @@
 		<constructor-arg name="settings" ref="heatmapSettings" />
 	</bean>
 	
+	<bean id="polygon"
+			class="de.uniwue.dmir.heatmap.core.util.PolygonFromGeoPolygonFacoryBean">
+		<constructor-arg name="geoPolygon" ref="geoPolygon" />
+		<constructor-arg name="tileCoordinates">
+			<null />
+		</constructor-arg>
+		<constructor-arg name="mapProjection" ref="projection" />
+	</bean>
+	
+	<!-- Pixel iterator factory to filter out points outside the given polygon. -->
+	<bean id="pixelIteratorFactory"
+			class="de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory">
+			
+		<constructor-arg name="factory">
+			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
+		</constructor-arg>
+		
+		<constructor-arg name="filter">
+			<bean class="de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory.CombinedKeyValueFilter">
+				<constructor-arg name="keyFilter">
+					<bean class="de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter">
+						<constructor-arg name="polygon" ref="polygon" />
+					</bean>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<!-- Point processor to calculate points for each group. -->
 	<bean id="pointProcessor" 
 			class="de.uniwue.dmir.heatmap.core.processing.PointProcessor" >
 	
 		<constructor-arg name="file" value="out/groups/point.json" />
 		<constructor-arg name="hashAlgorithm" value="MD5" />
+		<constructor-arg name="groupIteratorFactory">
+			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
+		</constructor-arg>
+		<constructor-arg name="pixelIteratorFactory" ref="pixelIteratorFactory" />
 	</bean>
 	
-	
+	<!-- Preparing point visualizer. -->
 	<bean id="colorImage"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
 
@@ -213,12 +246,10 @@
 		<constructor-arg name="image" ref="colorImage" />
 	</bean>
 	
-	<bean id="visualizer"
+	<bean id="simpleVisualizer"
 			class="de.uniwue.dmir.heatmap.impl.core.visualizer.SimpleVisualizer">
 			
-		<constructor-arg name="pixelIteratorFactory">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
-		</constructor-arg>
+		<constructor-arg name="pixelIteratorFactory" ref="pixelIteratorFactory" />
 
 		<constructor-arg name="colorPipe">
 			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.colors.CombinedColorPipe">
@@ -241,6 +272,13 @@
 			</bean>
 		</constructor-arg>
 	
+	</bean>
+	
+	<bean id="visualizer" 
+			class="de.uniwue.dmir.heatmap.impl.core.visualizer.StaticPolygonProxyVisualizer">
+			
+		<constructor-arg name="visualizer" ref="simpleVisualizer" />
+		<constructor-arg name="polygon" ref="polygon" />
 	</bean>
 	
 	<bean id="visualizationFileWriter"

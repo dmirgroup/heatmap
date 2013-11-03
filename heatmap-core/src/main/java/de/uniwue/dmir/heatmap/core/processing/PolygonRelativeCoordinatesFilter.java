@@ -20,10 +20,19 @@ implements IObjectFilter<RelativeCoordinates> {
 	
 	@Override
 	public boolean isToBeDisregarded(RelativeCoordinates object) {
-		return this.polygon.contains(object.getX(), object.getY());
+
+		boolean disregard = !this.polygon.contains(
+				object.getX(), 
+				object.getY());
+		
+//		System.out.println("FILTER");
+//		System.out.println(object);
+//		System.out.println(disregard);
+		
+		return disregard;
 	}
 	
-	public static final Polygon polygon(
+	public static final Polygon fromGeoPolygon(
 		GeoPolygon geoPolygon,
 		TileCoordinates tileCoordinates,
 		IMapProjection mapProjection) {

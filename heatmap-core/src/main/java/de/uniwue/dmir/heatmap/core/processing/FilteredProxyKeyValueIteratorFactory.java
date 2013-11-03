@@ -2,6 +2,7 @@ package de.uniwue.dmir.heatmap.core.processing;
 
 import lombok.AllArgsConstructor;
 
+@AllArgsConstructor
 public class FilteredProxyKeyValueIteratorFactory <TSource, TKey, TValue>
 implements IKeyValueIteratorFactory <TSource, TKey, TValue>{
 
