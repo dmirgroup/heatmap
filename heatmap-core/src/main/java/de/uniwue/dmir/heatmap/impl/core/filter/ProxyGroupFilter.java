@@ -20,6 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.filter;
 
+import lombok.Getter;
+import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.data.type.IExternalGroupData;
@@ -38,7 +40,10 @@ public class ProxyGroupFilter<E extends IExternalGroupData, IInner, IOuter>
 extends AbstractProxyFilter<E, IInner, IOuter> {
 
 	private IGroupAccess<IInner, IOuter> groupAccess;
-	private String defaultGroup;
+	
+	@Getter
+	@Setter
+	private String overallGroup;
 
 	public ProxyGroupFilter(
 			IGroupAccess<IInner, IOuter> groupAccess, 
@@ -46,7 +51,7 @@ extends AbstractProxyFilter<E, IInner, IOuter> {
 		
 		super(filter);
 		this.groupAccess = groupAccess;
-		this.defaultGroup = null;
+		this.overallGroup = null;
 	}
 	
 	@Override
@@ -69,10 +74,10 @@ extends AbstractProxyFilter<E, IInner, IOuter> {
 				tileSize, 
 				tileCoordinates);
 		
-		if (this.defaultGroup != null) {
+		if (this.overallGroup != null) {
 			
 			IInner defaultData = this.groupAccess.get(
-					this.defaultGroup, 
+					this.overallGroup, 
 					tile, 
 					tileSize, 
 					tileCoordinates);

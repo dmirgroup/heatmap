@@ -75,7 +75,7 @@ implements ITileProcessor<TTile> {
 			TileCoordinates coordinates) {
 		
 		Map<String, PointContainer> points = new HashMap<String, PointContainer>();
-		
+
 		IKeyValueIterator<String, TGroupTile> groupIterator = 
 				this.groupIteratorFactory.iterator(tile);
 		

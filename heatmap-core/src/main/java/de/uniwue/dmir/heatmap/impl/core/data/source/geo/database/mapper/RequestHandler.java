@@ -34,7 +34,7 @@ public final class RequestHandler {
 	public static final String LATITUDE = "latitude";
 	public static final String VALUE = "value";
 	public static final String TIMESTAMP = "timestamp";
-	public static final String GROUP = "'group'";
+	public static final String GROUP = "groupId";
 	
 	public String sql(RequestGeo request) {
 		SQL sql = new SQL();

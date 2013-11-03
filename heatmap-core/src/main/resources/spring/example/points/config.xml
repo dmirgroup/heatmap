@@ -74,15 +74,15 @@
 	<bean id="geoPolygon"
 			class="de.uniwue.dmir.heatmap.core.util.GeoPolygonFactoryBean">
 	
-		<constructor-arg name="resource" value="classpath:spring/example/points/polygon-turin.json" />
+		<constructor-arg name="resource" value="${polygon.file}" />
 	</bean>
 	
 	<bean id="tileSize"
 			class ="de.uniwue.dmir.heatmap.core.util.EquidistantProjectionTileSizeFactoryBean">
 	
-		<constructor-arg name="widthMeters" value="10" />
-		<constructor-arg name="heightMeters" value="10" />
-		<constructor-arg name="northReference" value="false" />
+		<constructor-arg name="widthMeters" value="${width.meters}" />
+		<constructor-arg name="heightMeters" value="${height.meters}" />
+		<constructor-arg name="northReference" value="${north.reference}" />
 		<constructor-arg name="geoBoundingBox" value="#{geoPolygon.geoBoundingBox}" />
 		<constructor-arg name="distanceFunction">
 			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance.Haversine" />
@@ -95,25 +95,7 @@
 		<constructor-arg name="geoBoundingBox" value="#{geoPolygon.geoBoundingBox}" />	
 		<constructor-arg name="tileSize" ref="tileSize" />	
 	</bean>
-	
-	<bean name="requestGeo" 
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo">
-		
-		<constructor-arg name="table" value="data_airprobe" />
-		<constructor-arg name="longitudeAttribute" value="geo_lon" />
-		<constructor-arg name="latitudeAttribute" value="geo_lat" />
-		
-		<property name="lonWest" value="#{geoPolygon.geoBoundingBox.northWest.longitude}" />
-		<property name="lonEast" value="#{geoPolygon.geoBoundingBox.southEast.longitude}" />
-		<property name="latNorth" value="#{geoPolygon.geoBoundingBox.northWest.latitude}" />
-		<property name="latSouth" value="#{geoPolygon.geoBoundingBox.southEast.latitude}" />
-	
-		<property name="timestampAttribute" value="meta_timestamp_recorded" />
-		<property name="orderAsc" value="true" />
-		<property name="groupAttribute" value="meta_install_id" />
-		<property name="valueAttribute" value="data_bc_1" />
-	</bean>
-	
+
 	<bean id="geoDatasource" 
 			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.DatabaseGeoDataSource">
 	
@@ -165,6 +147,8 @@
 		</constructor-arg>
 		
 		<constructor-arg name="filter" ref="filter" />
+		
+		<property name="overallGroup" value="${overall.group}" />
 	</bean>
 	
 	<bean id="zoomLevelRange"
@@ -223,26 +207,27 @@
 	<bean id="pointProcessor" 
 			class="de.uniwue.dmir.heatmap.core.processing.PointProcessor" >
 	
-		<constructor-arg name="file" value="out/groups/point.json" />
+		<constructor-arg name="file" value="${out.file}" />
 		<constructor-arg name="hashAlgorithm" value="MD5" />
 		<constructor-arg name="groupIteratorFactory">
 			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		<constructor-arg name="pixelIteratorFactory" ref="pixelIteratorFactory" />
+		
 	</bean>
 	
 	<!-- Preparing point visualizer. -->
 	<bean id="colorImage"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
 
-		<constructor-arg name="resource" value="classpath:color-schemes/classic.png" />
+		<constructor-arg name="resource" value="${color.image}" />
 	</bean>
 	
 	<bean id="ranges"
 			class="de.uniwue.dmir.heatmap.core.util.RangeFactoryBean">
 
-		<constructor-arg name="min" value="1" />
-		<constructor-arg name="max" value="48" />
+		<constructor-arg name="min" value="${range.min}" />
+		<constructor-arg name="max" value="${range.max}" />
 		<constructor-arg name="image" ref="colorImage" />
 	</bean>
 	
@@ -294,15 +279,19 @@
 	
 	<bean id="groupProxyFileWriter" 
 			class="de.uniwue.dmir.heatmap.core.processing.GroupProxyFileWriter">
+			
 		<constructor-arg name="groupIteratorFactory">
 			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		<constructor-arg name="fileWriter" ref="visualizationFileWriter" />
-		<constructor-arg name="parentFolder" value="out/points/new" />
+		<constructor-arg name="parentFolder" value="${out.folder}" />
+		
+		<property name="hashAlgorithm" value="MD5"></property>
 	</bean>
 	
 	<bean id="writer"
 			class="de.uniwue.dmir.heatmap.core.processing.ProxyTileProcessor">
+
 		<constructor-arg name="processors">
 			<list>
 				<ref bean="pointProcessor" />
@@ -310,5 +299,52 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	
+	
+	
+	
+	
+	
+	
+	<bean name="abstractRequest" 
+			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo">
+		
+		<constructor-arg name="table" value="data_airprobe" />
+		<constructor-arg name="longitudeAttribute" value="geo_lon" />
+		<constructor-arg name="latitudeAttribute" value="geo_lat" />
+		
+		<property name="lonWest" value="#{geoPolygon.geoBoundingBox.northWest.longitude}" />
+		<property name="lonEast" value="#{geoPolygon.geoBoundingBox.southEast.longitude}" />
+		<property name="latNorth" value="#{geoPolygon.geoBoundingBox.northWest.latitude}" />
+		<property name="latSouth" value="#{geoPolygon.geoBoundingBox.southEast.latitude}" />
+	
+		<property name="timestampAttribute" value="meta_timestamp_recorded" />
+		<property name="orderAsc" value="true" />
+
+		<property name="groupAttribute" value="${groupid.attribute}" />
+		<property name="valueAttribute" value="${value.attribute}" />
+	</bean>
+	
+	<bean id="requestGeo" parent="abstractRequest" />
+	
+	<beans profile="minmax">
+	
+		<bean id="dateFactory" class="java.text.SimpleDateFormat">
+			<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
+		</bean>
+		
+		<bean id="min" factory-bean="dateFactory" factory-method="parse">
+			<constructor-arg value="#{systemProperties.min}" />
+		</bean>
+		
+		<bean id="max" factory-bean="dateFactory" factory-method="parse">
+			<constructor-arg value="#{systemProperties.max}" />
+		</bean>
+	
+		<bean id="requestGeo" parent="abstractRequest" >
+			<property name="minimumTimestamp" ref="min" />
+			<property name="maximumTimestamp" ref="max" />
+		</bean>
+	</beans>
 
 </beans>
