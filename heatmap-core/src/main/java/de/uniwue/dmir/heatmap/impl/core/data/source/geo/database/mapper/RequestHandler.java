@@ -34,7 +34,7 @@ public final class RequestHandler {
 	public static final String LATITUDE = "latitude";
 	public static final String VALUE = "value";
 	public static final String TIMESTAMP = "timestamp";
-	public static final String USER = "user";
+	public static final String GROUP = "'group'";
 	
 	public String sql(RequestGeo request) {
 		SQL sql = new SQL();
@@ -42,7 +42,7 @@ public final class RequestHandler {
 		time(request, sql);
 		geo(request, sql);
 		value(request, sql);
-		user(request, sql);
+		group(request, sql);
 		return sql.toString();
 	}
 	
@@ -88,11 +88,11 @@ public final class RequestHandler {
 		}
 	}
 	
-	public void user(RequestSettingsUser request, SQL sql) {
-		if (request.getUserAttribute() != null) {
-			sql.SELECT(request.getUserAttribute() + " AS " + USER);
+	public void group(RequestSettingsUser request, SQL sql) {
+		if (request.getGroupAttribute() != null) {
+			sql.SELECT(request.getGroupAttribute() + " AS " + GROUP);
 		} else {
-			sql.SELECT(request.getDefaultUser() + " AS " + USER);
+			sql.SELECT(request.getDefaultUser() + " AS " + GROUP);
 		}
 	}
 

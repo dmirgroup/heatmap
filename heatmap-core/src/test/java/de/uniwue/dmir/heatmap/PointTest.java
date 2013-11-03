@@ -47,6 +47,7 @@ import de.uniwue.dmir.heatmap.core.processing.PointProcessor;
 import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.util.GeoPolygon;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.EquidistantProjection;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
@@ -71,9 +72,7 @@ public class PointTest {
 			new GeoCoordinates(-30,  30), 
 			new GeoCoordinates( 30, -30));
 	
-	public static final GeoBoundingBox LONDON = new GeoBoundingBox(
-			new GeoCoordinates(-0.11825877463434153, 51.53025322524078),
-			new GeoCoordinates(-0.0662972773659476, 51.505549554927526));
+			
 	
 	@Test
 	public void testHeatmap() throws IOException {
@@ -81,13 +80,16 @@ public class PointTest {
 		HeatmapSettings settings = new HeatmapSettings();
 		settings.getZoomLevelRange().setMax(0);
 		
-		GeoBoundingBox gbb = LONDON;
+		GeoPolygon geoPolygon = GeoPolygon.load("src/main/resources/spring/example/points/polygon-london.json");
+		GeoBoundingBox gbb = geoPolygon.getGeoBoundingBox();
+		System.out.println(gbb);
+		
 		System.out.println(
 				new GreatCircleDistance.Haversine().distance(
-						LONDON.getSouthEast(), 
+						gbb.getSouthEast(), 
 						new GeoCoordinates(
-								LONDON.getNorthWest().getLongitude(), 
-								LONDON.getSouthEast().getLatitude())));
+								gbb.getNorthWest().getLongitude(), 
+								gbb.getSouthEast().getLatitude())));
 		
 		TileSize tileSize = EquidistantProjection.getTileSize(
 				10, 
@@ -100,13 +102,18 @@ public class PointTest {
 		EquidistantProjection projection = new EquidistantProjection(
 				gbb,
 				tileSize);
-		RelativeCoordinates r1 = 
-				projection.fromGeoToRelativeCoordinates(LONDON.getNorthWest(), null);
-		System.out.println(r1);
 		
-		RelativeCoordinates r2 = 
-				projection.fromGeoToRelativeCoordinates(LONDON.getSouthEast(), null);
-		System.out.println(r2);
+//		RequestGeo requestGeo = new RequestGeo("data_airprobe", "geo_lon", "geo_lat");
+//		
+//		requestGeo.setLonWest(gbb.getNorthWest().getLongitude());
+//		requestGeo.setLatNorth(gbb.getNorthWest().getLatitude());
+//		requestGeo.setLonEast(gbb.getSouthEast().getLatitude());
+//		requestGeo.setLatSouth(gbb.getSouthEast().getLatitude());
+//		
+//		requestGeo.setTimestampAttribute("meta_timestamp_recorded");
+//		requestGeo.setOrderAsc(false);
+//		requestGeo.setGroupAttribute("meta_install_id");
+//		requestGeo.setValueAttribute("data_bc_1");
 		
 		GeoTileDataSource<GeoPoint, GroupValuePixel> dataSouce =
 				new GeoTileDataSource<GeoPoint, GroupValuePixel>(
@@ -120,11 +127,13 @@ public class PointTest {
 		
 		IFilter<GroupValuePixel, Map<RelativeCoordinates, PointSize>> filter = 
 				new PointFilter<Map<RelativeCoordinates,PointSize>>(
-						new MapPixelAccess<PointSize>());
+						new MapPixelAccess<PointSize>(), 
+						geoPolygon, 
+						tileSize);
 
 		ITileFactory<Map<RelativeCoordinates, PointSize>> tileFactory = 
 				new MapTileFactory<PointSize>();
-		
+
 		IFilter<GroupValuePixel, Map<String, Map<RelativeCoordinates, PointSize>>> groupFilter = 
 				new ProxyGroupFilter<
 					GroupValuePixel, 

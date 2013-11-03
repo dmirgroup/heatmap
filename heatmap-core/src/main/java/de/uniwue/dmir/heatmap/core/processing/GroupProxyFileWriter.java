@@ -22,6 +22,8 @@ package de.uniwue.dmir.heatmap.core.processing;
 
 import java.io.File;
 
+import lombok.Getter;
+import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.processing.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
@@ -36,6 +38,10 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 public class GroupProxyFileWriter<TInner, TOuter> 
 implements ITileProcessor<TOuter> {
 
+	@Getter
+	@Setter
+	private String nullGroup = "NULL";
+	
 	private IKeyValueIteratorFactory<TOuter, String, TInner> groupIteratorFactory;
 	private String parentFolder;
 	private AbstractFileWriter<TInner> fileWriter;
@@ -65,6 +71,10 @@ implements ITileProcessor<TOuter> {
 			iterator.next();
 			
 			String groupId = iterator.getKey();
+			if (groupId == null) {
+				groupId = this.nullGroup;
+			}
+			
 			TInner groupData = iterator.getValue();
 			
 			File parentFolder = new File(this.parentFolder, groupId);

@@ -44,6 +44,20 @@ var ghyb = new OpenLayers.Layer.Google(
 	});
 map.addLayer(ghyb);
 
+var img = new OpenLayers.Layer.Image(
+		"Image", 
+		"file:///home/becker/git/de.uniwue.dmir.heatmap/heatmap-core/out/points/NULL/0/0/0.png",
+		new OpenLayers.Bounds(0,0,50,50),
+		new OpenLayers.Size(188,195),
+		{
+			isBaseLayer: false,
+			numZoomLevels: 3,
+			opacity: 0.3,
+            displayOutsideMaxExtent: true,
+            'alwaysInRange': true
+		});
+	map.addLayer(img);
+
 // zoom level info box
 
 map.events.register('zoomend', map, function() {

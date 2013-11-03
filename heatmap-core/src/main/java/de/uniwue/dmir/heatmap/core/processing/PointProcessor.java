@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -43,6 +45,10 @@ public class PointProcessor implements ITileProcessor<Map<String, Map<RelativeCo
 	
 	private String file;
 	private String hashAlgorithm;
+
+	@Getter
+	@Setter
+	private String nullGroup = "NULL";
 	
 	public PointProcessor(String file, String hashAlgorithm) {
 		this.file = file;
@@ -60,12 +66,14 @@ public class PointProcessor implements ITileProcessor<Map<String, Map<RelativeCo
 		for (Map.Entry<String, Map<RelativeCoordinates, PointSize>> groupEntry : tile.entrySet()) {
 			
 			String groupId = groupEntry.getKey();
-			if (this.hashAlgorithm != null) {
+			if (this.hashAlgorithm != null && groupId != null) {
 				try {
 					groupId = HashUtils.digest(groupId, this.hashAlgorithm);
 				} catch (NoSuchAlgorithmException e) {
 					throw new RuntimeException(e);
 				}
+			} else if (groupId == null) {
+				groupId = this.nullGroup;
 			}
 			
 			PointContainer pointContainer = points.get(groupId);

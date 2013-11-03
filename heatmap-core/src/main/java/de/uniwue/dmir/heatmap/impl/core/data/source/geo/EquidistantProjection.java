@@ -63,8 +63,8 @@ public class EquidistantProjection implements IMapProjection {
 	}
 	
 	public static TileSize getTileSize(
-			int cellWidthMeters, 
-			int cellHeightMeters,
+			double cellWidthMeters, 
+			double cellHeightMeters,
 			boolean northReference,
 			GeoBoundingBox geoBoundingBox,
 			IDistanceFunction<GeoCoordinates> distanceFunction) {
@@ -84,8 +84,8 @@ public class EquidistantProjection implements IMapProjection {
 			widthMeters = distanceFunction.distance(southWest, southEast);
 		}
 		
-		int width = (int) widthMeters / cellWidthMeters;
-		int height = (int) heightMeters / cellHeightMeters;
+		int width = (int) (widthMeters / cellWidthMeters);
+		int height = (int) (heightMeters / cellHeightMeters);
 		
 		return new TileSize(width, height);
 	}
@@ -104,9 +104,6 @@ public class EquidistantProjection implements IMapProjection {
 				- geoCoordinates.getLatitude()
 				+ this.geoBoundingBox.getNorthWest().getLatitude();
 		
-//		System.out.println(longitude);
-//		System.out.println(latitude);
-//		System.out.println("---");
 		
 		RelativeCoordinates relativeCoordinates = new RelativeCoordinates(
 				(int) Math.floor(longitude / this.diffLongitude), 

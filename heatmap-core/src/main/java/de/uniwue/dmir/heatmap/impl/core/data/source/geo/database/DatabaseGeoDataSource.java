@@ -22,6 +22,9 @@ package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
@@ -32,6 +35,8 @@ public class DatabaseGeoDataSource implements IGeoDataSource<GeoPoint> {
 
 	private RequestGeo request;
 	
+	@Getter
+	@Setter
 	@Autowired
 	private GeoPointMapper mapper;
 	

@@ -28,7 +28,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class RequestSettingsUser extends RequestSettingsValue {
 	
-	private String userAttribute;
+	private String groupAttribute;
 	private String defaultUser;
 
 	public RequestSettingsUser(

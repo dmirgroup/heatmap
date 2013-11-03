@@ -43,7 +43,6 @@ implements ITileProcessor<I> {
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Getter
 	@Setter
 	private String parentFolder;
 	protected IFileStrategy fileStrategy;
