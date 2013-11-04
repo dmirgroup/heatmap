@@ -38,7 +38,7 @@
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 		<property name="basePackage" value="
-			de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.mapper" />
+			de.uniwue.dmir.heatmap.impl.core.mybatis" />
 	</bean>
 	
 	<!-- ############# Enable and use component scan. ############# -->
@@ -203,12 +203,52 @@
 		</constructor-arg>
 	</bean>
 	
+	<!-- Mapping MAC addresses to team names if possible. -->
+	<bean id="teamMapper"
+			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringLookupMapper">
+	
+		<constructor-arg name="instanceId" value="apic2013-teams" />		
+	</bean>
+	
+	<bean id="colonMapper"
+			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper">
+			
+		<constructor-arg name="regex" value=":" />
+		<constructor-arg name="replacement" value="" />
+	</bean>
+	
+	<bean id="md5Mapper" 
+			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringHashMapper">
+	</bean>
+	
+	<bean id="macMapper" 
+			class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
+		<constructor-arg name="mappers">
+			<list>
+				<ref bean="teamMapper" />
+				<ref bean="colonMapper" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="macFolderMapper" 
+			class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
+		<constructor-arg name="mappers">
+			<list>
+				<ref bean="teamMapper" />
+				<ref bean="colonMapper" />
+				<ref bean="md5Mapper" />
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	
 	<!-- Point processor to calculate points for each group. -->
 	<bean id="pointProcessor" 
 			class="de.uniwue.dmir.heatmap.core.processing.PointProcessor" >
 	
 		<constructor-arg name="file" value="${out.file}" />
-		<constructor-arg name="hashAlgorithm" value="MD5" />
+		<constructor-arg name="groupIdMapper" ref="macMapper" />
 		<constructor-arg name="groupIteratorFactory">
 			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
 		</constructor-arg>
@@ -292,7 +332,7 @@
 		<constructor-arg name="fileWriter" ref="visualizationFileWriter" />
 		<constructor-arg name="parentFolder" value="${out.folder}" />
 		
-		<property name="hashAlgorithm" value="MD5"></property>
+		<property name="groupIdMapper" ref="macFolderMapper" />
 	</bean>
 	
 	<bean id="writer"

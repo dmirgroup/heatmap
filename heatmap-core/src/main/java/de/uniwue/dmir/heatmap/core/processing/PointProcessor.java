@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.core.processing;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +33,10 @@ import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.processing.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.util.HashUtils;
 import de.uniwue.dmir.heatmap.impl.core.data.type.internal.PointSize;
 
 public class PointProcessor<TTile, TGroupTile>
@@ -49,7 +48,7 @@ implements ITileProcessor<TTile> {
 	private IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSize> pixelIteratorFactory;
 	
 	private String file;
-	private String hashAlgorithm;
+	private IMapper<String, String> groupIdMapper;
 
 	@Getter
 	@Setter
@@ -57,12 +56,12 @@ implements ITileProcessor<TTile> {
 	
 	public PointProcessor(
 			String file, 
-			String hashAlgorithm,
+			IMapper<String, String> groupIdMapper,
 			IKeyValueIteratorFactory<TTile, String, TGroupTile> groupIteratorFactory,
 			IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSize> pixelIteratorFactory) {
 		
 		this.file = file;
-		this.hashAlgorithm = hashAlgorithm;
+		this.groupIdMapper = groupIdMapper;
 		
 		this.groupIteratorFactory = groupIteratorFactory;
 		this.pixelIteratorFactory = pixelIteratorFactory;
@@ -84,12 +83,8 @@ implements ITileProcessor<TTile> {
 			groupIterator.next();
 			
 			String groupId = groupIterator.getKey();
-			if (this.hashAlgorithm != null && groupId != null) {
-				try {
-					groupId = HashUtils.digest(groupId, this.hashAlgorithm);
-				} catch (NoSuchAlgorithmException e) {
-					throw new RuntimeException(e);
-				}
+			if (this.groupIdMapper != null && groupId != null) {
+				groupId = this.groupIdMapper.map(groupId);
 			} else if (groupId == null) {
 				groupId = this.nullGroup;
 			}

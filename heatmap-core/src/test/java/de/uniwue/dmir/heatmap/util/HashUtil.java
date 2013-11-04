@@ -18,25 +18,20 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.mapper;
+package de.uniwue.dmir.heatmap.util;
 
-import java.util.List;
+import java.security.NoSuchAlgorithmException;
 
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.SelectProvider;
+import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsBasic;
+import de.uniwue.dmir.heatmap.core.util.HashUtils;
 
-public interface GeoPointMapper {
-
-	@SelectProvider(
-			type = RequestHandler.class,
-			method = "sql")
-	@Results({
-			@Result(column = "longitude", property = "geoCoordinates.longitude"),
-			@Result(column = "latitude", property = "geoCoordinates.latitude")})
-	public List<GeoPoint> getData(RequestSettingsBasic request);
+public class HashUtil {
 	
+	@Test
+	public void test() throws NoSuchAlgorithmException {
+		 System.out.println(HashUtils.digest("00:06:66:48:57:22", "MD5"));
+		 System.out.println("06b518ad081cafc5131ed6630677e2b6");
+	}
+
 }

@@ -18,7 +18,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.mapper;
+package de.uniwue.dmir.heatmap.impl.core.mybatis;
 
 import org.apache.ibatis.jdbc.SQL;
 
@@ -28,7 +28,7 @@ import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettings
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsUser;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestSettingsValue;
 
-public final class RequestHandler {
+public final class GeoPointRequestHandler {
 
 	public static final String LONGITUDE = "longitude";
 	public static final String LATITUDE = "latitude";

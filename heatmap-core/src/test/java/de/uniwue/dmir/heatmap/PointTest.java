@@ -49,6 +49,7 @@ import de.uniwue.dmir.heatmap.core.processing.IToDoubleMapper;
 import de.uniwue.dmir.heatmap.core.processing.PointProcessor;
 import de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter;
 import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
+import de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.GeoPolygon;
@@ -174,7 +175,7 @@ public class PointTest {
 		PointProcessor<Map<String, Map<RelativeCoordinates, PointSize>>, Map<RelativeCoordinates, PointSize>> pointProcessor = 
 				new PointProcessor<Map<String, Map<RelativeCoordinates, PointSize>>, Map<RelativeCoordinates, PointSize>>(
 						"out/points.json", 
-						"MD5",
+						new StringReplaceMapper(":", ""),
 						new MapKeyValueIteratorFactory<String, Map<RelativeCoordinates, PointSize>>(),
 						pixelIterator);
 		

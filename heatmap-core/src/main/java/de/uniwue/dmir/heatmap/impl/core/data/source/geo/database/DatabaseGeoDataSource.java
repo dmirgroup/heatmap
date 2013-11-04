@@ -29,15 +29,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.mapper.GeoPointMapper;
+import de.uniwue.dmir.heatmap.impl.core.mybatis.GeoPointMapper;
 
 public class DatabaseGeoDataSource implements IGeoDataSource<GeoPoint> {
 
 	private RequestGeo request;
 	
+	@Autowired
 	@Getter
 	@Setter
-	@Autowired
 	private GeoPointMapper mapper;
 	
 	public DatabaseGeoDataSource(RequestGeo request) {

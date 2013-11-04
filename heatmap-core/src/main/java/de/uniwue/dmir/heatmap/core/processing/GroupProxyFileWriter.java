@@ -21,14 +21,13 @@
 package de.uniwue.dmir.heatmap.core.processing;
 
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
 
 import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
+import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.processing.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.util.HashUtils;
 
 /**
  * 
@@ -50,7 +49,7 @@ implements ITileProcessor<TOuter> {
 	
 	@Getter
 	@Setter
-	private String hashAlgorithm;
+	private IMapper<String, String> groupIdMapper;
 	
 	public GroupProxyFileWriter(
 			IKeyValueIteratorFactory<TOuter, String, TInner> groupIteratorFactory,
@@ -81,12 +80,8 @@ implements ITileProcessor<TOuter> {
 				groupId = this.nullGroup;
 			}
 			
-			if (this.hashAlgorithm != null) {
-				try {
-					groupId = HashUtils.digest(groupId, this.hashAlgorithm);
-				} catch (NoSuchAlgorithmException e) {
-					throw new RuntimeException(e);
-				}
+			if (this.groupIdMapper != null) {
+				groupId = this.groupIdMapper.map(groupId);
 			}
 			
 			TInner groupData = iterator.getValue();
