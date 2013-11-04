@@ -14,6 +14,11 @@ REMOTE_HOST=cs.everyaware.eu
 
 # code
 
+if [ ! -d "$TILE_FOLDER" ]; then
+	echo "Folder does not exist: $TILE_FOLDER"
+	exit
+fi
+
 OUT_FILE=$OUT_FOLDER/$OUT_FILE_NAME.tar.gz
 
 cd $TILE_FOLDER

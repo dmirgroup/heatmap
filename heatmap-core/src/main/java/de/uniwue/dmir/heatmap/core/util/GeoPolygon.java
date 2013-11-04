@@ -31,6 +31,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
@@ -38,6 +40,8 @@ import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 @Data
 public class GeoPolygon {
 
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@JsonProperty("cLa")
 	private double cLa;
 	
@@ -64,6 +68,8 @@ public class GeoPolygon {
 	
 	public void calculateExtrema() {
 		
+		this.logger.debug("Calculating extrema.");
+		
 		this.minLatitude = Double.POSITIVE_INFINITY;
 		this.minLongitude = Double.POSITIVE_INFINITY;
 		
@@ -87,6 +93,7 @@ public class GeoPolygon {
 				new GeoCoordinates(this.minLongitude, this.maxLatitude), 
 				new GeoCoordinates(this.maxLongitude, this.minLatitude));
 		
+		this.logger.debug("Extrema: {}", this.geoBoundingBox);
 	}
 	
 	public static GeoPolygon load(String file) throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
