@@ -64,7 +64,7 @@ implements IVisualizer<I> {
 		Graphics g = image.getGraphics();
 		g.setColor(this.color);
 		
-		image.getGraphics().drawPolygon(this.polygon);
+		g.drawPolygon(this.polygon);
 		
 		return image;
 	}

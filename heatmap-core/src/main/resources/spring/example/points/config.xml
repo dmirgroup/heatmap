@@ -264,6 +264,12 @@
 			
 		<constructor-arg name="visualizer" ref="simpleVisualizer" />
 		<constructor-arg name="polygon" ref="polygon" />
+		
+		<property name="color">
+			<bean class="java.awt.Color">
+				<constructor-arg name="rgb" value="0" />
+			</bean>
+		</property>
 	</bean>
 	
 	<bean id="visualizationFileWriter"
