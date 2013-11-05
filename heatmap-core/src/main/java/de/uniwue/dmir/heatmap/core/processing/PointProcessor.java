@@ -23,6 +23,7 @@ package de.uniwue.dmir.heatmap.core.processing;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,6 +110,16 @@ implements ITileProcessor<TTile> {
 				pointContainer.setSize(pointContainer.getSize() + pointSize.getSize());
 				pointContainer.setPixels(pointContainer.getPixels() + 1);
 				
+				if (pointContainer.getMaxTime() == null) {
+					
+					pointContainer.setMaxTime(pointSize.getMaxDate());
+					
+				} else if (pointSize.getMaxDate().getTime() 
+						> pointContainer.getMaxTime().getTime()) {
+					
+					pointContainer.setMaxTime(pointSize.getMaxDate());
+				}
+				
 			}
 		}
 		
@@ -129,6 +140,7 @@ implements ITileProcessor<TTile> {
 		private double points;
 		private double size;
 		private int pixels;
+		private Date maxTime;
 	}
 
 }

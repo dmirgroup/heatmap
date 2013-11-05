@@ -136,16 +136,21 @@ public class PointTest {
 				new PointFilter<Map<RelativeCoordinates,PointSize>>(
 						new MapPixelAccess<PointSize>());
 
+		
 		ITileFactory<Map<RelativeCoordinates, PointSize>> tileFactory = 
 				new MapTileFactory<PointSize>();
 
-		IFilter<GroupValuePixel, Map<String, Map<RelativeCoordinates, PointSize>>> groupFilter = 
+		ProxyGroupFilter<
+						GroupValuePixel, 
+						Map<RelativeCoordinates, PointSize>, 
+						Map<String, Map<RelativeCoordinates, PointSize>>> groupFilter = 
 				new ProxyGroupFilter<
 					GroupValuePixel, 
 					Map<RelativeCoordinates, PointSize>, 
 					Map<String, Map<RelativeCoordinates, PointSize>>>(
 						new MapGroupAccess<Map<RelativeCoordinates, PointSize>>(tileFactory),
 						filter);
+		groupFilter.setOverallGroup("11OVER!9900ALL");
 		
 		IHeatmap<Map<String, Map<RelativeCoordinates, PointSize>>> heatmap =
 				new Heatmap<GroupValuePixel, Map<String, Map<RelativeCoordinates, PointSize>>>(
@@ -212,6 +217,7 @@ public class PointTest {
 						new MapKeyValueIteratorFactory<String, Map<RelativeCoordinates,PointSize>>(), 
 						fileWriter, 
 						"out/groups");
+		groupProxyFileWriter.setGroupIdMapper(new StringReplaceMapper("[^\\w]", ""));
 		
 		heatmap.processTiles(pointProcessor);
 		heatmap.processTiles(groupProxyFileWriter);

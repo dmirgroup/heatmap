@@ -43,6 +43,7 @@ public class MapperPipeline<T> implements IMapper<T, T> {
 		T result = object;
 		for (IMapper<T, T> m : this.mappers) {
 			result = m.map(result);
+			System.out.println(result);
 		}
 		
 		return result;

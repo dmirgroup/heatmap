@@ -216,12 +216,15 @@
 		<constructor-arg name="regex" value=":" />
 		<constructor-arg name="replacement" value="" />
 	</bean>
-	
-	<bean id="md5Mapper" 
-			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringHashMapper">
+	<bean id="alphaMapper"
+			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper">
+
+		<constructor-arg name="regex" value="[^\w]" />
+		<constructor-arg name="replacement" value="" />
 	</bean>
-	
-	<bean id="macMapper" 
+
+
+	<bean id="macMapper"
 			class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
 		<constructor-arg name="mappers">
 			<list>
@@ -230,18 +233,17 @@
 			</list>
 		</constructor-arg>
 	</bean>
-	
-	<bean id="macFolderMapper" 
-			class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
+
+	<bean id="macFolderMapper"
+		class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
 		<constructor-arg name="mappers">
 			<list>
 				<ref bean="teamMapper" />
-				<ref bean="colonMapper" />
-				<ref bean="md5Mapper" />
+				<ref bean="alphaMapper" />
 			</list>
 		</constructor-arg>
 	</bean>
-	
+
 	
 	<!-- Point processor to calculate points for each group. -->
 	<bean id="pointProcessor" 
@@ -305,9 +307,16 @@
 		<constructor-arg name="visualizer" ref="simpleVisualizer" />
 		<constructor-arg name="polygon" ref="polygon" />
 		
-		<property name="color">
+		<property name="strokeColor">
+			<null />
+		</property>
+		
+		<property name="fillColor">
 			<bean class="java.awt.Color">
-				<constructor-arg name="rgb" value="0" />
+				<constructor-arg name="r" value="0" />
+				<constructor-arg name="g" value="0" />
+				<constructor-arg name="b" value="0" />
+				<constructor-arg name="a" value="0.15" />
 			</bean>
 		</property>
 	</bean>
