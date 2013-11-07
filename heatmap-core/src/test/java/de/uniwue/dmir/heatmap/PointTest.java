@@ -49,6 +49,7 @@ import de.uniwue.dmir.heatmap.core.processing.IToDoubleMapper;
 import de.uniwue.dmir.heatmap.core.processing.PointProcessor;
 import de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter;
 import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
+import de.uniwue.dmir.heatmap.core.processing.mapper.IdentityMapper;
 import de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
@@ -122,15 +123,16 @@ public class PointTest {
 //		requestGeo.setGroupAttribute("meta_install_id");
 //		requestGeo.setValueAttribute("data_bc_1");
 		
-		GeoTileDataSource<GeoPoint, GroupValuePixel> dataSouce =
-				new GeoTileDataSource<GeoPoint, GroupValuePixel>(
+		GeoTileDataSource<GeoPoint<String>, GroupValuePixel> dataSouce =
+				new GeoTileDataSource<GeoPoint<String>, GroupValuePixel>(
 						new CsvGeoDataSource(
 								new File("src/test/resources/test_london.txt"),
 								",",
-								false), 
+								false),
 						projection, 
-						new GeoPointToGeoCoordinateMapper(), 
-						new GeoPointToGroupValuePixelMapper());
+						new GeoPointToGeoCoordinateMapper<String>(), 
+						new GeoPointToGroupValuePixelMapper<String>(
+								new IdentityMapper<String>()));
 		
 		IFilter<GroupValuePixel, Map<RelativeCoordinates, PointSize>> filter = 
 				new PointFilter<Map<RelativeCoordinates,PointSize>>(

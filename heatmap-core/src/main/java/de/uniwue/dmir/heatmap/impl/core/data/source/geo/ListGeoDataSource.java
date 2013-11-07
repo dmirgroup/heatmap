@@ -26,27 +26,28 @@ import java.util.List;
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
 
-public class ListGeoDataSource implements IGeoDataSource<GeoPoint> {
+public class ListGeoDataSource<TGroupDescription> 
+implements IGeoDataSource<GeoPoint<TGroupDescription>> {
 
 	@Getter
-	private List<GeoPoint> list;
+	private List<GeoPoint<TGroupDescription>> list;
 	
 	public ListGeoDataSource() {
-		this.list = new ArrayList<GeoPoint>();
+		this.list = new ArrayList<GeoPoint<TGroupDescription>>();
 	}
 	
-	public ListGeoDataSource(List<GeoPoint> list) {
+	public ListGeoDataSource(List<GeoPoint<TGroupDescription>> list) {
 		this.list = list;
 	}
 	
-	public List<GeoPoint> getData(
+	public List<GeoPoint<TGroupDescription>> getData(
 			double westLon,
 			double northLat, 
 			double eastLon, 
 			double southLat) {
 		
-		List<GeoPoint> result = new ArrayList<GeoPoint>();
-		for (GeoPoint geoPoint : this.list) {
+		List<GeoPoint<TGroupDescription>> result = new ArrayList<GeoPoint<TGroupDescription>>();
+		for (GeoPoint<TGroupDescription> geoPoint : this.list) {
 			if (geoPoint.getGeoCoordinates().getLongitude() > westLon
 					&& geoPoint.getGeoCoordinates().getLongitude() < eastLon
 					&& geoPoint.getGeoCoordinates().getLatitude() > southLat

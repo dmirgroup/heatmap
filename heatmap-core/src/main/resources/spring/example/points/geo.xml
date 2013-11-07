@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="de.uniwue.dmir.heatmap.impl.core.mybatis.GeoPointMapper">
+	<select id="getData" parameterType="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo" resultType="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint">
+		SELECT 
+			geo_lon 					AS 'geoCoordinates.longitude',
+			geo_lat 					AS 'geoCoordinates.latitude',
+			data_bc_1 					AS value,
+			meta_timestamp_recorded		AS timestamp,
+			meta_device_id				AS groupDescription
+			
+		FROM data_airprobe
+		WHERE 
+			meta_timestamp_recorded BETWEEN #{minimumTimestamp} AND #{maximumTimestamp}
+			AND geo_lon BETWEEN #{west} AND #{east}
+			AND geo_lat BETWEEN #{south} AND #{north}
+		ORDER BY meta_timestamp_recorded ASC
+	</select>
+</mapper>
+
+<!-- <resultMap id="userResultMap" type="User">
+	<id property="id" column="user_id" />
+	<result property="username" column="user_name" />
+	<result property="password" column="hashed_password" />
+</resultMap> -->

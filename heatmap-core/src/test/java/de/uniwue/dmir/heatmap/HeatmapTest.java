@@ -71,8 +71,8 @@ public class HeatmapTest {
 		HeatmapSettings settings = new HeatmapSettings();
 		settings.getZoomLevelRange().setMax(7);
 		
-		GeoTileDataSource<GeoPoint, ValuePixel> dataSouce =
-				new GeoTileDataSource<GeoPoint, ValuePixel>(
+		GeoTileDataSource<GeoPoint<String>, ValuePixel> dataSouce =
+				new GeoTileDataSource<GeoPoint<String>, ValuePixel>(
 						new CsvGeoDataSource(
 								new File("src/test/resources/lonlat.txt"),
 								",",
@@ -80,8 +80,8 @@ public class HeatmapTest {
 						new MercatorMapProjection(
 								settings.getTileSize(),
 								settings.getZoomLevelMapper()), 
-						new GeoPointToGeoCoordinateMapper(), 
-						new GeoPointToValuePixelMapper());
+						new GeoPointToGeoCoordinateMapper<String>(), 
+						new GeoPointToValuePixelMapper<String>());
 		
 		IFilter<ValuePixel, Sum[]> filter = 
 				new ImageFilter<ValuePixel, Sum>(

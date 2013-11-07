@@ -26,12 +26,14 @@ import lombok.Data;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 
 @Data
-public class GeoPoint {
+public class GeoPoint<TGroupDescription> {
 	
 	private GeoCoordinates geoCoordinates;
+	
 	private double value;
 	private Date timestamp;
-	private String groupId;
+	
+	private TGroupDescription groupDescription;
 	
 	public GeoPoint() {
 		this(0, 0, 0, null, null);
@@ -42,11 +44,11 @@ public class GeoPoint {
 			double latitude, 
 			double value,
 			Date timestamp,
-			String groupId) {
+			TGroupDescription groupDescription) {
 
 		this.geoCoordinates = new GeoCoordinates(longitude, latitude);
 		this.value = value;
 		this.timestamp = timestamp;
-		this.groupId = groupId;
+		this.groupDescription = groupDescription;
 	}
 }

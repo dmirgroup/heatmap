@@ -24,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import lombok.Data;
 
@@ -111,7 +113,28 @@ public class GeoPolygon {
 	}
 	
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
-		GeoPolygon geoPolygon = load("src/test/resources/polygon-london.json");
+		GeoPolygon geoPolygon = load("src/main/resources/spring/example/points/polygon-london.json");
 		System.out.println(geoPolygon);
+		
+		Calendar cal = 
+//				Calendar.getInstance();
+				Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		
+		// UTC
+		cal.set(Calendar.YEAR, 2013);
+		cal.set(Calendar.MONTH, 11);
+		cal.set(Calendar.DAY_OF_MONTH, 06);
+
+		cal.set(Calendar.HOUR_OF_DAY, 9);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+
+		System.out.println("----------------");
+		System.out.println(cal.getTime());
+//		cal.setTimeZone(TimeZone.getTimeZone("GMT"));
+		System.out.println(cal.getTime());
+		System.out.println(cal.getTime().getTime());
+		System.out.println(cal.getTimeInMillis());
+		
 	}
 }

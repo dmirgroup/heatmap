@@ -33,6 +33,11 @@
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" >
+			<list>
+				<value>#{systemProperties.workdir}/geo.xml</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -119,7 +124,11 @@
 			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper" />
 		</constructor-arg>
 		<constructor-arg name="externalDataMapper">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGroupValuePixelMapper" />
+			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGroupValuePixelMapper">
+				<constructor-arg name="descriptionToIdMapper">
+					<bean class="de.uniwue.dmir.heatmap.core.processing.mapper.IdentityMapper" />
+				</constructor-arg>
+			</bean>
 		</constructor-arg>
 	</bean>
 	
@@ -316,7 +325,7 @@
 				<constructor-arg name="r" value="0" />
 				<constructor-arg name="g" value="0" />
 				<constructor-arg name="b" value="0" />
-				<constructor-arg name="a" value="0.15" />
+				<constructor-arg name="a" value="0.21" />
 			</bean>
 		</property>
 	</bean>
@@ -368,10 +377,10 @@
 		<constructor-arg name="longitudeAttribute" value="geo_lon" />
 		<constructor-arg name="latitudeAttribute" value="geo_lat" />
 		
-		<property name="lonWest" value="#{geoPolygon.geoBoundingBox.northWest.longitude}" />
-		<property name="lonEast" value="#{geoPolygon.geoBoundingBox.southEast.longitude}" />
-		<property name="latNorth" value="#{geoPolygon.geoBoundingBox.northWest.latitude}" />
-		<property name="latSouth" value="#{geoPolygon.geoBoundingBox.southEast.latitude}" />
+		<property name="west" value="#{geoPolygon.geoBoundingBox.northWest.longitude}" />
+		<property name="east" value="#{geoPolygon.geoBoundingBox.southEast.longitude}" />
+		<property name="north" value="#{geoPolygon.geoBoundingBox.northWest.latitude}" />
+		<property name="south" value="#{geoPolygon.geoBoundingBox.southEast.latitude}" />
 	
 		<property name="timestampAttribute" value="meta_timestamp_recorded" />
 		<property name="orderAsc" value="true" />

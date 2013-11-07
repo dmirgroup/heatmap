@@ -20,15 +20,20 @@
  */
 package de.uniwue.dmir.heatmap.impl.core.data.source.geo;
 
+import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.data.type.IToInternalDataMapper;
+import de.uniwue.dmir.heatmap.core.filter.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.GroupValuePixel;
 
-public class GeoPointToGroupValuePixelMapper
-implements IToInternalDataMapper<GeoPoint, GroupValuePixel> {
+@AllArgsConstructor
+public class GeoPointToGroupValuePixelMapper<TGroupDescription>
+implements IToInternalDataMapper<GeoPoint<TGroupDescription>, GroupValuePixel> {
 
+	private IMapper<TGroupDescription, String> descriptionToIdMapper;
+	
 	public GroupValuePixel map(
-			GeoPoint sourceObject,
+			GeoPoint<TGroupDescription> sourceObject,
 			RelativeCoordinates relativeCoordinates) {
 		
 		return new GroupValuePixel(
@@ -36,7 +41,8 @@ implements IToInternalDataMapper<GeoPoint, GroupValuePixel> {
 				relativeCoordinates.getY(), 
 				sourceObject.getValue(),
 				sourceObject.getTimestamp(),
-				sourceObject.getGroupId());
+				this.descriptionToIdMapper.map(
+						sourceObject.getGroupDescription()));
 	}
 	
 }

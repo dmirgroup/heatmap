@@ -29,11 +29,11 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class RequestGeo extends RequestSettingsUser {
 
-	private double lonWest;
-	private double lonEast;
+	private double west;
+	private double east;
 
-	private double latNorth;
-	private double latSouth;
+	private double north;
+	private double south;
 	
 	public RequestGeo(
 			String table, 

@@ -23,10 +23,10 @@ package de.uniwue.dmir.heatmap.impl.core.data.source.geo;
 import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.source.geo.IToGeoCoordinatesMapper;
 
-public class GeoPointToGeoCoordinateMapper 
-implements IToGeoCoordinatesMapper<GeoPoint> {
+public class GeoPointToGeoCoordinateMapper<TGroupDescription>
+implements IToGeoCoordinatesMapper<GeoPoint<TGroupDescription>> {
 
-	public GeoCoordinates map(GeoPoint object) {
+	public GeoCoordinates map(GeoPoint<TGroupDescription> object) {
 		return object.getGeoCoordinates();
 	}
 	

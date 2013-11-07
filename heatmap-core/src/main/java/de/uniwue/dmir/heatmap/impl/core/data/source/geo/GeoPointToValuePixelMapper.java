@@ -24,11 +24,11 @@ import de.uniwue.dmir.heatmap.core.data.type.IToInternalDataMapper;
 import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
 
-public class GeoPointToValuePixelMapper
-implements IToInternalDataMapper<GeoPoint, ValuePixel> {
+public class GeoPointToValuePixelMapper<TGroupDescription>
+implements IToInternalDataMapper<GeoPoint<TGroupDescription>, ValuePixel> {
 
 	public ValuePixel map(
-			GeoPoint sourceObject,
+			GeoPoint<TGroupDescription> sourceObject,
 			RelativeCoordinates relativeCoordinates) {
 		
 		return new ValuePixel(

@@ -31,14 +31,15 @@ import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
 import de.uniwue.dmir.heatmap.impl.core.mybatis.GeoPointMapper;
 
-public class DatabaseGeoDataSource implements IGeoDataSource<GeoPoint> {
+public class DatabaseGeoDataSource<TGroupDescription>
+implements IGeoDataSource<GeoPoint<TGroupDescription>> {
 
 	private RequestGeo request;
 	
 	@Autowired
 	@Getter
 	@Setter
-	private GeoPointMapper mapper;
+	private GeoPointMapper<TGroupDescription> mapper;
 	
 	public DatabaseGeoDataSource(RequestGeo request) {
 		
@@ -53,16 +54,24 @@ public class DatabaseGeoDataSource implements IGeoDataSource<GeoPoint> {
 	}
 	
 	@Override
-	public List<GeoPoint> getData(
-			double westLon, double northLat,
-			double eastLon, double southLat) {
+	public List<GeoPoint<TGroupDescription>> getData(
+			double west, double north,
+			double east, double south) {
 		
-		this.request.setLatNorth(northLat);
-		this.request.setLatSouth(southLat);
-		this.request.setLonEast(eastLon);
-		this.request.setLonWest(westLon);
+		this.request.setNorth(north);
+		this.request.setSouth(south);
+		this.request.setEast(east);
+		this.request.setWest(west);
 		
-		return this.mapper.getData(this.request);
+		List<GeoPoint<TGroupDescription>> points = 
+				this.mapper.getData(this.request);
+
+//		System.out.println(points.get(99));
+//		System.out.println(points.get(1001));
+//		System.out.println(points.get(2001));
+//		System.out.println(points.get(21001));
+		
+		return points;
 	}
 
 }

@@ -31,13 +31,13 @@ import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CsvGeoDataSource 
-extends ListGeoDataSource {
+public class CsvGeoDataSource
+extends ListGeoDataSource<String> {
 
 	@Getter
 	@Setter
 	private SimpleDateFormat dateFormat = 
-		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+			new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
 	public CsvGeoDataSource(
 			File file, 
@@ -57,14 +57,13 @@ extends ListGeoDataSource {
 
 			String[] split = line.split(separator);
 			
-			GeoPoint geoPoint = new GeoPoint();
+			GeoPoint<String> geoPoint = new GeoPoint<String>();
 			
 			double longitude = Double.parseDouble(split[0]);
 			geoPoint.getGeoCoordinates().setLongitude(longitude);
 			
 			double latitude = Double.parseDouble(split[1]);
 			geoPoint.getGeoCoordinates().setLatitude(latitude);
-			
 			
 			if (split.length > 2) {
 				double value = Double.parseDouble(split[2]);
@@ -84,13 +83,13 @@ extends ListGeoDataSource {
 			
 			if (split.length > 4) {
 				String groupId = split[4];
-				geoPoint.setGroupId(groupId);
+				geoPoint.setGroupDescription(groupId);
 			}
 			
 			this.getList().add(geoPoint);
 			
 			line = bufferedReader.readLine();
-			System.out.println(geoPoint);
+//			System.out.println(geoPoint);
 		}
 		
 		bufferedReader.close();

@@ -62,20 +62,20 @@ public class SpringTest2 {
 						"spring/example/settings.xml");
 		
 		@SuppressWarnings("unchecked")
-		IGeoDataSource<GeoPoint> dataSource = 
+		IGeoDataSource<GeoPoint<String>> dataSource = 
 				appContext.getBean(IGeoDataSource.class);
 		
 		HeatmapSettings settings = new HeatmapSettings();
 		settings.getZoomLevelRange().setMax(7);
 		
-		GeoTileDataSource<GeoPoint, ValuePixel> dataSouce =
-				new GeoTileDataSource<GeoPoint, ValuePixel>(
+		GeoTileDataSource<GeoPoint<String>, ValuePixel> dataSouce =
+				new GeoTileDataSource<GeoPoint<String>, ValuePixel>(
 						dataSource,
 						new MercatorMapProjection(
 								settings.getTileSize(),
 								settings.getZoomLevelMapper()), 
-						new GeoPointToGeoCoordinateMapper(), 
-						new GeoPointToValuePixelMapper());
+						new GeoPointToGeoCoordinateMapper<String>(), 
+						new GeoPointToValuePixelMapper<String>());
 		
 		IFilter<ValuePixel, Sum[]> filter = 
 				new ImageFilter<ValuePixel, Sum>(

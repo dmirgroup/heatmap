@@ -39,10 +39,10 @@ public class SpringTest {
 						"spring/applicationContext.xml");
 		
 		@SuppressWarnings("unchecked")
-		IGeoDataSource<GeoPoint> geoDataSource = 
+		IGeoDataSource<GeoPoint<String>> geoDataSource = 
 				appContext.getBean(IGeoDataSource.class);
 		
-		List<GeoPoint> points = geoDataSource.getData(10, 10, 100, 100);
+		List<GeoPoint<String>> points = geoDataSource.getData(10, 10, 100, 100);
 		for (int i = 0; i < 10; i++) {
 			System.out.println(points.get(i));
 		}

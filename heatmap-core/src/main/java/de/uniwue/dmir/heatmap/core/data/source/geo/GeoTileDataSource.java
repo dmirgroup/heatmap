@@ -40,7 +40,7 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  *
- * @param <S> souce data type
+ * @param <S> source data type
  * @param <T> tile data type
  */
 @AllArgsConstructor
