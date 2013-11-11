@@ -29,28 +29,28 @@ import javax.imageio.ImageIO;
 
 import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.core.ArrayTileFactory;
-import de.uniwue.dmir.heatmap.core.Heatmap;
+import de.uniwue.dmir.heatmap.core.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
-import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
-import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
-import de.uniwue.dmir.heatmap.core.visualizer.IColorScheme;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
+import de.uniwue.dmir.heatmap.core.data.sources.GeoHeatmapDatasource;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.CsvGeoDatasource;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToGeoCoordinateMapper;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection;
+import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
+import de.uniwue.dmir.heatmap.core.data.types.mappers.ValuePixelToSumMapper;
+import de.uniwue.dmir.heatmap.core.filters.ImageFilter;
+import de.uniwue.dmir.heatmap.core.filters.operators.SumAdder;
+import de.uniwue.dmir.heatmap.core.filters.operators.SumScalarMultiplier;
+import de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap;
+import de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.ImageColorScheme;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.SumAlphaVisualizer;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
+import de.uniwue.dmir.heatmap.core.tiles.factories.ArrayTileFactory;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
 import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection;
-import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.Sum;
-import de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToSumMapper;
-import de.uniwue.dmir.heatmap.impl.core.filter.ImageFilter;
-import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumAdder;
-import de.uniwue.dmir.heatmap.impl.core.filter.operators.SumScalarMultiplier;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.SumAlphaVisualizer;
 
 public class HeatmapTest {
 
@@ -71,9 +71,9 @@ public class HeatmapTest {
 		HeatmapSettings settings = new HeatmapSettings();
 		settings.getZoomLevelRange().setMax(7);
 		
-		GeoTileDataSource<GeoPoint<String>, ValuePixel> dataSouce =
-				new GeoTileDataSource<GeoPoint<String>, ValuePixel>(
-						new CsvGeoDataSource(
+		GeoHeatmapDatasource<GeoPoint<String>, ValuePixel> dataSouce =
+				new GeoHeatmapDatasource<GeoPoint<String>, ValuePixel>(
+						new CsvGeoDatasource(
 								new File("src/test/resources/lonlat.txt"),
 								",",
 								false), 
@@ -100,7 +100,7 @@ public class HeatmapTest {
 //						42, 42, 21, 21);
 		
 		IHeatmap<Sum[]> heatmap =
-				new Heatmap<ValuePixel, Sum[]>(
+				new DefaultHeatmap<ValuePixel, Sum[]>(
 						new ArrayTileFactory<Sum>(Sum.class),
 						dataSouce, 
 						filter, 
@@ -120,8 +120,8 @@ public class HeatmapTest {
 				new Color(colorImage.getRGB(0, colorImage.getHeight() - 1), true));
 		visualizer.setForceAlphaValue(true);
 
-		VisualizationFileWriter<Sum[]> heatmapFileWriter =
-				new VisualizationFileWriter<Sum[]>(
+		VisualizationFileWriterProcessor<Sum[]> heatmapFileWriter =
+				new VisualizationFileWriterProcessor<Sum[]>(
 						"out/tiles",
 						new DefaultFileStrategy(), 
 						"png",

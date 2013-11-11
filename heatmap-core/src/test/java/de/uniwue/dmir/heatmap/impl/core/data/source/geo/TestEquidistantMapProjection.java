@@ -26,13 +26,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.impl.core.data.type.external.ValuePixel;
-import de.uniwue.dmir.heatmap.impl.core.filter.AbstractConfigurableFilter;
+import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection;
+import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
+import de.uniwue.dmir.heatmap.core.filters.AbstractConfigurableFilter;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 public class TestEquidistantMapProjection {
 	
@@ -43,8 +44,8 @@ public class TestEquidistantMapProjection {
 		
 		EquidistantProjection equidistantProjection = new EquidistantProjection(
 				new GeoBoundingBox(
-						new GeoCoordinates(0 + offset, 10 + offset), 
-						new GeoCoordinates(10 + offset, 0 + offset)), 
+						new GeoCoordinates(0 + offset, 0 + offset), 
+						new GeoCoordinates(10 + offset, 10 + offset)), 
 				new TileSize(10, 10));
 		
 		RelativeCoordinates r1 = 
@@ -86,8 +87,8 @@ public class TestEquidistantMapProjection {
 		
 		EquidistantProjection equidistantProjection = new EquidistantProjection(
 				new GeoBoundingBox(
-						new GeoCoordinates(0 + offset, 10 + offset), 
-						new GeoCoordinates(10 + offset, 0 + offset)), 
+						new GeoCoordinates(0 + offset, 0 + offset), 
+						new GeoCoordinates(10 + offset, 10 + offset)), 
 				new TileSize(10, 10));
 		
 		IFilter<?, ?> filter = new AbstractConfigurableFilter<ValuePixel, Object>() {

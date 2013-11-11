@@ -36,8 +36,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 
 @Data
 public class GeoPolygon {
@@ -92,17 +92,19 @@ public class GeoPolygon {
 		}
 		
 		this.geoBoundingBox = new GeoBoundingBox(
-				new GeoCoordinates(this.minLongitude, this.maxLatitude), 
-				new GeoCoordinates(this.maxLongitude, this.minLatitude));
+				new GeoCoordinates(this.minLongitude, this.minLatitude), 
+				new GeoCoordinates(this.maxLongitude, this.maxLatitude));
 		
 		this.logger.debug("Extrema: {}", this.geoBoundingBox);
 	}
 	
-	public static GeoPolygon load(String file) throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
+	public static GeoPolygon load(String file) 
+	throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
 		return load(new FileInputStream(file));
 	}
 
-	public static GeoPolygon load(InputStream inputStream) throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
+	public static GeoPolygon load(InputStream inputStream) 
+	throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		GeoPolygon geoPolygon = 
 				objectMapper.readValue(

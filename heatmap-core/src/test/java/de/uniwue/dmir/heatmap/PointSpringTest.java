@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
+import de.uniwue.dmir.heatmap.core.ITileProcessor;
 
 public class PointSpringTest {
 

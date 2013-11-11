@@ -22,9 +22,7 @@ package de.uniwue.dmir.heatmap.core;
 
 import java.util.Collection;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.data.type.IExternalData;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
  * A filter merges a given data point into the given tile.
@@ -34,7 +32,7 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * @param <E> data type (external) to merge into the tile 
  * @param <I> data type (internal) for merged data as stored in the tile
  */
-public interface IFilter<E extends IExternalData, I> {
+public interface IFilter<E, I> {
 
 	/**
 	 * Merges a given data point into the given tile.

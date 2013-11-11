@@ -20,19 +20,18 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
  * Class for creating empty tiles.
  * 
  * @author Martin Becker
  *
- * @param <I> type of tile
+ * @param <TTile> type of tile
  */
-public interface ITileFactory<I> {
+public interface ITileFactory<TTile> {
 	
-	I newInstance(
+	TTile newInstance(
 			TileSize tileSize, 
 			TileCoordinates tileCoordinates);
 	

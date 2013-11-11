@@ -30,54 +30,51 @@ import javax.imageio.ImageIO;
 
 import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.core.Heatmap;
+import de.uniwue.dmir.heatmap.core.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings;
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
 import de.uniwue.dmir.heatmap.core.ITileFactory;
-import de.uniwue.dmir.heatmap.core.MapTileFactory;
-import de.uniwue.dmir.heatmap.core.MapTileFactory2;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource;
-import de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy;
-import de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory.CombinedKeyValueFilter;
-import de.uniwue.dmir.heatmap.core.processing.GroupProxyFileWriter;
-import de.uniwue.dmir.heatmap.core.processing.IToDoubleMapper;
-import de.uniwue.dmir.heatmap.core.processing.PointProcessor;
-import de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter;
-import de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter;
-import de.uniwue.dmir.heatmap.core.processing.mapper.IdentityMapper;
-import de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.RelativeCoordinates;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.data.sources.GeoHeatmapDatasource;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.CsvGeoDatasource;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToGeoCoordinateMapper;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection;
+import de.uniwue.dmir.heatmap.core.filters.PointFilter;
+import de.uniwue.dmir.heatmap.core.filters.ProxyGroupFilter;
+import de.uniwue.dmir.heatmap.core.filters.access.MapGroupAccess;
+import de.uniwue.dmir.heatmap.core.filters.access.MapPixelAccess;
+import de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap;
+import de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
+import de.uniwue.dmir.heatmap.core.processors.PointProcessor;
+import de.uniwue.dmir.heatmap.core.processors.PolygonRelativeCoordinatesFilter;
+import de.uniwue.dmir.heatmap.core.processors.ProxyFilteredKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.processors.ProxyFilteredKeyValueIteratorFactory.CombinedKeyValueFilter;
+import de.uniwue.dmir.heatmap.core.processors.ProxyGroupFileWriter;
+import de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor;
+import de.uniwue.dmir.heatmap.core.processors.mappers.IdentityMapper;
+import de.uniwue.dmir.heatmap.core.processors.mappers.StringReplaceMapper;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.ImageColorScheme;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.MapKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.SimpleVisualizer;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.StaticPolygonProxyVisualizer;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.colors.CombinedColorPipe;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.colors.SimpleColorPipe;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.factories.GenericMapTileFactory;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
 import de.uniwue.dmir.heatmap.core.util.GeoPolygon;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.CsvGeoDataSource;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.EquidistantProjection;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGroupValuePixelMapper;
-import de.uniwue.dmir.heatmap.impl.core.data.type.external.GroupValuePixel;
-import de.uniwue.dmir.heatmap.impl.core.data.type.internal.PointSize;
-import de.uniwue.dmir.heatmap.impl.core.filter.MapGroupAccess;
-import de.uniwue.dmir.heatmap.impl.core.filter.MapPixelAccess;
-import de.uniwue.dmir.heatmap.impl.core.filter.PointFilter;
-import de.uniwue.dmir.heatmap.impl.core.filter.ProxyGroupFilter;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.SimpleVisualizer;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.StaticPolygonProxyVisualizer;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.colors.CombinedColorPipe;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.colors.SimpleColorPipe;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance;
 
 public class PointTest {
 
 	public static final GeoBoundingBox TEST = new GeoBoundingBox(
-			new GeoCoordinates(-30,  30), 
-			new GeoCoordinates( 30, -30));
+			new GeoCoordinates(-30, -30), 
+			new GeoCoordinates(+30, +30));
 	
 	@Test
 	public void testHeatmap() throws IOException {
@@ -123,9 +120,9 @@ public class PointTest {
 //		requestGeo.setGroupAttribute("meta_install_id");
 //		requestGeo.setValueAttribute("data_bc_1");
 		
-		GeoTileDataSource<GeoPoint<String>, GroupValuePixel> dataSouce =
-				new GeoTileDataSource<GeoPoint<String>, GroupValuePixel>(
-						new CsvGeoDataSource(
+		GeoHeatmapDatasource<GeoPoint<String>, GroupValuePixel> dataSouce =
+				new GeoHeatmapDatasource<GeoPoint<String>, GroupValuePixel>(
+						new CsvGeoDatasource(
 								new File("src/test/resources/test_london.txt"),
 								",",
 								false),
@@ -155,8 +152,8 @@ public class PointTest {
 		groupFilter.setOverallGroup("11OVER!9900ALL");
 		
 		IHeatmap<Map<String, Map<RelativeCoordinates, PointSize>>> heatmap =
-				new Heatmap<GroupValuePixel, Map<String, Map<RelativeCoordinates, PointSize>>>(
-						new MapTileFactory2<String, Map<RelativeCoordinates, PointSize>>(),
+				new DefaultHeatmap<GroupValuePixel, Map<String, Map<RelativeCoordinates, PointSize>>>(
+						new GenericMapTileFactory<String, Map<RelativeCoordinates, PointSize>>(),
 						dataSouce, 
 						groupFilter,
 						settings);
@@ -172,8 +169,8 @@ public class PointTest {
 				null, 
 				projection);
 		
-		FilteredProxyKeyValueIteratorFactory<Map<RelativeCoordinates, PointSize>, RelativeCoordinates, PointSize> pixelIterator = 
-				new FilteredProxyKeyValueIteratorFactory<Map<RelativeCoordinates, PointSize>, RelativeCoordinates, PointSize>(
+		ProxyFilteredKeyValueIteratorFactory<Map<RelativeCoordinates, PointSize>, RelativeCoordinates, PointSize> pixelIterator = 
+				new ProxyFilteredKeyValueIteratorFactory<Map<RelativeCoordinates, PointSize>, RelativeCoordinates, PointSize>(
 						new MapKeyValueIteratorFactory<RelativeCoordinates, PointSize>(),
 						new CombinedKeyValueFilter<RelativeCoordinates, PointSize>(
 									new PolygonRelativeCoordinatesFilter(
@@ -207,15 +204,15 @@ public class PointTest {
 		StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSize>> visualizer =
 				new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSize>>(simpleVisualizer, polygon);
 		
-		VisualizationFileWriter<Map<RelativeCoordinates, PointSize>> fileWriter =
-				new VisualizationFileWriter<Map<RelativeCoordinates,PointSize>>(
+		VisualizationFileWriterProcessor<Map<RelativeCoordinates, PointSize>> fileWriter =
+				new VisualizationFileWriterProcessor<Map<RelativeCoordinates,PointSize>>(
 						"", 
 						new DefaultFileStrategy(), 
 						"png", 
 						visualizer);
 		
-		GroupProxyFileWriter<Map<RelativeCoordinates, PointSize>, Map<String, Map<RelativeCoordinates, PointSize>>> groupProxyFileWriter =
-				new GroupProxyFileWriter<Map<RelativeCoordinates,PointSize>, Map<String,Map<RelativeCoordinates,PointSize>>>(
+		ProxyGroupFileWriter<Map<RelativeCoordinates, PointSize>, Map<String, Map<RelativeCoordinates, PointSize>>> groupProxyFileWriter =
+				new ProxyGroupFileWriter<Map<RelativeCoordinates,PointSize>, Map<String,Map<RelativeCoordinates,PointSize>>>(
 						new MapKeyValueIteratorFactory<String, Map<RelativeCoordinates,PointSize>>(), 
 						fileWriter, 
 						"out/groups");

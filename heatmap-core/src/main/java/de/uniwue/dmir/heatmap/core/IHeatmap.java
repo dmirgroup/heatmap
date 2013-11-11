@@ -20,11 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import de.uniwue.dmir.heatmap.core.ITileCoordinatesProjection.IdentityTileCoordinatesProjection;
-import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
  * <h1>Tiles</h1>
@@ -49,7 +45,7 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * 		the heat map's dimensions are set via {@link IHeatmapDimensions},
  * 	</li>
  * 	<li>
- * 		an {@link IExternalDataSource}, to get the data according to tile coordinates
+ * 		an {@link IHeatmapDatasource}, to get the data according to tile coordinates
  * 	</li>
  * 	<li>
  * 		a {@link IFilter} to merge data points into a tile.
@@ -62,7 +58,7 @@ import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  */
-public interface IHeatmap<I> {
+public interface IHeatmap<TTile> {
 	
 	public static final int DEFAULT_TILE_WIDTH = 256;
 	public static final int DEFAULT_TILE_HEIGHT = 256;
@@ -81,69 +77,7 @@ public interface IHeatmap<I> {
 	 * @return <code>null</code> if the tile does not contain data; 
 	 * 		the tile corresponding to the coordinates otherwise
 	 */
-	I getTile(TileCoordinates coordinates);
+	TTile getTile(TileCoordinates coordinates);
 	
-	void processTiles(ITileProcessor<I> processor);
-	
-	@Data
-	@AllArgsConstructor
-	public static class HeatmapSettings {
-		
-		private TileSize tileSize;
-		private ZoomLevelRange zoomLevelRange;
-		private IZoomLevelMapper zoomLevelMapper;
-		private ITileCoordinatesProjection tileProjection;
-		
-		public HeatmapSettings() {
-			
-			this(
-					new TileSize(
-						DEFAULT_TILE_WIDTH, 
-						DEFAULT_TILE_HEIGHT),
-			
-					new ZoomLevelRange(
-						DEFAULT_MIN_ZOOM_LEVEL, 
-						DEFAULT_MAX_ZOOM_LEVEL),
-			
-					new DefaultZoomLevelMapper(),
-			
-					new IdentityTileCoordinatesProjection());
-		}
-	}
-	
-	@Data
-	@AllArgsConstructor
-	public static class TileSize {
-		private int width;
-		private int height;
-	}
-	
-	@Data
-	@AllArgsConstructor
-	public static class ZoomLevelRange {
-		private int min;
-		private int max;
-	}
-
-	@Data
-	@AllArgsConstructor
-	public static class ZoomLevelSize {
-		private int width;
-		private int height;
-	}
-	
-	public static interface IZoomLevelMapper {
-		public ZoomLevelSize getSize(int zoom);
-	}
-	
-	public static class DefaultZoomLevelMapper 
-	implements IZoomLevelMapper {
-
-		@Override
-		public ZoomLevelSize getSize(int zoom) {
-			int xy = (1 << zoom); // log scale using base 2
-			return new ZoomLevelSize(xy, xy);
-		}
-		
-	}
+	void processTiles(ITileProcessor<TTile> processor);
 }

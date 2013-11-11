@@ -24,11 +24,11 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.EquidistantProjection;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IDistanceFunction;
+import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 
 @AllArgsConstructor
 public class EquidistantProjectionTileSizeFactoryBean 

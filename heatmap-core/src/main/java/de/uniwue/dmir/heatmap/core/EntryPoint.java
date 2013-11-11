@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import de.uniwue.dmir.heatmap.core.processing.ITileProcessor;
-
 public class EntryPoint {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);

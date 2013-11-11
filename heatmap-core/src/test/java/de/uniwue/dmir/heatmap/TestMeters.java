@@ -20,19 +20,19 @@
  */
 package de.uniwue.dmir.heatmap;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap.DefaultZoomLevelMapper;
-import de.uniwue.dmir.heatmap.core.IHeatmap.IZoomLevelMapper;
-import de.uniwue.dmir.heatmap.core.IHeatmap.TileSize;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.source.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection;
-import de.uniwue.dmir.heatmap.impl.core.filter.PointFilter;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance.EquidistantApproximation;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance.Cosine;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance.Haversine;
-import de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.IDistanceFunction;
+import de.uniwue.dmir.heatmap.core.DefaultZoomLevelMapper;
+import de.uniwue.dmir.heatmap.core.IZoomLevelMapper;
+import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection;
+import de.uniwue.dmir.heatmap.core.filters.PointFilter;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Cosine;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.EquidistantApproximation;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Haversine;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 public class TestMeters {
 	

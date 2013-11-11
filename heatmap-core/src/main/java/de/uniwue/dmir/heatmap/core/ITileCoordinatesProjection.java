@@ -20,8 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap.IZoomLevelMapper;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
  * For tile indexing, we adopted a top-left centered indexing scheme with

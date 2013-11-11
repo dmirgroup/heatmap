@@ -26,7 +26,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.ImageColorScheme;
 
 @AllArgsConstructor
 public class RangeFactoryBean implements FactoryBean<double[]> {

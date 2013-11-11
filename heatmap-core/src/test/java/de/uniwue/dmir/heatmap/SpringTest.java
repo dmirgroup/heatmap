@@ -26,8 +26,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import de.uniwue.dmir.heatmap.core.data.source.geo.IGeoDataSource;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
 
 public class SpringTest {
 
@@ -39,8 +39,8 @@ public class SpringTest {
 						"spring/applicationContext.xml");
 		
 		@SuppressWarnings("unchecked")
-		IGeoDataSource<GeoPoint<String>> geoDataSource = 
-				appContext.getBean(IGeoDataSource.class);
+		IGeoDatasource<GeoPoint<String>> geoDataSource = 
+				appContext.getBean(IGeoDatasource.class);
 		
 		List<GeoPoint<String>> points = geoDataSource.getData(10, 10, 100, 100);
 		for (int i = 0; i < 10; i++) {

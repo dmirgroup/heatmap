@@ -26,9 +26,9 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import de.uniwue.dmir.heatmap.core.data.source.geo.IMapProjection;
-import de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter;
-import de.uniwue.dmir.heatmap.core.tile.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.IMapProjection;
+import de.uniwue.dmir.heatmap.core.processors.PolygonRelativeCoordinatesFilter;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 @AllArgsConstructor
 public class PolygonFromGeoPolygonFacoryBean 
