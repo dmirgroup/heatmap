@@ -2,13 +2,13 @@ package de.uniwue.dmir.heatmap.core.data.sources.geo.data.types;
 
 import java.util.Date;
 
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import lombok.Data;
 
 @Data
-public class ApicPoint {
+public class ApicPoint implements IGeoPoint {
 	
-	private double longtiude;
-	private double latitude;
+	private GeoCoordinates geoCoordinates;
 	private String geoProvider;
 	
 	private Date timestampReceived;

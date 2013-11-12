@@ -21,13 +21,13 @@
 package de.uniwue.dmir.heatmap.core.data.sources.geo.mappers;
 
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.IGeoPoint;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
-public class GeoPointToGeoCoordinateMapper<TGroupDescription>
-implements IMapper<GeoPoint<TGroupDescription>, GeoCoordinates> {
+public class GeoPointToGeoCoordinateMapper<TData extends IGeoPoint>
+implements IMapper<TData, GeoCoordinates> {
 
-	public GeoCoordinates map(GeoPoint<TGroupDescription> object) {
+	public GeoCoordinates map(TData object) {
 		return object.getGeoCoordinates();
 	}
 	

@@ -35,35 +35,34 @@ import de.uniwue.dmir.heatmap.core.IHeatmap;
 import de.uniwue.dmir.heatmap.core.IHeatmapDatasource;
 import de.uniwue.dmir.heatmap.core.ITileFactory;
 import de.uniwue.dmir.heatmap.core.ITileProcessor;
-import de.uniwue.dmir.heatmap.core.data.types.IDataWithRelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
-public class DefaultHeatmap<E extends IDataWithRelativeCoordinates, I> 
-implements IHeatmap<I> {
+public class DefaultHeatmap<TData, TTile> 
+implements IHeatmap<TTile> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	/**
 	 * Factory to create empty tiles.
 	 */
-	private ITileFactory<I> tileFactory;
+	private ITileFactory<TTile> tileFactory;
 
 	/**
 	 * Data source providing the data points for the tiles.
 	 */
-	private IHeatmapDatasource<E> dataSource;
+	private IHeatmapDatasource<TData> dataSource;
 	
 	/**
 	 * Filter used to add points to tiles.
 	 */
-	private IFilter<E, I> filter;
+	private IFilter<TData, TTile> filter;
 	
 	/**
 	 * Heatmap providing tile seeds.
 	 */
 	@Getter
 	@Setter
-	private IHeatmap<I> seed;
+	private IHeatmap<TTile> seed;
 	
 	/**
 	 * Heatmap settings.
@@ -72,23 +71,23 @@ implements IHeatmap<I> {
 	private HeatmapSettings settings;
 	
 	public DefaultHeatmap(
-			ITileFactory<I> tileFactory,
-			IHeatmapDatasource<E> dataSource,
-			IFilter<E, I> filter,
+			ITileFactory<TTile> tileFactory,
+			IHeatmapDatasource<TData> dataSource,
+			IFilter<TData, TTile> filter,
 			HeatmapSettings settings) {
 		
 		this(tileFactory, dataSource, filter, settings, null);
 	}
 	
 	public DefaultHeatmap(
-			ITileFactory<I> tileFactory,
-			IHeatmapDatasource<E> dataSource,
-			IFilter<E, I> filter,
+			ITileFactory<TTile> tileFactory,
+			IHeatmapDatasource<TData> dataSource,
+			IFilter<TData, TTile> filter,
 			HeatmapSettings settings,
-			IHeatmap<I> seed) {
+			IHeatmap<TTile> seed) {
 		
 		if (seed == null) {
-			this.seed = new EmptyHeatmap<I>(settings);
+			this.seed = new EmptyHeatmap<TTile>(settings);
 		} else {
 			this.seed = seed;
 		}
@@ -100,7 +99,7 @@ implements IHeatmap<I> {
 	}
 	
 	@Override
-	public I getTile(TileCoordinates tileCoordinates) {
+	public TTile getTile(TileCoordinates tileCoordinates) {
 		
 		// initializing stop watch
 		StopWatch stopWatch = new StopWatch();
@@ -118,7 +117,7 @@ implements IHeatmap<I> {
 		stopWatch.reset();
 		stopWatch.start();
 		
-		I tile = this.seed.getTile(projectedTileCoordinates);
+		TTile tile = this.seed.getTile(projectedTileCoordinates);
 		
 		stopWatch.stop();
 		if (tile == null) {
@@ -134,7 +133,7 @@ implements IHeatmap<I> {
 		stopWatch.reset();
 		stopWatch.start();
 		
-		Iterator<E> externalData = this.dataSource.getData(
+		Iterator<TData> externalData = this.dataSource.getData(
 				projectedTileCoordinates, 
 				this.filter);
 		
@@ -167,7 +166,7 @@ implements IHeatmap<I> {
 		
 		int externalDataPointCount = 0;
 		while(externalData.hasNext()) {
-			E externalDataPoint = externalData.next();
+			TData externalDataPoint = externalData.next();
 			this.filter.filter(
 					externalDataPoint, 
 					tile, 
@@ -186,7 +185,7 @@ implements IHeatmap<I> {
 	}
 
 	@Override
-	public void processTiles(ITileProcessor<I> processor) {
+	public void processTiles(ITileProcessor<TTile> processor) {
 		
 		this.logger.debug("Processing tiles.");
 		
@@ -211,7 +210,7 @@ implements IHeatmap<I> {
 			int tileCount = 0;
 			while (iterator.hasNext()) {
 				TileCoordinates coordinates = iterator.next();
-				I tile = this.getTile(coordinates);
+				TTile tile = this.getTile(coordinates);
 				processor.process(tile, this.settings.getTileSize(), coordinates);
 				tileCount ++;
 			}

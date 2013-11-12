@@ -22,6 +22,7 @@ package de.uniwue.dmir.heatmap.core.data.sources.geo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * A tuple consisting of longitude and latitude.
@@ -30,6 +31,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class GeoCoordinates {
 	private double longitude;
 	private double latitude;

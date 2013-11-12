@@ -74,37 +74,111 @@
 
 
 
-
-	
-	<bean id="geoPolygon"
+	<bean id="geoPolygonAntwerp"
 			class="de.uniwue.dmir.heatmap.core.util.GeoPolygonFactoryBean">
-	
-		<constructor-arg name="resource" value="${polygon.file}" />
+
+		<constructor-arg name="resource" value="${polygon.file.antwerp}" />
 	</bean>
 	
-	<bean id="tileSize"
-			class ="de.uniwue.dmir.heatmap.core.util.EquidistantProjectionTileSizeFactoryBean">
+	<bean id="geoPolygonKassel"
+			class="de.uniwue.dmir.heatmap.core.util.GeoPolygonFactoryBean">
 	
+		<constructor-arg name="resource" value="${polygon.file.kassel}" />
+	</bean>
+	
+	<bean id="geoPolygonLondon"
+			class="de.uniwue.dmir.heatmap.core.util.GeoPolygonFactoryBean">
+
+		<constructor-arg name="resource" value="${polygon.file.london}" />
+	</bean>
+	
+	<bean id="geoPolygonTurin"
+			class="de.uniwue.dmir.heatmap.core.util.GeoPolygonFactoryBean">
+
+		<constructor-arg name="resource" value="${polygon.file.turin}" />
+	</bean>
+	
+	<bean id="abstractTileSize"
+			class="de.uniwue.dmir.heatmap.core.util.EquidistantProjectionTileSizeFactoryBean"
+			abstract="true">
+			
 		<constructor-arg name="widthMeters" value="${width.meters}" />
 		<constructor-arg name="heightMeters" value="${height.meters}" />
 		<constructor-arg name="northReference" value="${north.reference}" />
-		<constructor-arg name="geoBoundingBox" value="#{geoPolygon.geoBoundingBox}" />
 		<constructor-arg name="distanceFunction">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.rbf.GreatCircleDistance.Haversine" />
-		</constructor-arg>
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Haversine" />
+		</constructor-arg>	
+	</bean>
+	
+	<bean id="tileSizeAntwerp" parent="abstractTileSize">
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonAntwerp.geoBoundingBox}" />
+	</bean>
+	
+	<bean id="tileSizeKassel" parent="abstractTileSize">
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonKassel.geoBoundingBox}" />
+	</bean>
+	
+	<bean id="tileSizeLondon" parent="abstractTileSize">
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonLondon.geoBoundingBox}" />
+	</bean>
+	
+	<bean id="tileSizeTurin" parent="abstractTileSize">
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonTurin.geoBoundingBox}" />
+	</bean>
+
+	<bean id="projectionAntwerp"
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection">
+	
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonAntwerp.geoBoundingBox}" />	
+		<constructor-arg name="tileSize" ref="tileSizeAntwerp" />	
+	</bean>
+	
+	<bean id="projectionKassel"
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection">
+	
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonKassel.geoBoundingBox}" />	
+		<constructor-arg name="tileSize" ref="tileSizeKassel" />	
+	</bean>
+	
+	<bean id="projectionLondon"
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection">
+	
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonLondon.geoBoundingBox}" />	
+		<constructor-arg name="tileSize" ref="tileSizeLondon" />	
+	</bean>
+	
+	<bean id="projectionTurin"
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection">
+	
+		<constructor-arg name="geoBoundingBox" value="#{geoPolygonTurin.geoBoundingBox}" />	
+		<constructor-arg name="tileSize" ref="tileSizeTurin" />	
+	</bean>
+
+
+
+
+
+
+
+
+
+
+
+	<bean id="tileSize"
+			class ="de.uniwue.dmir.heatmap.core.TileSize">
+	
+		<constructor-arg name="width" value="256" />
+		<constructor-arg name="height" value="256" />
 	</bean>
 
 	<bean id="projection"
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.EquidistantProjection">
-	
-		<constructor-arg name="geoBoundingBox" value="#{geoPolygon.geoBoundingBox}" />	
-		<constructor-arg name="tileSize" ref="tileSize" />	
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.projections.NullProjection">
 	</bean>
 
 	<bean id="geoDatasource" 
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.DatabaseGeoDataSource">
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.DatabaseGeoDatasource">
 	
-		<constructor-arg name="request" ref="requestGeo" />		
+		<constructor-arg name="settings" ref="geoSettings" />		
 	</bean>
 	
 		
@@ -116,155 +190,139 @@
 	</bean> -->
 	
 	<bean id="tileDatasource" 
-			class="de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource">
+			class="de.uniwue.dmir.heatmap.core.data.sources.GeoHeatmapDatasource">
 		
-		<constructor-arg name="geoDataSource" ref="geoDatasource" />
+		<constructor-arg name="geoDatasource" ref="geoDatasource" />
 		<constructor-arg name="projection" ref="projection" />
-		<constructor-arg name="coordinateMapper">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper" />
+		<constructor-arg name="toGeoCoordinatesMapper">
+			<bean class="de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToGeoCoordinateMapper" />
 		</constructor-arg>
-		<constructor-arg name="externalDataMapper">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGroupValuePixelMapper">
-				<constructor-arg name="descriptionToIdMapper">
-					<bean class="de.uniwue.dmir.heatmap.core.processing.mapper.IdentityMapper" />
-				</constructor-arg>
+	</bean>
+	
+	<bean id="dateFactory" class="java.text.SimpleDateFormat">
+		<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
+	</bean>
+	
+	<bean id="minimumTimestampRecorded" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="#{systemProperties.min}" />
+	</bean>
+	
+	<bean id="userToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+		<constructor-arg name="map">
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
+				<constructor-arg name="mapIdentifier" value="apic2013-user2group" />
 			</bean>
 		</constructor-arg>
+	</bean>
+	
+	<bean id="deviceToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+		<constructor-arg name="map">
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
+				<constructor-arg name="mapIdentifier" value="apic2013-device2group" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="macToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+		<constructor-arg name="map">
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
+				<constructor-arg name="mapIdentifier" value="apic2013-mac2group" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="pointToGroupMapper" 
+			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapperPipe">
+	
+		<constructor-arg name="mappers">
+			<list>
+				<ref bean="userToGroupMapper" />
+				<ref bean="deviceToGroupMapper" />
+				<ref bean="macToGroupMapper" />
+			</list>
+		</constructor-arg>
+	
+	</bean>
+	
+	<bean id="groupToCityMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+		<constructor-arg name="map">
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
+				<constructor-arg name="mapIdentifier" value="apic2013-group2city" />
+			</bean>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="cityToAreaMap" 
+			class="java.util.HashMap">
+		<constructor-arg name="m">
+			<map key-type="java.lang.String" value-type="java.awt.geom.Path2D">
+				<entry key="Antwerp" value="#{geoPolygonAntwerp.getPath2D(true)}" />
+				<entry key="Kassel" value="#{geoPolygonKassel.getPath2D(true)}" />
+				<entry key="London" value="#{geoPolygonLondon.getPath2D(true)}" />
+				<entry key="Turin" value="#{geoPolygonTurin.getPath2D(true)}" />
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="cityToAreaMapper" 
+			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			
+		<constructor-arg name="map" ref="cityToAreaMap" />
+	</bean>
+	
+	<bean id="cityToMapProjectionMapper" 
+			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			
+		<constructor-arg name="map">
+			<map>
+				<entry key="Antwerp" value-ref="projectionAntwerp" />
+				<entry key="Kassel" value-ref="projectionKassel" />
+				<entry key="London" value-ref="projectionLondon"  />
+				<entry key="Turin" value-ref="projectionTurin"  />
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="pointToCityMapper"
+			class="de.uniwue.dmir.heatmap.core.filters.apic.PointToCityMapper">
+			
+		<constructor-arg name="areas" ref="cityToAreaMap" />
 	</bean>
 	
 	<bean id="filter" 
-			class="de.uniwue.dmir.heatmap.impl.core.filter.PointFilter">
-		<constructor-arg name="pixelAccess">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.filter.MapPixelAccess" />
-		</constructor-arg>
-		<constructor-arg name="geoPolygon" ref="geoPolygon" />
-		<constructor-arg name="tileSize" ref="tileSize" />	
+			class="de.uniwue.dmir.heatmap.core.filters.ApicPointFilter">
+		
+		<constructor-arg name="minimumTimestamp" ref="minimumTimestampRecorded" />	
+		<constructor-arg name="pointToGroupMapper" ref="pointToGroupMapper" />
+		<constructor-arg name="pointToCityMapper" ref="pointToCityMapper" />
+		<constructor-arg name="groupToCityMapper" ref="groupToCityMapper" />
+		<constructor-arg name="cityToAreaMapper" ref="cityToAreaMapper" />
+		<constructor-arg name="cityToMapProjectionMapper" ref="cityToMapProjectionMapper" />
+		
 	</bean>
 	
 	<bean id="tileFactory" 
-			class="de.uniwue.dmir.heatmap.core.MapTileFactory" />
+			class="de.uniwue.dmir.heatmap.core.tiles.factories.ApicTileFactory" />
 
-	<bean id="groupFilter"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.ProxyGroupFilter">
-	
-		<constructor-arg name="groupAccess">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.filter.MapGroupAccess">
-				<constructor-arg name="tileFactory">
-					<bean class="de.uniwue.dmir.heatmap.core.MapTileFactory" />
-				</constructor-arg>
-			</bean>
-		</constructor-arg>
-		
-		<constructor-arg name="filter" ref="filter" />
-		
-		<property name="overallGroup" value="${overall.group}" />
-	</bean>
-	
 	<bean id="zoomLevelRange"
-			class="de.uniwue.dmir.heatmap.core.IHeatmap.ZoomLevelRange">
+			class="de.uniwue.dmir.heatmap.core.ZoomLevelRange">
 		<constructor-arg name="min" value="0" />
 		<constructor-arg name="max" value="0" />
 	</bean>
 
 	<bean id="heatmapSettings"
-			class="de.uniwue.dmir.heatmap.core.IHeatmap.HeatmapSettings" >
+			class="de.uniwue.dmir.heatmap.core.HeatmapSettings" >
 		<property name="zoomLevelRange" ref="zoomLevelRange" />
 		<property name="tileSize" ref="tileSize" />
 	</bean>
 	
 	<bean id="heatmap" 
-			class="de.uniwue.dmir.heatmap.core.Heatmap">
+			class="de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap">
 	
-		<constructor-arg name="tileFactory">
-			<bean class="de.uniwue.dmir.heatmap.core.MapTileFactory2" />
-		</constructor-arg>
-		
+		<constructor-arg name="tileFactory" ref="tileFactory" />
 		<constructor-arg name="dataSource" ref="tileDatasource" />
-		<constructor-arg name="filter" ref="groupFilter" />
+		<constructor-arg name="filter" ref="filter" />
 		<constructor-arg name="settings" ref="heatmapSettings" />
-	</bean>
-	
-	<bean id="polygon"
-			class="de.uniwue.dmir.heatmap.core.util.PolygonFromGeoPolygonFacoryBean">
-		<constructor-arg name="geoPolygon" ref="geoPolygon" />
-		<constructor-arg name="tileCoordinates">
-			<null />
-		</constructor-arg>
-		<constructor-arg name="mapProjection" ref="projection" />
-	</bean>
-	
-	<!-- Pixel iterator factory to filter out points outside the given polygon. -->
-	<bean id="pixelIteratorFactory"
-			class="de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory">
-			
-		<constructor-arg name="factory">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
-		</constructor-arg>
-		
-		<constructor-arg name="filter">
-			<bean class="de.uniwue.dmir.heatmap.core.processing.FilteredProxyKeyValueIteratorFactory.CombinedKeyValueFilter">
-				<constructor-arg name="keyFilter">
-					<bean class="de.uniwue.dmir.heatmap.core.processing.PolygonRelativeCoordinatesFilter">
-						<constructor-arg name="polygon" ref="polygon" />
-					</bean>
-				</constructor-arg>
-			</bean>
-		</constructor-arg>
-	</bean>
-	
-	<!-- Mapping MAC addresses to team names if possible. -->
-	<bean id="teamMapper"
-			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringLookupMapper">
-	
-		<constructor-arg name="instanceId" value="apic2013-teams" />		
-	</bean>
-	
-	<bean id="colonMapper"
-			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper">
-			
-		<constructor-arg name="regex" value=":" />
-		<constructor-arg name="replacement" value="" />
-	</bean>
-	<bean id="alphaMapper"
-			class="de.uniwue.dmir.heatmap.core.processing.mapper.StringReplaceMapper">
-
-		<constructor-arg name="regex" value="[^\w]" />
-		<constructor-arg name="replacement" value="" />
-	</bean>
-
-
-	<bean id="macMapper"
-			class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
-		<constructor-arg name="mappers">
-			<list>
-				<ref bean="teamMapper" />
-				<ref bean="colonMapper" />
-			</list>
-		</constructor-arg>
-	</bean>
-
-	<bean id="macFolderMapper"
-		class="de.uniwue.dmir.heatmap.core.processing.mapper.MapperPipeline">
-		<constructor-arg name="mappers">
-			<list>
-				<ref bean="teamMapper" />
-				<ref bean="alphaMapper" />
-			</list>
-		</constructor-arg>
-	</bean>
-
-	
-	<!-- Point processor to calculate points for each group. -->
-	<bean id="pointProcessor" 
-			class="de.uniwue.dmir.heatmap.core.processing.PointProcessor" >
-	
-		<constructor-arg name="file" value="${out.file}" />
-		<constructor-arg name="groupIdMapper" ref="macMapper" />
-		<constructor-arg name="groupIteratorFactory">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
-		</constructor-arg>
-		<constructor-arg name="pixelIteratorFactory" ref="pixelIteratorFactory" />
-		
 	</bean>
 	
 	<!-- Preparing point visualizer. -->
@@ -283,19 +341,21 @@
 	</bean>
 	
 	<bean id="simpleVisualizer"
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.SimpleVisualizer">
+			class="de.uniwue.dmir.heatmap.core.processors.visualizers.SimpleVisualizer">
 			
-		<constructor-arg name="pixelIteratorFactory" ref="pixelIteratorFactory" />
+		<constructor-arg name="pixelIteratorFactory">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.MapKeyValueIteratorFactory" />
+		</constructor-arg>
 
 		<constructor-arg name="colorPipe">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.colors.CombinedColorPipe">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.colors.CombinedColorPipe">
 				<constructor-arg name="colorPipe">
-					<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.colors.SimpleColorPipe">
+					<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.colors.SimpleColorPipe">
 						<constructor-arg name="toDoubleMapper">
-							<bean class="de.uniwue.dmir.heatmap.core.processing.PointSizeToPointsMapper" />
+							<bean class="de.uniwue.dmir.heatmap.core.processors.PointSizeToPointsMapper" />
 						</constructor-arg>
 						<constructor-arg name="colorScheme">
-							<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme" >
+							<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.ImageColorScheme" >
 								<constructor-arg name="image" ref="colorImage" />
 								<constructor-arg name="ranges" ref="ranges" />
 							</bean> 
@@ -310,56 +370,31 @@
 	
 	</bean>
 	
-	<bean id="visualizer" 
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.StaticPolygonProxyVisualizer">
+	<bean id="apicVisualizationProcessor"
+			class="de.uniwue.dmir.heatmap.core.processors.ApicPointProcessor">
 			
+		<constructor-arg name="folder" value="${out.folder}" />
 		<constructor-arg name="visualizer" ref="simpleVisualizer" />
-		<constructor-arg name="polygon" ref="polygon" />
-		
-		<property name="strokeColor">
-			<null />
-		</property>
-		
-		<property name="fillColor">
-			<bean class="java.awt.Color">
-				<constructor-arg name="r" value="0" />
-				<constructor-arg name="g" value="0" />
-				<constructor-arg name="b" value="0" />
-				<constructor-arg name="a" value="0.21" />
+		<constructor-arg name="cityToTileSizeMapper">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+				<constructor-arg name="map">
+					<map key-type="java.lang.String" value-type="java.awt.geom.Path2D">
+						<entry key="Antwerp" value-ref="tileSizeAntwerp" />
+						<entry key="Kassel" value-ref="tileSizeKassel" />
+						<entry key="London" value-ref="tileSizeLondon" />
+						<entry key="Turin" value-ref="tileSizeTurin" />
+					</map>
+				</constructor-arg>
 			</bean>
-		</property>
-	</bean>
-	
-	<bean id="visualizationFileWriter"
-			class="de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter">
-			
-		<constructor-arg name="parentFolder" value="not-needed" />
-		<constructor-arg name="fileStrategy">
-			<bean class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy" />
 		</constructor-arg>
-		<constructor-arg name="fileFormat" value="png" />
-		<constructor-arg name="visualizer" ref="visualizer" />
-	</bean>
-	
-	<bean id="groupProxyFileWriter" 
-			class="de.uniwue.dmir.heatmap.core.processing.GroupProxyFileWriter">
-			
-		<constructor-arg name="groupIteratorFactory">
-			<bean class="de.uniwue.dmir.heatmap.impl.core.visualizer.MapKeyValueIteratorFactory" />
-		</constructor-arg>
-		<constructor-arg name="fileWriter" ref="visualizationFileWriter" />
-		<constructor-arg name="parentFolder" value="${out.folder}" />
-		
-		<property name="groupIdMapper" ref="macFolderMapper" />
 	</bean>
 	
 	<bean id="writer"
-			class="de.uniwue.dmir.heatmap.core.processing.ProxyTileProcessor">
+			class="de.uniwue.dmir.heatmap.core.processors.ProxyTileProcessor">
 
 		<constructor-arg name="processors">
 			<list>
-				<ref bean="pointProcessor" />
-				<ref bean="groupProxyFileWriter" />
+				<ref bean="apicVisualizationProcessor" />
 			</list>
 		</constructor-arg>
 	</bean>
@@ -369,34 +404,8 @@
 	
 	
 	
-	
-	<bean name="abstractRequest" 
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo">
-		
-		<constructor-arg name="table" value="data_airprobe" />
-		<constructor-arg name="longitudeAttribute" value="geo_lon" />
-		<constructor-arg name="latitudeAttribute" value="geo_lat" />
-		
-		<property name="west" value="#{geoPolygon.geoBoundingBox.northWest.longitude}" />
-		<property name="east" value="#{geoPolygon.geoBoundingBox.southEast.longitude}" />
-		<property name="north" value="#{geoPolygon.geoBoundingBox.northWest.latitude}" />
-		<property name="south" value="#{geoPolygon.geoBoundingBox.southEast.latitude}" />
-	
-		<property name="timestampAttribute" value="meta_timestamp_recorded" />
-		<property name="orderAsc" value="true" />
-
-		<property name="groupAttribute" value="${groupid.attribute}" />
-		<property name="valueAttribute" value="${value.attribute}" />
-	</bean>
-	
-	<bean id="requestGeo" parent="abstractRequest" />
-	
 	<beans profile="minmax">
 	
-		<bean id="dateFactory" class="java.text.SimpleDateFormat">
-			<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
-		</bean>
-		
 		<bean id="min" factory-bean="dateFactory" factory-method="parse">
 			<constructor-arg value="#{systemProperties.min}" />
 		</bean>
@@ -405,7 +414,8 @@
 			<constructor-arg value="#{systemProperties.max}" />
 		</bean>
 	
-		<bean id="requestGeo" parent="abstractRequest" >
+		<bean id="geoSettings" 
+				class="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.TimeGeoSettings" >
 			<property name="minimumTimestamp" ref="min" />
 			<property name="maximumTimestamp" ref="max" />
 		</bean>

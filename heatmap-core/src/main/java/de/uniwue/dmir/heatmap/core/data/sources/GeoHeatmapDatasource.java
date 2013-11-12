@@ -48,7 +48,7 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 public class GeoHeatmapDatasource<TData> 
 implements IHeatmapDatasource<TData> {
 
-	private IGeoDatasource<TData> geoDataSource;
+	private IGeoDatasource<TData> geoDatasource;
 	private IMapProjection projection;
 
 	private IMapper<TData, GeoCoordinates> toGeoCoordinatesMapper;
@@ -62,7 +62,7 @@ implements IHeatmapDatasource<TData> {
 						tileCoordinates, 
 						filter);
 		
-		List<TData> sourceData = this.geoDataSource.getData(
+		List<TData> sourceData = this.geoDatasource.getData(
 				geoBoundingBox);
 		
 		return sourceData.iterator();
@@ -73,7 +73,7 @@ implements IHeatmapDatasource<TData> {
 			int zoom,
 			IFilter<?, ?> filter) {
 		
-		List<TData> sourceDataSet = this.geoDataSource.getData(null);
+		List<TData> sourceDataSet = this.geoDatasource.getData(null);
 		
 		Set<TileCoordinates> coordinates = new HashSet<TileCoordinates>();
 		

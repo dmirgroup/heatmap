@@ -29,46 +29,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.RequestGeo;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
-import de.uniwue.dmir.heatmap.impl.core.mybatis.GeoPointMapper;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.GeoRequest;
+import de.uniwue.dmir.heatmap.impl.core.mybatis.GeoMapper;
 
-public class DatabaseGeoDatasource<TGroupDescription>
-implements IGeoDatasource<GeoPoint<TGroupDescription>> {
+public class DatabaseGeoDatasource<TGeoData, TSettings>
+implements IGeoDatasource<TGeoData> {
 
-	private RequestGeo request;
+	private GeoRequest<TSettings> geoRequest;
 	
 	@Autowired
 	@Getter
 	@Setter
-	private GeoPointMapper<TGroupDescription> mapper;
+	private GeoMapper<TGeoData, TSettings> mapper;
 	
-	public DatabaseGeoDatasource(RequestGeo request) {
-		
-		if (request.getTable() == null 
-				&& request.getLongitudeAttribute() == null 
-				&& request.getLatitudeAttribute() == null) {
-			
-			throw new IllegalArgumentException("");
-		}
-		
-		this.request = request;
+	public DatabaseGeoDatasource(TSettings settings) {
+		this.geoRequest = new GeoRequest<TSettings>();
+		this.geoRequest.setSettings(settings);
 	}
 	
 	@Override
-	public List<GeoPoint<TGroupDescription>> getData(
-			GeoBoundingBox geoBoundingBox) {
-		
-		if (geoBoundingBox != null) {
-			this.request.setWest(geoBoundingBox.getMin().getLongitude());
-			this.request.setEast(geoBoundingBox.getMax().getLongitude());
-			this.request.setSouth(geoBoundingBox.getMin().getLatitude());
-			this.request.setNorth(geoBoundingBox.getMax().getLatitude());
-		}
-		
-		List<GeoPoint<TGroupDescription>> points = 
-				this.mapper.getData(this.request);
-
+	public List<TGeoData> getData(GeoBoundingBox geoBoundingBox) {
+		this.geoRequest.setGeoBoundingBox(geoBoundingBox);
+		List<TGeoData> points = this.mapper.getData(this.geoRequest);
 		return points;
 	}
 

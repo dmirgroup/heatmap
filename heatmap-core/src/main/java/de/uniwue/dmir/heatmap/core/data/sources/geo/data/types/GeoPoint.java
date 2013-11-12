@@ -26,7 +26,7 @@ import lombok.Data;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 
 @Data
-public class GeoPoint<TGroupDescription> {
+public class GeoPoint<TGroupDescription> implements IGeoPoint {
 	
 	private GeoCoordinates geoCoordinates;
 	

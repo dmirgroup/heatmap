@@ -22,9 +22,8 @@ package de.uniwue.dmir.heatmap.impl.core.mybatis;
 
 import java.util.List;
 
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.GeoRequest;
 
-public interface GeoPointMapper<TGroupDescription> {
-	public List<GeoPoint<TGroupDescription>> getData(Object request);
-	
+public interface GeoMapper<TGeoData, TSettings> {
+	public List<TGeoData> getData(GeoRequest<TSettings> geoRequest);
 }

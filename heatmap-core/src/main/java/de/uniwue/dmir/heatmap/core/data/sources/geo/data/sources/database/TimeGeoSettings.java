@@ -20,15 +20,15 @@
  */
 package de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database;
 
-import lombok.AllArgsConstructor;
+import java.util.Date;
+
 import lombok.Data;
 
+
 @Data
-@AllArgsConstructor
-public class RequestSettingsBasic {
+public class TimeGeoSettings {
+
+	private Date minimumTimestamp;
+	private Date maximumTimestamp;
 	
-	private String table;
-	
-	private String longitudeAttribute;
-	private String latitudeAttribute;
 }

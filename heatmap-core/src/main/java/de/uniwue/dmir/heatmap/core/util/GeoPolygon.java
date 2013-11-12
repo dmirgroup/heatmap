@@ -20,12 +20,11 @@
  */
 package de.uniwue.dmir.heatmap.core.util;
 
+import java.awt.geom.Path2D;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 import lombok.Data;
 
@@ -78,11 +77,11 @@ public class GeoPolygon {
 		this.maxLatitude = Double.NEGATIVE_INFINITY;
 		this.maxLongitude = Double.NEGATIVE_INFINITY;
 		
-		for (int i = 0; i < p.length; i++) {
+		for (int i = 0; i < this.p.length; i++) {
 			
 			double value = this.p[i];
 			
-			if ((i + 1) % 2 == 1) {
+			if ((i + 1) % 2 == 1) { // lat, lon pairs
 				this.minLatitude = Math.min(value, this.minLatitude);
 				this.maxLatitude = Math.max(value, this.maxLatitude);
 			} else {
@@ -96,6 +95,53 @@ public class GeoPolygon {
 				new GeoCoordinates(this.maxLongitude, this.maxLatitude));
 		
 		this.logger.debug("Extrema: {}", this.geoBoundingBox);
+	}
+	
+
+	public Path2D getPath2D(boolean lonlat) {
+		
+		Path2D path = new Path2D.Double();
+		
+		if (this.p.length > 2) {
+
+			double latitude = this.p[0];
+			double longitude = this.p[1];
+			
+			double firstX;
+			double firstY;
+			
+			if (lonlat) {
+				firstX = longitude;
+				firstY = latitude;
+			} else {
+				firstX = latitude;
+				firstY = longitude;
+			}
+			
+			path.moveTo(firstX, firstY);
+			
+			for (int i = 1; i < this.p.length / 2; i++) {
+				
+				latitude = this.p[2 * i];
+				longitude = this.p[2 * i + 1];
+				
+				double x;
+				double y;
+				if (lonlat) {
+					x = longitude;
+					y = latitude;
+				} else {
+					x = latitude;
+					y = longitude;
+				}
+
+				path.lineTo(x, y);
+			}
+			
+			path.lineTo(firstX, firstY);
+		}
+		
+		return path;
 	}
 	
 	public static GeoPolygon load(String file) 
@@ -114,29 +160,11 @@ public class GeoPolygon {
 		return geoPolygon;
 	}
 	
-	public static void main(String[] args) throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
+	public static void main(String[] args) 
+	throws JsonParseException, JsonMappingException, FileNotFoundException, IOException {
+
 		GeoPolygon geoPolygon = load("src/main/resources/spring/example/points/polygon-london.json");
 		System.out.println(geoPolygon);
-		
-		Calendar cal = 
-//				Calendar.getInstance();
-				Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		
-		// UTC
-		cal.set(Calendar.YEAR, 2013);
-		cal.set(Calendar.MONTH, 11);
-		cal.set(Calendar.DAY_OF_MONTH, 06);
-
-		cal.set(Calendar.HOUR_OF_DAY, 9);
-		cal.set(Calendar.MINUTE, 0);
-		cal.set(Calendar.SECOND, 0);
-
-		System.out.println("----------------");
-		System.out.println(cal.getTime());
-//		cal.setTimeZone(TimeZone.getTimeZone("GMT"));
-		System.out.println(cal.getTime());
-		System.out.println(cal.getTime().getTime());
-		System.out.println(cal.getTimeInMillis());
 		
 	}
 }

@@ -30,12 +30,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
-public class DataFileWriterProcessor<I> 
+public class JsonFileWriterProcessor<I> 
 extends AbstractFileWriterProcessor<I> {
 
 	private ObjectMapper mapper;
 	
-	public DataFileWriterProcessor(
+	public JsonFileWriterProcessor(
 			String parentFolder,
 			IFileStrategy fileStrategy, 
 			boolean gzip) {

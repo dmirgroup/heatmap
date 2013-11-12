@@ -25,5 +25,9 @@ import java.awt.image.BufferedImage;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 public interface IVisualizer<TTile> {
-	BufferedImage visualize(TTile tile, TileSize tileSize, TileCoordinates coordinates);
+	
+	BufferedImage visualize(
+			TTile tile, 
+			TileSize tileSize, 
+			TileCoordinates tileCoordinates);
 }
