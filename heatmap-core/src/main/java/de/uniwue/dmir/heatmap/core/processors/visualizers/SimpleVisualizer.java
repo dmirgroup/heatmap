@@ -65,9 +65,6 @@ implements IVisualizer<TTile> {
 			
 			Color color = this.colorPipe.getColor(pixel);
 			
-			System.out.println(tileSize);
-			System.out.println(relativeCoordinates);
-			
 			bufferedImage.setRGB(
 					relativeCoordinates.getX(), 
 					relativeCoordinates.getY(), 

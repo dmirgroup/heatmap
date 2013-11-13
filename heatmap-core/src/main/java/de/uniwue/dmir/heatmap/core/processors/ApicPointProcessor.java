@@ -8,6 +8,10 @@ import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
@@ -25,8 +29,11 @@ public class ApicPointProcessor
 implements ITileProcessor<ApicOverallTile> {
 
 	public static final String IMAGE_TYPE = "png";
-	public static final String CITY_PREFIX = "city";
-	public static final String GROUP_PREFIX = "group";
+	public static final String CITY_PREFIX = "city-";
+	public static final String GROUP_PREFIX = "group-";
+	public static final String APIC_FILE = "apic.json";
+	
+	private final ObjectMapper objectMapper = new ObjectMapper();
 	
 	private String folder;
 	private IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
@@ -40,6 +47,17 @@ implements ITileProcessor<ApicOverallTile> {
 		
 		File folder = new File(this.folder);
 		folder.mkdirs();
+		
+		File apicFile = new File(folder, APIC_FILE);
+		try {
+			this.objectMapper.writeValue(apicFile, tile);
+		} catch (JsonGenerationException e) {
+			throw new RuntimeException(e);
+		} catch (JsonMappingException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 		
 		for (Entry<String, ApicCityTile> cityEntry : tile.getCityTiles().entrySet()) {
 			

@@ -154,7 +154,37 @@
 		<constructor-arg name="tileSize" ref="tileSizeTurin" />	
 	</bean>
 
-
+	<bean id="polygonAntwerp" class="de.uniwue.dmir.heatmap.core.util.PolygonFromGeoPolygonFacoryBean">
+		<constructor-arg name="geoPolygon" ref="geoPolygonAntwerp" />
+		<constructor-arg name="mapProjection" ref="projectionAntwerp" />
+		<constructor-arg name="tileCoordinates" >
+			<null />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="polygonKassel" class="de.uniwue.dmir.heatmap.core.util.PolygonFromGeoPolygonFacoryBean">
+		<constructor-arg name="geoPolygon" ref="geoPolygonKassel" />
+		<constructor-arg name="mapProjection" ref="projectionKassel" />
+		<constructor-arg name="tileCoordinates" >
+			<null />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="polygonLondon" class="de.uniwue.dmir.heatmap.core.util.PolygonFromGeoPolygonFacoryBean">
+		<constructor-arg name="geoPolygon" ref="geoPolygonLondon" />
+		<constructor-arg name="mapProjection" ref="projectionLondon" />
+		<constructor-arg name="tileCoordinates" >
+			<null />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="polygonTurin" class="de.uniwue.dmir.heatmap.core.util.PolygonFromGeoPolygonFacoryBean">
+		<constructor-arg name="geoPolygon" ref="geoPolygonTurin" />
+		<constructor-arg name="mapProjection" ref="projectionTurin" />
+		<constructor-arg name="tileCoordinates" >
+			<null />
+		</constructor-arg>
+	</bean>
 
 
 
@@ -232,15 +262,11 @@
 	</bean>
 
 	<bean id="pointToGroupMapper" 
-			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapperPipe">
+			class="de.uniwue.dmir.heatmap.core.filters.apic.PointToGroupMapper">
 	
-		<constructor-arg name="mappers">
-			<list>
-				<ref bean="userToGroupMapper" />
-				<ref bean="deviceToGroupMapper" />
-				<ref bean="macToGroupMapper" />
-			</list>
-		</constructor-arg>
+		<constructor-arg name="userToGroupMapper" ref="userToGroupMapper" />
+		<constructor-arg name="deviceToGroupMapper" ref="deviceToGroupMapper" />
+		<constructor-arg name="macToGroupMapper" ref="macToGroupMapper" />
 	
 	</bean>
 	
@@ -287,6 +313,19 @@
 			class="de.uniwue.dmir.heatmap.core.filters.apic.PointToCityMapper">
 			
 		<constructor-arg name="areas" ref="cityToAreaMap" />
+	</bean>
+	
+	<bean id="cityToPolygonMapper"
+			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			
+		<constructor-arg name="map" >
+			<map>
+				<entry key="Antwerp" value-ref="polygonAntwerp" />
+				<entry key="Kassel" value-ref="polygonKassel" />
+				<entry key="London" value-ref="polygonLondon" />
+				<entry key="Turin" value-ref="polygonTurin" />
+			</map>
+		</constructor-arg>
 	</bean>
 	
 	<bean id="filter" 

@@ -47,7 +47,7 @@ import org.apache.ibatis.annotations.Select;
 public interface BidirectionalMyBatisMapper2 {
 
 	@Select("SELECT element_value "
-			+ "FROM bidirectional_mappings "
+			+ "FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}"
 			+ "AND element_key = #{elementKey}")
 	String getValue(
@@ -55,7 +55,7 @@ public interface BidirectionalMyBatisMapper2 {
 			@Param("elementKey") String key);
 
 	@Select("SELECT element_value "
-			+ "FROM bidirectional_mappings "
+			+ "FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}"
 			+ "AND element_value = #{elementValue}")
 	List<String> getKey(
@@ -63,51 +63,51 @@ public interface BidirectionalMyBatisMapper2 {
 			@Param("elementValue") String value);
 
 	@Select("SELECT * "
-			+ "FROM bidirectional_mappings "
+			+ "FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}")
 	@Results({
 		@Result(column = "mapping_id", property = "mappingId"),
-		@Result(column = "element_key", property = "elementKey"),
-		@Result(column = "element_value", property = "elementValue"),
-		@Result(column = "element_data", property = "elementData"),
+		@Result(column = "element_key", property = "key"),
+		@Result(column = "element_value", property = "value"),
+		@Result(column = "element_data", property = "data"),
 	})
 	List<Element> getElements(@Param("mappingId") String mappingId);
 
 	@Select("SELECT * "
-			+ "FROM bidirectional_mappings "
+			+ "FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}"
 			+ "AND element_key = #{elementKey}")
 	@Results({
 		@Result(column = "mapping_id", property = "mappingId"),
-		@Result(column = "element_key", property = "elementKey"),
-		@Result(column = "element_value", property = "elementValue"),
-		@Result(column = "element_data", property = "elementData"),
+		@Result(column = "element_key", property = "key"),
+		@Result(column = "element_value", property = "value"),
+		@Result(column = "element_data", property = "data"),
 	})
 	Element getElementsByKey(
 			@Param("mappingId") String mappingId, 
 			@Param("elementKey") String key);
 
 	@Select("SELECT * "
-			+ "FROM bidirectional_mappings "
+			+ "FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}"
 			+ "AND element_value = #{elementValue}")
 	@Results({
 		@Result(column = "mapping_id", property = "mappingId"),
-		@Result(column = "element_key", property = "elementKey"),
-		@Result(column = "element_value", property = "elementValue"),
-		@Result(column = "element_data", property = "elementData"),
+		@Result(column = "element_key", property = "key"),
+		@Result(column = "element_value", property = "value"),
+		@Result(column = "element_data", property = "data"),
 	})
 	List<Element> getElementsByValue(
 			@Param("mappingId") String mappingId, 
 			@Param("elementValue") String value);
 
 	@Select("SELECT EXISTS("
-			+ "SELECT 1 FROM bidirectional_mappings "
+			+ "SELECT 1 FROM mappings "
 			+ "WHERE mapping_id = #{mappingId})")
 	boolean containsMapping(@Param("mappingId") String mappingId);
 
 	@Select("SELECT EXISTS("
-			+ "SELECT 1 FROM bidirectional_mappings "
+			+ "SELECT 1 FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}"
 			+ "AND element_key = #{elementKey})")
 	boolean containsKey(
@@ -115,7 +115,7 @@ public interface BidirectionalMyBatisMapper2 {
 			@Param("elementKey") String key);
 
 	@Select("SELECT EXISTS("
-			+ "SELECT 1 FROM bidirectional_mappings "
+			+ "SELECT 1 FROM mappings "
 			+ "WHERE mapping_id = #{mappingId}"
 			+ "AND element_value = #{elementValue})")
 	boolean containsValue(

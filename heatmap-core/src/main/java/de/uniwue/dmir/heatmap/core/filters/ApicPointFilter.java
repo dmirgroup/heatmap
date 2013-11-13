@@ -29,6 +29,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IMapProjection;
@@ -79,76 +80,72 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 			ApicOverallTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
-
-		// try to associate point with group and city; both may be null in the end
 		
-		String group = this.pointToGroupMapper.map(dataPoint);
-		String city; 
-		if (group != null) {
-			city = this.groupToCityMapper.map(group);
-		} else {
-			city = this.pointToCityMapper.map(dataPoint);
+		FilterResult r = new FilterResult();
+		
+		if (dataPoint.getDeviceId() != null && dataPoint.getDeviceId().equals("test")) {
+			System.out.println("MUHUH");
 		}
 		
-		// setting group to default group if city is given, but no group was found
+		// try to associate point with group and city; both are either null or set at the same time
 		
-		if (city != null) {
-			group = DEFAULT_GROUP;
-		}
+		this.setCityAndGroup(dataPoint, r);
 		
 		// check if timestamp and location are given
 		
-		boolean hasTimestamp = 
+		r.hasTimestamp =
 				dataPoint.getTimestampRecorded().getTime() > 0
 				&& dataPoint.getTimestampRecorded().getTime() != DEFAULT_TIMESTAMP.getTime();
 		
-		boolean hasLocation = !dataPoint.getGeoProvider().toLowerCase().equals(GEO_PROVIDER_NONE);
+		r.hasLocation =
+				!dataPoint.getGeoProvider().toLowerCase().equals(GEO_PROVIDER_NONE);
 				
 		// check if point is in game time
 		
-		boolean inGameTime = hasTimestamp 
+		r.inGameTimestamp =
+				r.isHasTimestamp()
 				&& dataPoint.getTimestampRecorded().getTime() > this.minimumTimestamp.getTime();
 		
 		// incorporate point into city and group statistics and tiles
-		if (city != null) {
+		if (r.city != null) {
 
 			// get city tile
 			
-			ApicCityTile cityTile = tile.cityTiles.get(city);
+			r.cityTile = tile.cityTiles.get(r.city);
 			
 			// create city tile, if it does not exist
-			if (cityTile == null) {
-				cityTile = new ApicCityTile();
-				tile.cityTiles.put(city, cityTile);
+			if (r.cityTile == null) {
+				r.cityTile = new ApicCityTile();
+				tile.cityTiles.put(r.city, r.cityTile);
 			}
 			
 			// get group tile
 			
-			ApicGroupTile groupTile = cityTile.groupTiles.get(group);
+			r.groupTile = r.cityTile.groupTiles.get(r.group);
 			
 			// create group tile if it does not exist
-			if (groupTile == null) {
-				groupTile = new ApicGroupTile();
-				cityTile.groupTiles.put(group, groupTile);
+			if (r.groupTile == null) {
+				r.groupTile = new ApicGroupTile();
+				r.cityTile.groupTiles.put(r.group, r.groupTile);
 			}
 			
 			// check if point is in area
 			
-			Path2D cityPath = this.cityToAreaMapper.map(city);
+			Path2D cityPath = this.cityToAreaMapper.map(r.city);
 			
 			GeoCoordinates geoCoordinates = dataPoint.getGeoCoordinates();
 			
-			boolean inGameLocation = hasLocation 
+			r.inGameLocation = r.hasLocation 
 					&& cityPath.contains(
 							geoCoordinates.getLongitude(), 
 							geoCoordinates.getLatitude());
 			
-			// adding point 
+			// adding in game point 
 			
-			if (inGameTime && inGameLocation) {
+			if (r.inGameTimestamp && r.inGameLocation) {
 				
 				IMapProjection cityProjection = 
-						this.cityToMapProjectionMapper.map(city);
+						this.cityToMapProjectionMapper.map(r.city);
 				
 				RelativeCoordinates relativeCoordinates = 
 						cityProjection.fromGeoToRelativeCoordinates(
@@ -157,74 +154,188 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 
 				// setting pixel for points grids (city and group)
 
-				boolean countedForCity = 
-						this.addPointToGrid(
+				r.pointResultCity = this.addPointToGrid(
 								dataPoint, 
 								relativeCoordinates, 
-								cityTile.getPixels());
+								r.cityTile.getPixels());
 				
-				boolean countedForGroup =
-						this.addPointToGrid(
+				r.pointResultGroup = this.addPointToGrid(
 								dataPoint, 
 								relativeCoordinates, 
-								groupTile.getPixels());
+								r.groupTile.getPixels());
 				
-				// update ingame measurement count
-
-				
-				if (countedForCity) {
-					tile.measurementCountInGamePointsCities ++;
-					cityTile.measurementCountInGamePoints ++;
-				}
-				
-				if (countedForGroup) {
-					tile.measurementCountInGamePointsGroups ++;
-					groupTile.measurementCountInGamePoints ++;
-				}
 				
 			} 
 			
-			// update city and group measurement count
 
-			cityTile.measurementCount ++;
-			groupTile.measurementCount ++;
-			
-			if (hasLocation && hasTimestamp) {
-				if (inGameLocation && inGameTime) {
-					tile.measurementCountInGame ++;
-					cityTile.measurementCountInGame ++;
-					groupTile.measurementCountInGame ++;
-				} else {
-					tile.measurementCountOutGame ++;
-					cityTile.measurementCountOutGame ++;
-					groupTile.measurementCountOutGame ++;
-				}
-			} else {
-				cityTile.measurementCountError ++;
-				groupTile.measurementCountError ++;
-			}
 		}
+		updateStatistics(dataPoint, tile, r);
 		
-		// update overall measurement count
+	}
+
+	private void updateStatistics(
+			ApicPoint dataPoint, 
+			ApicOverallTile tile,
+			FilterResult r) {
+
 		tile.measurementCount ++;
-		if (!hasLocation || !hasTimestamp) {
+		
+		// data point has an error
+		if (!r.hasLocation || !r.hasTimestamp) {
 			tile.measurementCountError ++;
 		}
 		
-		if (city != null) {
-			tile.measurementCountCity ++;
-			if (!hasLocation || !hasTimestamp) {
-				tile.measurementCountCityError ++;
+		
+		// city given (including group)
+		if (r.city != null) { 
+
+			// measurements
+			
+			tile
+				.measurementCountCity ++;
+			r.cityTile
+				.measurementCount ++;
+			r.groupTile
+				.measurementCount ++;
+			
+			// time
+
+			if (r.cityTile.lastMeasurement.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+				r.cityTile.lastMeasurement = dataPoint.getTimestampRecorded();
 			}
+			
+			if (r.groupTile.lastMeasurement.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+				r.groupTile.lastMeasurement = dataPoint.getTimestampRecorded();
+			}
+			
+			// data point is valid
+			if (r.hasLocation && r.hasTimestamp) {
+				
+				// data point is "in game"
+				if (r.inGameLocation && r.inGameTimestamp) {
+					
+					// measurements
+					
+					tile
+						.measurementCountInGame ++;
+					r.cityTile
+						.measurementCountInGame ++;
+					r.groupTile
+						.measurementCountInGame ++;
+					
+					// points
+					
+					if (r.pointResultCity.pointReceived) {
+						tile.measurementCountInGamePointsCities ++;
+						r.cityTile.measurementCountInGamePoints ++;
+
+						if (r.cityTile.lastMeasurementInGamePoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+							r.cityTile.lastMeasurementInGamePoint = dataPoint.getTimestampRecorded();
+						}
+					}
+					
+					if (r.pointResultGroup.pointReceived) {
+						tile.measurementCountInGamePointsGroups ++;
+						r.groupTile.measurementCountInGamePoints ++;
+
+						if (r.groupTile.lastMeasurementInGamePoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+							r.groupTile.lastMeasurementInGamePoint = dataPoint.getTimestampRecorded();
+						}
+					}
+					
+					// pixels
+					
+					if (r.pointResultCity.isNewPixel()) {
+						r.cityTile.pixelCountInGame ++;
+
+						if (r.cityTile.lastMeasurementInGamePixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+							r.cityTile.lastMeasurementInGamePixel = dataPoint.getTimestampRecorded();
+						}
+					}
+					
+					if (r.pointResultGroup.isNewPixel()) {
+						r.groupTile.pixelCountInGame ++;
+						
+						if (r.groupTile.lastMeasurementInGamePixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+							r.groupTile.lastMeasurementInGamePixel = dataPoint.getTimestampRecorded();
+						}
+					}
+					
+					// time
+					
+					if (r.cityTile.lastMeasurementInGame.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.cityTile.lastMeasurementInGame = dataPoint.getTimestampRecorded();
+					}
+					
+					if (r.groupTile.lastMeasurementInGame.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.groupTile.lastMeasurementInGame = dataPoint.getTimestampRecorded();
+					}
+					
+					
+				// data point is "out game"
+				} else {
+					
+					// measurements
+					
+					tile
+						.measurementCountOutGame ++;
+					r.cityTile
+						.measurementCountOutGame ++;
+					r.groupTile
+						.measurementCountOutGame ++;
+
+					// time
+					
+					if (r.cityTile.lastMeasurementOutGame.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.cityTile.lastMeasurementOutGame = dataPoint.getTimestampRecorded();
+					}
+					
+					if (r.groupTile.lastMeasurementOutGame.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.groupTile.lastMeasurementOutGame = dataPoint.getTimestampRecorded();
+					}
+				}
+				
+			// data point has an error
+			} else {
+				
+				// measurements
+				
+				tile
+					.measurementCountCityError ++;
+				r.cityTile
+					.measurementCountError ++;
+				r.groupTile
+					.measurementCountError ++;
+				
+				// time
+				
+				if (r.cityTile.lastMeasurementError.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+					r.cityTile.lastMeasurementError = dataPoint.getTimestampRecorded();
+				}
+				
+				if (r.groupTile.lastMeasurementError.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+					r.groupTile.lastMeasurementError = dataPoint.getTimestampRecorded();
+				}
+			}
+			
+		// no city is given
 		} else {
+			
 			tile.measurementCountNoCity ++;
-			if (!hasLocation || !hasTimestamp) {
+			
+			// data point is valid
+			if (r.hasLocation && r.hasTimestamp) {
+				
+				// nothing to do at the moment
+				
+				
+				
+			// data point has an error
+			} else {
 				tile.measurementCountNoCityError ++;
 			}
 		}
 		
-		// incorporate point into overall statistics
-
 		
 //		// overall
 //		tile.getStatistics().measurements ++;
@@ -247,7 +358,31 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 //		}
 	}
 	
-	public boolean addPointToGrid(
+	public void setCityAndGroup(ApicPoint dataPoint, FilterResult filterResult) {
+		
+		// try to get group from data point
+		String group = this.pointToGroupMapper.map(dataPoint);
+
+		// If a group is given, we infer the city from the group.
+		// If no group has given we try to infer the city from the data point.
+		String city; 
+		if (group != null) { 
+			city = this.groupToCityMapper.map(group);
+		} else { // try to extract city from 
+			city = this.pointToCityMapper.map(dataPoint);
+		}
+		
+		// setting group to default group if city is given, but no group was found
+		if (city != null && group == null) {
+			group = DEFAULT_GROUP;
+		}
+		
+		filterResult.setCity(city);
+		filterResult.setGroup(group);
+		
+	}
+	
+	public PointResult addPointToGrid(
 			ApicPoint dataPoint,
 			RelativeCoordinates relativeCoordinates,
 			Map<RelativeCoordinates, PointSize> pixels) {
@@ -268,7 +403,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 					relativeCoordinates, 
 					groupTilePixel);
 			
-			return true;
+			return new PointResult(true, true);
 			
 		} else {
 
@@ -288,13 +423,34 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 				groupTilePixel.setPoints(newPoints);
 				groupTilePixel.setMaxDate(dataPoint.getTimestampRecorded());
 				
-				return true;
+				return new PointResult(false, true);
 			} else {
-				return false;
+				return new PointResult(false, false);
 			}
 		}
 	}
 
+	@Data
+	public static class FilterResult {
+		private String city;
+		private String group;
+		private boolean hasTimestamp;
+		private boolean hasLocation;
+		private boolean inGameTimestamp;
+		private boolean inGameLocation;
+		private ApicCityTile cityTile;
+		private ApicGroupTile groupTile;
+		private PointResult pointResultCity;
+		private PointResult pointResultGroup;
+	}
+	
+	@Data
+	@AllArgsConstructor
+	public static class PointResult {
+		private boolean newPixel;
+		private boolean pointReceived;
+	}
+	
 	@Data
 	public static final class ApicStatistics {
 		
@@ -333,40 +489,51 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 
 		private int measurementCountNoCity;
 		private int measurementCountNoCityError;
+		
 	}
 
 	@Data
-	public static final class ApicGroupTile {
+	public static class ApicGroupTile {
 
 		@JsonIgnore
 		private Map<RelativeCoordinates, PointSize> pixels =
 				new HashMap<RelativeCoordinates, PointSize>();
 
-		private int measurementCount;
+		// measurements
+		
+		protected int measurementCount;
 
-		private int measurementCountError;
-		private int measurementCountOutGame;
-		private int measurementCountInGame;
+		protected int measurementCountError;
+		protected int measurementCountOutGame;
+		protected int measurementCountInGame;
 
-		private int measurementCountInGamePoints;
+		protected int measurementCountInGamePoints;
+		
+		protected int pixelCountInGame;
+		
+		// time
+		
+		protected Date lastMeasurement = new Date(0);
+		
+		protected Date lastMeasurementError = new Date(0);
+		protected Date lastMeasurementOutGame = new Date(0);
+		protected Date lastMeasurementInGame = new Date(0);
+
+		protected Date lastMeasurementInGamePoint = new Date(0);
+		protected Date lastMeasurementInGamePixel = new Date(0);
+		
+//		private long minX = Long.MAX_VALUE;
+//		private long minY = Long.MAX_VALUE;
+//		private long maxX = Long.MIN_VALUE;
+//		private long maxY = Long.MIN_VALUE;
 	}
 
 	@Data
-	public static final class ApicCityTile {
-		
-		private Map<RelativeCoordinates, PointSize> pixels =
-				new HashMap<RelativeCoordinates, PointSize>();
+	@EqualsAndHashCode(callSuper = true)
+	public static class ApicCityTile extends ApicGroupTile {
 		
 		private Map<String, ApicGroupTile> groupTiles =
 				new HashMap<String, ApicGroupTile>();
-		
-		private int measurementCount;
-		
-		private int measurementCountError;
-		private int measurementCountOutGame;
-		private int measurementCountInGame;
-		
-		private int measurementCountInGamePoints;
 		
 	}
 	

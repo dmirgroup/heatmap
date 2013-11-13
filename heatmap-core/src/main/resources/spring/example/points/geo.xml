@@ -16,7 +16,7 @@
 			meta_timestamp_received		AS timestampReceived,
 			meta_timestamp_recorded		AS timestampRecorded,
 			meta_user_id				AS userId,
-			meta_device_id				AS devideId
+			meta_device_id				AS deviceId
 			
 		FROM data_airprobe
 		
