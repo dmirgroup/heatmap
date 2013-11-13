@@ -62,8 +62,7 @@ implements IHeatmapDatasource<TData> {
 						tileCoordinates, 
 						filter);
 		
-		List<TData> sourceData = this.geoDatasource.getData(
-				geoBoundingBox);
+		List<TData> sourceData = this.geoDatasource.getData(geoBoundingBox);
 		
 		return sourceData.iterator();
 	}

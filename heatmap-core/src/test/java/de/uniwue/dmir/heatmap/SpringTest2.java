@@ -50,77 +50,75 @@ import de.uniwue.dmir.heatmap.core.processors.visualizers.SumAlphaVisualizer;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
 import de.uniwue.dmir.heatmap.core.tiles.factories.ArrayTileFactory;
 import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
-import de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper;
 
 public class SpringTest2 {
 
-	@Test
-	public void testHeatmap() throws IOException {
-		
-		ClassPathXmlApplicationContext appContext = 
-				new ClassPathXmlApplicationContext(
-						"spring/example/settings.xml");
-		
-		@SuppressWarnings("unchecked")
-		IGeoDatasource<GeoPoint<String>> dataSource = 
-				appContext.getBean(IGeoDatasource.class);
-		
-		HeatmapSettings settings = new HeatmapSettings();
-		settings.getZoomLevelRange().setMax(7);
-		
-		GeoHeatmapDatasource<GeoPoint<String>, ValuePixel> dataSouce =
-				new GeoHeatmapDatasource<GeoPoint<String>, ValuePixel>(
-						dataSource,
-						new MercatorMapProjection(
-								settings.getTileSize(),
-								settings.getZoomLevelMapper()), 
-						new GeoPointToGeoCoordinateMapper<String>(), 
-						new GeoPointToValuePixelMapper<String>());
-		
-		IFilter<ValuePixel, Sum[]> filter = 
-				new ImageFilter<ValuePixel, Sum>(
-						new ValuePixelToSumMapper(),
-						new SumAdder(),
-						new SumScalarMultiplier(),
-						ImageIO.read(new File("src/main/resources/filter/dot13_black.png")));
-		
-//		System.out.println(dataSouce.getData(new TileCoordinates(6, 10, 5), filter));
-		
-//		IFilter<ValuePixel, SumAndSize> filter = 
-//				new ErodeFilter<ValuePixel, SumAndSize>(
-//						new ValuePixelToSumAndSizeMapper(),
-//						new SumAndSizeAdder(),
-//						42, 42, 21, 21);
-		
-		IHeatmap<Sum[]> heatmap = new DefaultHeatmap<ValuePixel, Sum[]>(
-				new ArrayTileFactory<Sum>(Sum.class),
-				dataSouce, 
-				filter, 
-				settings);
-		
-		BufferedImage colorImage = ImageIO.read(
-				new File("src/main/resources/color-schemes/classic_alpha70.png"));
-		
-		double[] ranges = ImageColorScheme.ranges(1, 500, colorImage.getHeight());
-
-		IColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
-		
-		//		System.out.println(Arrays.toString(ranges));
-		
-//		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeBinaryVisualizer(),
-		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(colorScheme);
-		visualizer.setAlphaValue(0.2f);
-		visualizer.setForceAlphaValue(true);
-
-		VisualizationFileWriterProcessor<Sum[]> heatmapFileWriter =
-				new VisualizationFileWriterProcessor<Sum[]>(
-						"out/tiles",
-						new DefaultFileStrategy(), 
-						"png",
-						visualizer);
-		
-		heatmap.processTiles(heatmapFileWriter);
-
-		appContext.close();
-	}
+//	@Test
+//	public void testHeatmap() throws IOException {
+//		
+//		ClassPathXmlApplicationContext appContext = 
+//				new ClassPathXmlApplicationContext(
+//						"spring/example/settings.xml");
+//		
+//		@SuppressWarnings("unchecked")
+//		IGeoDatasource<GeoPoint<String>> dataSource = 
+//				appContext.getBean(IGeoDatasource.class);
+//		
+//		HeatmapSettings settings = new HeatmapSettings();
+//		settings.getZoomLevelRange().setMax(7);
+//		
+//		GeoHeatmapDatasource<GeoPoint<String>> dataSouce =
+//				new GeoHeatmapDatasource<GeoPoint<String>>(
+//						dataSource,
+//						new MercatorMapProjection(
+//								settings.getTileSize(),
+//								settings.getZoomLevelMapper()), 
+//						new GeoPointToGeoCoordinateMapper<GeoPoint<String>>());
+//		
+//		IFilter<ValuePixel, Sum[]> filter = 
+//				new ImageFilter<ValuePixel, Sum>(
+//						new ValuePixelToSumMapper(),
+//						new SumAdder(),
+//						new SumScalarMultiplier(),
+//						ImageIO.read(new File("src/main/resources/filter/dot13_black.png")));
+//		
+////		System.out.println(dataSouce.getData(new TileCoordinates(6, 10, 5), filter));
+//		
+////		IFilter<ValuePixel, SumAndSize> filter = 
+////				new ErodeFilter<ValuePixel, SumAndSize>(
+////						new ValuePixelToSumAndSizeMapper(),
+////						new SumAndSizeAdder(),
+////						42, 42, 21, 21);
+//		
+//		IHeatmap<Sum[]> heatmap = new DefaultHeatmap<ValuePixel, Sum[]>(
+//				new ArrayTileFactory<Sum>(Sum.class),
+//				dataSouce, 
+//				filter, 
+//				settings);
+//		
+//		BufferedImage colorImage = ImageIO.read(
+//				new File("src/main/resources/color-schemes/classic_alpha70.png"));
+//		
+//		double[] ranges = ImageColorScheme.ranges(1, 500, colorImage.getHeight());
+//
+//		IColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
+//		
+//		//		System.out.println(Arrays.toString(ranges));
+//		
+////		SumAndSizeAlphaVisualizer visualizer = new SumAndSizeBinaryVisualizer(),
+//		SumAlphaVisualizer visualizer = new SumAlphaVisualizer(colorScheme);
+//		visualizer.setAlphaValue(0.2f);
+//		visualizer.setForceAlphaValue(true);
+//
+//		VisualizationFileWriterProcessor<Sum[]> heatmapFileWriter =
+//				new VisualizationFileWriterProcessor<Sum[]>(
+//						"out/tiles",
+//						new DefaultFileStrategy(), 
+//						"png",
+//						visualizer);
+//		
+//		heatmap.processTiles(heatmapFileWriter);
+//
+//		appContext.close();
+//	}
 }

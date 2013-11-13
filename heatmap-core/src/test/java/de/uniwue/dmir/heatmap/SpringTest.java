@@ -26,6 +26,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
 
@@ -42,7 +44,11 @@ public class SpringTest {
 		IGeoDatasource<GeoPoint<String>> geoDataSource = 
 				appContext.getBean(IGeoDatasource.class);
 		
-		List<GeoPoint<String>> points = geoDataSource.getData(10, 10, 100, 100);
+		List<GeoPoint<String>> points = geoDataSource.getData(
+				new GeoBoundingBox(
+						new GeoCoordinates(10, 10),
+						new GeoCoordinates(100, 100)));
+
 		for (int i = 0; i < 10; i++) {
 			System.out.println(points.get(i));
 		}

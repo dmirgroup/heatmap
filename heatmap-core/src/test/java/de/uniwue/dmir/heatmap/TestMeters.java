@@ -26,12 +26,12 @@ import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection;
-import de.uniwue.dmir.heatmap.core.filters.PointFilter;
+import de.uniwue.dmir.heatmap.core.filters.AbstractConfigurableFilter;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Cosine;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.EquidistantApproximation;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Haversine;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 public class TestMeters {
@@ -51,11 +51,19 @@ public class TestMeters {
 						(int) zoomLevelMapper.getSize(zoomLevel).getWidth() / 2, 
 						(int) zoomLevelMapper.getSize(zoomLevel).getHeight() / 2 + 1, 
 						zoomLevel), 
-				new PointFilter<Object>(null));
+				new AbstractConfigurableFilter<Object, Object>() {
+					@Override
+					public void filter(Object dataPoint, Object tile, TileSize tileSize, TileCoordinates tileCoordinates) {
+					}
+				});
 		System.out.println(bb);
 		
-		GeoCoordinates northWest = bb.getNorthWest();
-		GeoCoordinates southEast = bb.getSouthEast();
+		GeoCoordinates northWest = new GeoCoordinates(
+				bb.getMin().getLongitude(),
+				bb.getMax().getLatitude());
+		GeoCoordinates southEast = new GeoCoordinates(
+				bb.getMax().getLongitude(),
+				bb.getMin().getLatitude());
 	
 //		GeoCoordinates northEast = new GeoCoordinates(southEast.getLongitude(), northWest.getLatitude());
 		GeoCoordinates southWest = new GeoCoordinates(northWest.getLongitude(), southEast.getLatitude());

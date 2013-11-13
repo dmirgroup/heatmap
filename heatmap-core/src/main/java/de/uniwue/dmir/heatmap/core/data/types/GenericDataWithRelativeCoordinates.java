@@ -35,7 +35,8 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class GenericDataWithRelativeCoordinates<TData> extends BasicDataWithRelativeCoordinates {
+public class GenericDataWithRelativeCoordinates<TData> 
+extends BasicDataWithRelativeCoordinates {
 	
 	private TData data;
 	
@@ -49,7 +50,10 @@ public class GenericDataWithRelativeCoordinates<TData> extends BasicDataWithRela
 		this.data = data;
 	}
 	
-	public GenericDataWithRelativeCoordinates(RelativeCoordinates relativeCoordinates, TData data) {
+	public GenericDataWithRelativeCoordinates(
+			RelativeCoordinates relativeCoordinates,
+			TData data) {
+
 		super(relativeCoordinates);
 		this.data = data;
 	}
