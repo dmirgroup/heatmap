@@ -426,6 +426,21 @@
 				</constructor-arg>
 			</bean>
 		</constructor-arg>
+		
+		<property name="cityToPolygonMapper" ref="cityToPolygonMapper" />
+		
+		<property name="polygonStrokeColor">
+			<null />
+		</property>
+		
+		<property name="polygonFillColor">
+			<bean class="java.awt.Color">
+				<constructor-arg name="r" value="0" />
+				<constructor-arg name="g" value="0" />
+				<constructor-arg name="b" value="0" />
+				<constructor-arg name="a" value="0.21" />
+			</bean>
+		</property>
 	</bean>
 	
 	<bean id="writer"

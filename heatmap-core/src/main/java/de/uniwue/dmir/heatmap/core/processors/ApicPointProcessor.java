@@ -1,5 +1,7 @@
 package de.uniwue.dmir.heatmap.core.processors;
 
+import java.awt.Color;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,11 +10,12 @@ import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
+import lombok.Setter;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.TileSize;
@@ -20,11 +23,11 @@ import de.uniwue.dmir.heatmap.core.filters.ApicPointFilter.ApicCityTile;
 import de.uniwue.dmir.heatmap.core.filters.ApicPointFilter.ApicGroupTile;
 import de.uniwue.dmir.heatmap.core.filters.ApicPointFilter.ApicOverallTile;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.StaticPolygonProxyVisualizer;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
 
-@AllArgsConstructor
 public class ApicPointProcessor 
 implements ITileProcessor<ApicOverallTile> {
 
@@ -38,6 +41,30 @@ implements ITileProcessor<ApicOverallTile> {
 	private String folder;
 	private IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
 	private IMapper<String, TileSize> cityToTileSizeMapper;
+	
+	
+	
+	public ApicPointProcessor(
+			String folder,
+			IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer,
+			IMapper<String, TileSize> cityToTileSizeMapper) {
+		
+		super();
+		this.folder = folder;
+		this.visualizer = visualizer;
+		this.cityToTileSizeMapper = cityToTileSizeMapper;
+	}
+
+	@Setter
+	private IMapper<String, Polygon> cityToPolygonMapper;
+	
+	@Setter
+	private Color polygonFillColor;
+	
+	@Setter
+	private Color polygonStrokeColor;
+	
+	
 	
 	@Override
 	public void process(
@@ -60,12 +87,28 @@ implements ITileProcessor<ApicOverallTile> {
 		}
 		
 		for (Entry<String, ApicCityTile> cityEntry : tile.getCityTiles().entrySet()) {
+
+			Polygon cityPolygon = this.cityToPolygonMapper.map(cityEntry.getKey());
 			
-			System.out.println("KEY: " + cityEntry.getKey());
+			IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
+			if (cityToPolygonMapper != null) {
+				StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSize>> polygonVisualizer = 
+						new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSize>>(
+								this.visualizer, 
+								cityPolygon);
+				polygonVisualizer.setFillColor(this.polygonFillColor);
+				polygonVisualizer.setStrokeColor(this.polygonStrokeColor);
+				
+				visualizer = polygonVisualizer;
+				
+			} else {
+				visualizer = this.visualizer;
+			}
+			
 			TileSize cityTileSize = this.cityToTileSizeMapper.map(cityEntry.getKey()); 
 			
 			ApicCityTile cityTile = cityEntry.getValue();
-			BufferedImage cityImage = this.visualizer.visualize(
+			BufferedImage cityImage = visualizer.visualize(
 					cityTile.getPixels(), 
 					cityTileSize, 
 					tileCoordinates);
@@ -82,7 +125,7 @@ implements ITileProcessor<ApicOverallTile> {
 			for (Entry<String, ApicGroupTile> groupEntry : cityTile.getGroupTiles().entrySet()) {
 
 				ApicGroupTile groupTile = groupEntry.getValue();
-				BufferedImage groupImage = this.visualizer.visualize(
+				BufferedImage groupImage = visualizer.visualize(
 						groupTile.getPixels(), 
 						cityTileSize, 
 						tileCoordinates);
