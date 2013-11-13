@@ -67,7 +67,31 @@ public class GeoPolygon {
 	
 	private GeoBoundingBox geoBoundingBox;
 	
-	public void calculateExtrema() {
+	private Path2D path2DLonLat;
+	private Path2D path2DLatLon;
+
+	public GeoBoundingBox getGeoBoundingBox() {
+		if (this.geoBoundingBox == null) {
+			calculateGeoBoundingBox();
+		}
+		return this.geoBoundingBox;
+	}
+	
+	public Path2D getPath2DLonLat() {
+		if (this.path2DLonLat == null) {
+			this.path2DLonLat = calculatePath2D(true);
+		}
+		return this.path2DLonLat;
+	}
+	
+	public Path2D getPath2DLatLon() {
+		if (this.path2DLatLon == null) {
+			this.path2DLatLon = calculatePath2D(false);
+		}
+		return this.path2DLatLon;
+	}
+	
+	private void calculateGeoBoundingBox() {
 		
 		this.logger.debug("Calculating extrema.");
 		
@@ -98,7 +122,7 @@ public class GeoPolygon {
 	}
 	
 
-	public Path2D getPath2D(boolean lonlat) {
+	private Path2D calculatePath2D(boolean lonlat) {
 		
 		Path2D path = new Path2D.Double();
 		
@@ -156,7 +180,7 @@ public class GeoPolygon {
 				objectMapper.readValue(
 						inputStream, 
 						GeoPolygon.class);
-		geoPolygon.calculateExtrema();
+		geoPolygon.calculateGeoBoundingBox();
 		return geoPolygon;
 	}
 	

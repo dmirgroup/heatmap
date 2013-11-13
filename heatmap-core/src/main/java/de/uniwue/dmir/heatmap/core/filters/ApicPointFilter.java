@@ -31,6 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IMapProjection;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicPoint;
@@ -39,6 +40,7 @@ import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
+import de.uniwue.dmir.heatmap.core.util.GeoPolygon;
 
 @AllArgsConstructor
 public class ApicPointFilter
@@ -72,7 +74,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 	// city relevant data
 
 	private IMapper<String, IMapProjection> cityToMapProjectionMapper;
-	private IMapper<String, Path2D> cityToAreaMapper;
+	private IMapper<String, GeoPolygon> cityToGeoPolygonMapper;
 
 	@Override
 	public void filter(
@@ -82,10 +84,6 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 			TileCoordinates tileCoordinates) {
 		
 		FilterResult r = new FilterResult();
-		
-		if (dataPoint.getDeviceId() != null && dataPoint.getDeviceId().equals("test")) {
-			System.out.println("MUHUH");
-		}
 		
 		// try to associate point with group and city; both are either null or set at the same time
 		
@@ -116,6 +114,8 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 			// create city tile, if it does not exist
 			if (r.cityTile == null) {
 				r.cityTile = new ApicCityTile();
+				r.cityTile.geoBoundingBox = 
+						this.cityToGeoPolygonMapper.map(r.city).getGeoBoundingBox();
 				tile.cityTiles.put(r.city, r.cityTile);
 			}
 			
@@ -131,7 +131,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 			
 			// check if point is in area
 			
-			Path2D cityPath = this.cityToAreaMapper.map(r.city);
+			Path2D cityPath = this.cityToGeoPolygonMapper.map(r.city).getPath2DLonLat();
 			
 			GeoCoordinates geoCoordinates = dataPoint.getGeoCoordinates();
 			
@@ -522,15 +522,20 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		protected Date lastMeasurementInGamePoint = new Date(0);
 		protected Date lastMeasurementInGamePixel = new Date(0);
 		
-//		private long minX = Long.MAX_VALUE;
-//		private long minY = Long.MAX_VALUE;
-//		private long maxX = Long.MIN_VALUE;
-//		private long maxY = Long.MIN_VALUE;
+//		// relative coordinates
+//
+//		private long minRelativeX = Long.MAX_VALUE;
+//		private long minRelativeY = Long.MAX_VALUE;
+//		private long maxRelativeX = Long.MIN_VALUE;
+//		private long maxRelativeY = Long.MIN_VALUE;
+		
 	}
 
 	@Data
 	@EqualsAndHashCode(callSuper = true)
 	public static class ApicCityTile extends ApicGroupTile {
+		
+		private GeoBoundingBox geoBoundingBox;
 		
 		private Map<String, ApicGroupTile> groupTiles =
 				new HashMap<String, ApicGroupTile>();

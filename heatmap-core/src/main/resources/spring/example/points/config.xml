@@ -282,19 +282,30 @@
 			class="java.util.HashMap">
 		<constructor-arg name="m">
 			<map key-type="java.lang.String" value-type="java.awt.geom.Path2D">
-				<entry key="Antwerp" value="#{geoPolygonAntwerp.getPath2D(true)}" />
-				<entry key="Kassel" value="#{geoPolygonKassel.getPath2D(true)}" />
-				<entry key="London" value="#{geoPolygonLondon.getPath2D(true)}" />
-				<entry key="Turin" value="#{geoPolygonTurin.getPath2D(true)}" />
+				<entry key="Antwerp" value="#{geoPolygonAntwerp.getPath2DLonLat()}" />
+				<entry key="Kassel" value="#{geoPolygonKassel.getPath2DLonLat()}" />
+				<entry key="London" value="#{geoPolygonLondon.getPath2DLonLat()}" />
+				<entry key="Turin" value="#{geoPolygonTurin.getPath2DLonLat()}" />
 			</map>
 		</constructor-arg>
 	</bean>
 	
-	<bean id="cityToAreaMapper" 
+	<bean id="cityToGeoPolygonMap" class="java.util.HashMap">
+		<constructor-arg name="m">
+			<map key-type="java.lang.String" value-type="de.uniwue.dmir.heatmap.core.util.GeoPolygon">
+				<entry key="Antwerp" value-ref="geoPolygonAntwerp" />
+				<entry key="Kassel" value-ref="geoPolygonKassel" />
+				<entry key="London" value-ref="geoPolygonLondon" />
+				<entry key="Turin" value-ref="geoPolygonTurin" />
+			</map>
+		</constructor-arg>
+	</bean>
+	
+<!-- 	<bean id="cityToAreaMapper" 
 			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
 			
 		<constructor-arg name="map" ref="cityToAreaMap" />
-	</bean>
+	</bean> -->
 	
 	<bean id="cityToMapProjectionMapper" 
 			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
@@ -335,7 +346,11 @@
 		<constructor-arg name="pointToGroupMapper" ref="pointToGroupMapper" />
 		<constructor-arg name="pointToCityMapper" ref="pointToCityMapper" />
 		<constructor-arg name="groupToCityMapper" ref="groupToCityMapper" />
-		<constructor-arg name="cityToAreaMapper" ref="cityToAreaMapper" />
+		<constructor-arg name="cityToGeoPolygonMapper" >
+			<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+				<constructor-arg name="map" ref="cityToGeoPolygonMap" />
+			</bean>
+		</constructor-arg>
 		<constructor-arg name="cityToMapProjectionMapper" ref="cityToMapProjectionMapper" />
 		
 	</bean>
