@@ -96,7 +96,8 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 				&& dataPoint.getTimestampRecorded().getTime() != DEFAULT_TIMESTAMP.getTime();
 		
 		r.hasLocation =
-				!dataPoint.getGeoProvider().toLowerCase().equals(GEO_PROVIDER_NONE);
+				dataPoint.getGeoCoordinates() != null 
+				&& !dataPoint.getGeoProvider().toLowerCase().equals(GEO_PROVIDER_NONE);
 				
 		// check if point is in game time
 		
@@ -365,10 +366,12 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 
 		// If a group is given, we infer the city from the group.
 		// If no group has given we try to infer the city from the data point.
-		String city; 
+		String city = null; 
 		if (group != null) { 
 			city = this.groupToCityMapper.map(group);
-		} else { // try to extract city from 
+		} 
+		
+		if (city == null) { // try to extract city from point
 			city = this.pointToCityMapper.map(dataPoint);
 		}
 		

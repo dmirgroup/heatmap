@@ -28,6 +28,8 @@ import lombok.Data;
 @Data
 public class ApicPoint implements IGeoPoint {
 	
+	private long id;
+	
 	private GeoCoordinates geoCoordinates;
 	private String geoProvider;
 	

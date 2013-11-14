@@ -10,13 +10,15 @@
 			resultType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicPoint">
 
 		SELECT 
+			id							AS id,
 			geo_lon 					AS 'geoCoordinates.longitude',
 			geo_lat 					AS 'geoCoordinates.latitude',
 			geo_provider				AS geoProvider,
 			meta_timestamp_received		AS timestampReceived,
 			meta_timestamp_recorded		AS timestampRecorded,
 			meta_user_id				AS userId,
-			meta_device_id				AS deviceId
+			meta_device_id				AS deviceId,
+			data_sensorbox_mac			AS mac
 			
 		FROM data_airprobe
 		

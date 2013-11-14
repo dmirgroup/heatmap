@@ -336,7 +336,7 @@
 	<bean id="pointToCityMapper"
 			class="de.uniwue.dmir.heatmap.core.filters.apic.PointToCityMapper">
 			
-		<constructor-arg name="areas" ref="cityToAreaMap" />
+		<constructor-arg name="cityToPath2DMap" ref="cityToAreaMap" />
 	</bean>
 	
 	<bean id="cityToPolygonMapper"

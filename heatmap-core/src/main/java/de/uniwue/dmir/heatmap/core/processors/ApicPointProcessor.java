@@ -151,7 +151,7 @@ implements ITileProcessor<ApicOverallTile> {
 						tileCoordinates);
 				
 				String groupName = groupEntry.getKey().replaceAll("[^\\w]*", "");
-				File groupFile = new File(folder, GROUP_PREFIX + groupName + "." + IMAGE_TYPE);
+				File groupFile = new File(folder, GROUP_PREFIX + cityName + "-" + groupName + "." + IMAGE_TYPE);
 				
 				try {
 					ImageIO.write(groupImage, IMAGE_TYPE, groupFile);

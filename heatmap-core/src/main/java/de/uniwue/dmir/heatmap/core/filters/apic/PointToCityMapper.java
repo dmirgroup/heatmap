@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import lombok.AllArgsConstructor;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicPoint;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
@@ -32,15 +33,20 @@ import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 public class PointToCityMapper 
 implements IMapper<ApicPoint, String> {
 
-	private Map<String, Path2D> areas;
+	private Map<String, Path2D> cityToPath2DMap;
 
 	@Override
 	public String map(ApicPoint object) {
 		
-		for (Entry<String, Path2D> e : this.areas.entrySet()) {
-			double x = object.getGeoCoordinates().getLongitude();
-			double y = object.getGeoCoordinates().getLatitude();
-			
+		GeoCoordinates geoCoordinates = object.getGeoCoordinates();
+		if (geoCoordinates == null) {
+			return null;
+		}
+		
+		double x = geoCoordinates.getLongitude();
+		double y = geoCoordinates.getLatitude();
+
+		for (Entry<String, Path2D> e : this.cityToPath2DMap.entrySet()) {
 			if (e.getValue().contains(x, y)) {
 				return e.getKey();
 			}
