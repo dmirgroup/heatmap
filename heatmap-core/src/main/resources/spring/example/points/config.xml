@@ -270,11 +270,24 @@
 	
 	</bean>
 	
-	<bean id="groupToCityMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
-		<constructor-arg name="map">
-			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
-				<constructor-arg name="mapIdentifier" value="apic2013-group2city" />
-			</bean>
+	<bean id="groupToCityMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapperPipe">
+		<constructor-arg name="mappers">
+			<list>
+				<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+					<constructor-arg name="map">
+						<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
+							<constructor-arg name="mapIdentifier" value="apic2013-group2city" />
+						</bean>
+					</constructor-arg>
+				</bean>
+				<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+					<constructor-arg name="map">
+						<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
+							<constructor-arg name="mapIdentifier" value="apic2013-mac2city" />
+						</bean>
+					</constructor-arg>
+				</bean>
+			</list>
 		</constructor-arg>
 	</bean>
 	

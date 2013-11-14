@@ -49,6 +49,10 @@ implements IMapper<ApicPoint, String>{
 			group = this.macToGroupMapper.map(object.getMac());
 		}
 		
+		if (group == null) {
+			group = object.getMac();
+		}
+		
 		return group;
 	}
 
