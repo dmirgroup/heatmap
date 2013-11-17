@@ -237,6 +237,11 @@
 		<constructor-arg value="#{systemProperties.min}" />
 	</bean>
 	
+	<bean id="maximumTimestampRecorded" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="#{systemProperties.max}" />
+	</bean>
+	
+	
 	<bean id="userToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
 		<constructor-arg name="map">
 			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
@@ -355,7 +360,11 @@
 	<bean id="filter" 
 			class="de.uniwue.dmir.heatmap.core.filters.ApicPointFilter">
 		
-		<constructor-arg name="minimumTimestamp" ref="minimumTimestampRecorded" />	
+		<constructor-arg name="limitToCityBounds" value="true" />
+		
+		<constructor-arg name="minimumTimestampRecorded" ref="minimumTimestampRecorded" />	
+		<constructor-arg name="maximumTimestampRecorded" ref="maximumTimestampRecorded" />	
+		
 		<constructor-arg name="pointToGroupMapper" ref="pointToGroupMapper" />
 		<constructor-arg name="pointToCityMapper" ref="pointToCityMapper" />
 		<constructor-arg name="groupToCityMapper" ref="groupToCityMapper" />
@@ -382,7 +391,7 @@
 		<property name="zoomLevelRange" ref="zoomLevelRange" />
 		<property name="tileSize" ref="tileSize" />
 	</bean>
-	
+
 	<bean id="heatmap" 
 			class="de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap">
 	
@@ -391,7 +400,7 @@
 		<constructor-arg name="filter" ref="filter" />
 		<constructor-arg name="settings" ref="heatmapSettings" />
 	</bean>
-	
+
 	<!-- Preparing point visualizer. -->
 	<bean id="colorImage"
 			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">

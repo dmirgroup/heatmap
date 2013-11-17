@@ -55,12 +55,21 @@ implements ITileProcessor<ApicOverallTile> {
 	public static final String CITY_PREFIX = "city-";
 	public static final String GROUP_PREFIX = "group-";
 	public static final String APIC_FILE = "apic.json";
-	
+
 	private final ObjectMapper objectMapper = new ObjectMapper();
-	
+
 	private String folder;
 	private IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
 	private IMapper<String, TileSize> cityToTileSizeMapper;
+
+	@Setter
+	private IMapper<String, Polygon> cityToPolygonMapper;
+	
+	@Setter
+	private Color polygonFillColor;
+	
+	@Setter
+	private Color polygonStrokeColor;
 	
 	
 	
@@ -74,15 +83,6 @@ implements ITileProcessor<ApicOverallTile> {
 		this.visualizer = visualizer;
 		this.cityToTileSizeMapper = cityToTileSizeMapper;
 	}
-
-	@Setter
-	private IMapper<String, Polygon> cityToPolygonMapper;
-	
-	@Setter
-	private Color polygonFillColor;
-	
-	@Setter
-	private Color polygonStrokeColor;
 	
 	
 	
@@ -108,6 +108,13 @@ implements ITileProcessor<ApicOverallTile> {
 		
 		for (Entry<String, ApicCityTile> cityEntry : tile.getCityTiles().entrySet()) {
 
+//			// calculate relative coordinate bounds
+//			
+//			RelativeCoordinates min = new RelativeCoordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
+//			RelativeCoordinates max = new RelativeCoordinates(Integer.MIN_VALUE, Integer.MIN_VALUE);
+			
+			// initialize visualizer
+			
 			Polygon cityPolygon = this.cityToPolygonMapper.map(cityEntry.getKey());
 			
 			IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;

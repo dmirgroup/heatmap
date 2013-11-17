@@ -62,7 +62,10 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 	public static final String GEO_PROVIDER_PHONE_NETWORK = "network";
 	public static final String GEO_PROVIDER_SENSORBOX_GPS = "sensorbox";
 
-	private Date minimumTimestamp;
+	private boolean limitToCityBounds;
+	
+	private Date minimumTimestampRecorded;
+	private Date maximumTimestampRecorded;
 
 	private IMapper<ApicPoint, String> pointToGroupMapper;
 
@@ -103,7 +106,8 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		
 		r.inGameTimestamp =
 				r.isHasTimestamp()
-				&& dataPoint.getTimestampRecorded().getTime() > this.minimumTimestamp.getTime();
+				&& dataPoint.getTimestampRecorded().getTime() >= this.minimumTimestampRecorded.getTime()
+				&& dataPoint.getTimestampRecorded().getTime() <= this.maximumTimestampRecorded.getTime();
 		
 		// incorporate point into city and group statistics and tiles
 		if (r.city != null) {
@@ -141,9 +145,9 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 							geoCoordinates.getLongitude(), 
 							geoCoordinates.getLatitude());
 			
-			// adding in game point 
+			// adding in game point
 			
-			if (r.inGameTimestamp && r.inGameLocation) {
+			if (r.inGameTimestamp && (!this.limitToCityBounds || r.inGameLocation)) {
 				
 				IMapProjection cityProjection = 
 						this.cityToMapProjectionMapper.map(r.city);
@@ -435,6 +439,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 
 	@Data
 	public static class FilterResult {
+		
 		private String city;
 		private String group;
 		private boolean hasTimestamp;
@@ -445,6 +450,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		private ApicGroupTile groupTile;
 		private PointResult pointResultCity;
 		private PointResult pointResultGroup;
+		
 	}
 	
 	@Data
@@ -525,12 +531,13 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		protected Date lastMeasurementInGamePoint = new Date(0);
 		protected Date lastMeasurementInGamePixel = new Date(0);
 		
-//		// relative coordinates
-//
-//		private long minRelativeX = Long.MAX_VALUE;
-//		private long minRelativeY = Long.MAX_VALUE;
-//		private long maxRelativeX = Long.MIN_VALUE;
-//		private long maxRelativeY = Long.MIN_VALUE;
+		// relative coordinates
+
+		protected RelativeCoordinates min = 
+				new RelativeCoordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		
+		protected RelativeCoordinates max =
+			new RelativeCoordinates(Integer.MIN_VALUE, Integer.MIN_VALUE);
 		
 	}
 
