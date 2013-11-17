@@ -233,12 +233,20 @@
 		<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
 	</bean>
 	
-	<bean id="minimumTimestampRecorded" factory-bean="dateFactory" factory-method="parse">
-		<constructor-arg value="#{systemProperties.min}" />
+	<bean id="minimumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="${timestamp.received.min}" />
+	</bean>
+	
+	<bean id="maximumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="${timestamp.received.max}" />
+	</bean>
+	
+		<bean id="minimumTimestampRecorded" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="${timestamp.recorded.min}" />
 	</bean>
 	
 	<bean id="maximumTimestampRecorded" factory-bean="dateFactory" factory-method="parse">
-		<constructor-arg value="#{systemProperties.max}" />
+		<constructor-arg value="${timestamp.recorded.max}" />
 	</bean>
 	
 	
@@ -490,26 +498,10 @@
 		</constructor-arg>
 	</bean>
 	
-	
-	
-	
-	
-	
-	<beans profile="minmax">
-	
-		<bean id="min" factory-bean="dateFactory" factory-method="parse">
-			<constructor-arg value="#{systemProperties.min}" />
-		</bean>
-		
-		<bean id="max" factory-bean="dateFactory" factory-method="parse">
-			<constructor-arg value="#{systemProperties.max}" />
-		</bean>
-	
-		<bean id="geoSettings" 
-				class="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.TimeGeoSettings" >
-			<property name="minimumTimestamp" ref="min" />
-			<property name="maximumTimestamp" ref="max" />
-		</bean>
-	</beans>
+	<bean id="geoSettings" 
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.TimeGeoSettings" >
+		<property name="minimumTimestamp" ref="minimumTimestampReceived" />
+		<property name="maximumTimestamp" ref="maximumTimestampReceived" />
+	</bean>
 
 </beans>
