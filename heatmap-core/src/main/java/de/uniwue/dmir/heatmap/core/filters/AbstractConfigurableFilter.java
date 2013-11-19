@@ -20,9 +20,32 @@
  */
 package de.uniwue.dmir.heatmap.core.filters;
 
+import de.uniwue.dmir.heatmap.core.IFilter;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Abstract implementation of the {@link IFilter} interface implementing
+ * filter dimensions handling, 
+ * i.e. access and modification of values retrieved by
+ * 
+ * {@link IFilter#getWidth()},
+ * {@link IFilter#getHeight()},
+ * {@link IFilter#getCenterX()} and 
+ * {@link IFilter#getCenterY()}.
+ * 
+ * The default values are 
+ * <code>width=1</code>, 
+ * <code>height=1</code>, 
+ * <code>centerX=0</code>, 
+ * <code>centerY=0</code>.
+ * 
+ * 
+ * @author Martin Becker
+ *
+ * @param <TData> type of the data to be incorporated into the tile
+ * @param <TTile> type of the tile to incorporate data into
+ */
 @Getter
 @Setter
 public abstract class AbstractConfigurableFilter<TData, TTile> 

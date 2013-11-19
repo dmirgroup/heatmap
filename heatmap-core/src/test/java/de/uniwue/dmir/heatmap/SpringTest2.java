@@ -34,7 +34,7 @@ import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmap;
 import de.uniwue.dmir.heatmap.core.data.sources.GeoHeatmapDatasource;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;

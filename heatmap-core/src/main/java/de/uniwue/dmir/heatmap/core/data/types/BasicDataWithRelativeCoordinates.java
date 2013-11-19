@@ -29,7 +29,8 @@ import lombok.Data;
  * @author Martin Becker
  */
 @Data
-public class BasicDataWithRelativeCoordinates implements IDataWithRelativeCoordinates {
+public class BasicDataWithRelativeCoordinates 
+implements IDataWithRelativeCoordinates {
 	
 	private RelativeCoordinates coordinates;
 

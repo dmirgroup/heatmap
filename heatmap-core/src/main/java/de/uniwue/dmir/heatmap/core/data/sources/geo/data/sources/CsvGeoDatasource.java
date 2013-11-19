@@ -28,7 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.GeoPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -66,7 +66,7 @@ extends ListGeoDatasource<String> {
 
 			String[] split = line.split(separator);
 			
-			GeoPoint<String> geoPoint = new GeoPoint<String>();
+			SimpleGeoPoint<String> geoPoint = new SimpleGeoPoint<String>();
 			
 			double longitude = Double.parseDouble(split[0]);
 			geoPoint.getGeoCoordinates().setLongitude(longitude);

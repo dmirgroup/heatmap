@@ -43,7 +43,6 @@ public class EquidistantProjection implements IMapProjection {
 	private double diffLongitude;
 	private double diffLatitude;
 	
-	
 	public EquidistantProjection(
 			GeoBoundingBox geoBoundingBox, 
 			TileSize tileSize) {

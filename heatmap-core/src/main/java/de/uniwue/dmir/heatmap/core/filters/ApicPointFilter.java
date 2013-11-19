@@ -34,7 +34,7 @@ import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IMapProjection;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicGeoPoint;
 import de.uniwue.dmir.heatmap.core.filters.ApicPointFilter.ApicOverallTile;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
@@ -44,7 +44,7 @@ import de.uniwue.dmir.heatmap.core.util.GeoPolygon;
 
 @AllArgsConstructor
 public class ApicPointFilter
-extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
+extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 
 	/**
 	 * Half an hour in milliseconds.
@@ -67,12 +67,12 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 	private Date minimumTimestampRecorded;
 	private Date maximumTimestampRecorded;
 
-	private IMapper<ApicPoint, String> pointToGroupMapper;
+	private IMapper<ApicGeoPoint, String> pointToGroupMapper;
 
 	// to city mappers
 
 	private IMapper<String, String> groupToCityMapper;
-	private IMapper<ApicPoint, String> pointToCityMapper;
+	private IMapper<ApicGeoPoint, String> pointToCityMapper;
 
 	// city relevant data
 
@@ -81,7 +81,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 
 	@Override
 	public void filter(
-			ApicPoint dataPoint, 
+			ApicGeoPoint dataPoint, 
 			ApicOverallTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
@@ -177,7 +177,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 	}
 
 	private void updateStatistics(
-			ApicPoint dataPoint, 
+			ApicGeoPoint dataPoint, 
 			ApicOverallTile tile,
 			FilterResult r) {
 
@@ -508,7 +508,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 //		}
 	}
 	
-	public void setCityAndGroup(ApicPoint dataPoint, FilterResult filterResult) {
+	public void setCityAndGroup(ApicGeoPoint dataPoint, FilterResult filterResult) {
 		
 		// try to get group from data point
 		String group = this.pointToGroupMapper.map(dataPoint);
@@ -535,7 +535,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 	}
 	
 	public PointResult addPointToGrid(
-			ApicPoint dataPoint,
+			ApicGeoPoint dataPoint,
 			RelativeCoordinates relativeCoordinates,
 			Map<RelativeCoordinates, PointSize> pixels) {
 

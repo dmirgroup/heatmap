@@ -22,21 +22,33 @@ package de.uniwue.dmir.heatmap.core.data.sources.geo.data.types;
 
 import java.util.Date;
 
-import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import lombok.Data;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 
 @Data
-public class ApicPoint implements IGeoPoint {
-	
-	private long id;
+public class SimpleGeoPoint<TGroupDescription> implements IGeoPoint {
 	
 	private GeoCoordinates geoCoordinates;
-	private String geoProvider;
 	
-	private Date timestampReceived;
-	private Date timestampRecorded;
+	private double value;
+	private Date timestamp;
 	
-	private String mac;
-	private String deviceId;
-	private String userId;
+	private TGroupDescription groupDescription;
+	
+	public SimpleGeoPoint() {
+		this(0, 0, 0, null, null);
+	}
+	
+	public SimpleGeoPoint(
+			double longitude, 
+			double latitude, 
+			double value,
+			Date timestamp,
+			TGroupDescription groupDescription) {
+
+		this.geoCoordinates = new GeoCoordinates(longitude, latitude);
+		this.value = value;
+		this.timestamp = timestamp;
+		this.groupDescription = groupDescription;
+	}
 }

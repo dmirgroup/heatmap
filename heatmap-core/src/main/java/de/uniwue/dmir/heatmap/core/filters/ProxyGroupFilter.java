@@ -29,12 +29,14 @@ import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
- * Allows to create tiles which contain grouped data.
+ * Allows to create tiles which contain grouped data, i.e.,
+ * the tile containes a set of tiles: one tile for each group.
  * 
  * @author Martin Becker
  *
  * @param <TData>
- * @param <I>
+ * @param <TGroupTile>>
+ * @param <TGroupContainerTile>>
  */
 public class ProxyGroupFilter<TData, TGroupTile, TGroupContainerTile> 
 extends AbstractProxyFilter<TData, TGroupTile, TGroupContainerTile> {

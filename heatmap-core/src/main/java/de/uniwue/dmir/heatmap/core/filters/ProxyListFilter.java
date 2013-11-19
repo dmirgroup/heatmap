@@ -24,26 +24,31 @@ import java.util.List;
 
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.TileSize;
-import de.uniwue.dmir.heatmap.core.data.types.IDataWithRelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
- * Applies a set of filters.
+ * Applies a set of filters. 
+ * The  
+ * {@link IFilter#getWidth()},
+ * {@link IFilter#getHeight()},
+ * {@link IFilter#getCenterX()} and 
+ * {@link IFilter#getCenterY()} 
+ * values are adjusted accordingly.
  * 
  * TODO: finish
  * 
  * @author Martin Becker
  *
- * @param <E>
- * @param <I>
+ * @param <TData>
+ * @param <TTile>
  */
-public class ProxyListFilter<E extends IDataWithRelativeCoordinates, I>
-extends AbstractConfigurableFilter<E, I>
-implements IFilter<E, I>{
+public class ProxyListFilter<TData, TTile>
+extends AbstractConfigurableFilter<TData, TTile>
+implements IFilter<TData, TTile>{
 	
-	private List<IFilter<E, I>> filters;
+	private List<IFilter<TData, TTile>> filters;
 
-	public void addFilter(IFilter<E, I> filter) {
+	public void addFilter(IFilter<TData, TTile> filter) {
 		
 		this.filters.add(filter);
 		
@@ -52,12 +57,12 @@ implements IFilter<E, I>{
 	
 	@Override
 	public void filter(
-			E dataPoint, 
-			I tile, 
+			TData dataPoint, 
+			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 
-		for (IFilter<E, I> filter : this.filters) {
+		for (IFilter<TData, TTile> filter : this.filters) {
 			filter.filter(dataPoint, tile, tileSize, tileCoordinates);
 		}
 	}

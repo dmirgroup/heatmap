@@ -18,24 +18,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.filters;
+package de.uniwue.dmir.heatmap.core.data.sources.geo.data.types;
 
-import de.uniwue.dmir.heatmap.core.filters.access.ArrayPixelAccess;
-import de.uniwue.dmir.heatmap.core.filters.operators.IAdder;
-import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.tiles.coordinates.IToRelativeCoordinatesMapper;
+import java.util.Date;
 
-public class AddingArrayFilter<TData, TPixel> 
-extends AddingFilter<TData, TPixel, TPixel[]> {
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
+import lombok.Data;
 
-	public AddingArrayFilter(
-			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> dataToPixelMapper, 
-			IAdder<TPixel> pixelAdder) {
-		super(
-				new ArrayPixelAccess<TPixel>(), 
-				toRelativeCoordinatesMapper,
-				dataToPixelMapper, 
-				pixelAdder);
-	}
+@Data
+public class ApicGeoPoint implements IGeoPoint {
+	
+	private long id;
+	
+	private GeoCoordinates geoCoordinates;
+	private String geoProvider;
+	
+	private Date timestampReceived;
+	private Date timestampRecorded;
+	
+	private String mac;
+	private String deviceId;
+	private String userId;
 }

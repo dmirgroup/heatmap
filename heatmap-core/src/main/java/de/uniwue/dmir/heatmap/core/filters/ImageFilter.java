@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.filters.access.IPixelAccess;
 import de.uniwue.dmir.heatmap.core.filters.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.filters.operators.IScalarMultiplier;
@@ -33,11 +34,11 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @Getter
-public class ImageFilter<TData, TPixel> 
-extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
+public class ImageFilter<TData, TPixel, TTile> 
+extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 
 	/** Maps external data, e.g., from the data base to internal data, i.e., tile data. */
-	private IMapper<TData, TPixel> internalMapper;
+	private IMapper<TData, TPixel> dataToPixelMapper;
 	
 	/** Defines how to add up internal data. */
 	private IAdder<TPixel> adder;
@@ -62,34 +63,40 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 	private Double[] array;
 
 	public ImageFilter(
-			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> internalMapper,
+			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
+			IMapper<TData, TPixel> dataToPixelMapper,
+			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> adder,
 			IScalarMultiplier<TPixel> multiplier,
 			BufferedImage image) {
-		this(toRelativeCoordinatesMapper, internalMapper, adder, multiplier, false);
+		
+		this(dataToRelativeCoordinatesMapper, dataToPixelMapper, pixelAccess, adder, multiplier, false);
 	}
 	
 	public ImageFilter(
-			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> internalMapper,
+			IToRelativeCoordinatesMapper<TData> tdataTRelativeCoordinatesMapper,
+			IMapper<TData, TPixel> dataToPixelMapper,
+			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> adder,
 			IScalarMultiplier<TPixel> multiplier,
 			BufferedImage image,
 			boolean useAlpha) {
 		
-		this(toRelativeCoordinatesMapper, internalMapper, adder, multiplier, useAlpha);
+		this(tdataTRelativeCoordinatesMapper, dataToPixelMapper, pixelAccess, adder, multiplier, useAlpha);
 		initialize(image);
 	}
 	
 	private ImageFilter(
-			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> internalMapper,
+			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
+			IMapper<TData, TPixel> dataToPixelMapper,
+			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> adder,
 			IScalarMultiplier<TPixel> multiplier,
 			boolean useAlpha) {
-		super(toRelativeCoordinatesMapper);
-		this.internalMapper = internalMapper;
+
+		super(dataToRelativeCoordinatesMapper, pixelAccess);
+
+		this.dataToPixelMapper = dataToPixelMapper;
 		this.adder = adder;
 		this.multiplier = multiplier;
 		this.useAlpha = useAlpha;
@@ -143,7 +150,7 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 	public void filter(
 			TData dataTPixeloint, 
 			RelativeCoordinates relativeCoordinates,
-			TPixel[] tile, 
+			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
@@ -172,15 +179,14 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 					continue;
 				}
 				
-				TPixel addable = this.internalMapper.map(dataTPixeloint);
+				TPixel addable = this.dataToPixelMapper.map(dataTPixeloint);
 				
 				this.multiplier.multiply(addable, multiplicator);
 				
-				TPixel currentValue = Arrays2d.get(
-						x, y, 
+				TPixel currentValue = this.pixelAccess.get(
+						relativeCoordinates,
 						tile, 
-						tileSize.getWidth(), 
-						tileSize.getHeight());
+						tileSize);
 				
 				TPixel sum;
 				if (currentValue == null) {
@@ -189,11 +195,11 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 					sum = this.adder.add(currentValue, addable);
 				}
 				
-				Arrays2d.set(
-						sum, x, y, 
+				this.pixelAccess.set(
+						sum, 
+						relativeCoordinates,
 						tile, 
-						tileSize.getWidth(), 
-						tileSize.getHeight());
+						tileSize);
 			}
 		}
 	}

@@ -29,6 +29,16 @@ import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
+/** 
+ * Abstract filter providing a default implementation for the 
+ * {@link IFilter#filter(Collection, Object, TileSize, TileCoordinates)} method 
+ * by simple iteration as well as logging capabilities.
+ * 
+ * @author Martin Becker
+ *
+ * @param <TData> type of the data to be incorporated into the tile
+ * @param <TTile> type of the tile to incorporate data into
+ */
 public abstract class AbstractFilter<TData, TTile> 
 implements IFilter<TData, TTile> {
 

@@ -23,16 +23,16 @@ package de.uniwue.dmir.heatmap.core.filters.access;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 
-public interface IPixelAccess<I, T> {
+public interface IPixelAccess<TPixel, TTile> {
 
-	public I get(
+	public TPixel get(
 			RelativeCoordinates relativeCoordinates,
-			T tile,
+			TTile tile,
 			TileSize tileSize);
 	
 	public void set(
-			I pixelValue,
+			TPixel pixelValue,
 			RelativeCoordinates relativeCoordinates,
-			T tile,
+			TTile tile,
 			TileSize tileSize);
 }

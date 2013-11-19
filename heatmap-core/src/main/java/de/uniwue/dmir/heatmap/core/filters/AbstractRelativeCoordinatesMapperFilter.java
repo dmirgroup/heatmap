@@ -25,13 +25,22 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.IToRelativeCoordinatesMappe
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
+/** 
+ * Abstract filter handling the mapping from the given data type to relative
+ * coordinates using an {@link IToRelativeCoordinatesMapper}.
+ * 
+ * @author Martin Becker
+ *
+ * @param <TData> type of the data to be incorporated into the tile
+ * @param <TTile> type of the tile to incorporate data into
+ */
 public abstract class AbstractRelativeCoordinatesMapperFilter<TData, TTile> 
 extends AbstractConfigurableFilter<TData, TTile> {
 
-	protected IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper;
+	protected IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper;
 	
 	public AbstractRelativeCoordinatesMapperFilter(IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper) {
-		this.toRelativeCoordinatesMapper = toRelativeCoordinatesMapper;
+		this.dataToRelativeCoordinatesMapper = toRelativeCoordinatesMapper;
 	}
 	
 	public abstract void filter(
@@ -49,7 +58,7 @@ extends AbstractConfigurableFilter<TData, TTile> {
 			TileCoordinates tileCoordinates) {
 		
 		RelativeCoordinates relativeCoordinates = 
-				this.toRelativeCoordinatesMapper.map(dataPoint, tileCoordinates);
+				this.dataToRelativeCoordinatesMapper.map(dataPoint, tileCoordinates);
 		
 		this.filter(
 				dataPoint, 

@@ -22,6 +22,7 @@ package de.uniwue.dmir.heatmap.core.filters;
 
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.filters.access.IPixelAccess;
 import de.uniwue.dmir.heatmap.core.filters.operators.IAdder;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.IToRelativeCoordinatesMapper;
@@ -30,22 +31,25 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @Getter
-public class ErodeArrayFilter<TData, TPixel>
-extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
+public class ErodingFilter<TData, TPixel, TTile>
+extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 
-	public ErodeArrayFilter(
-			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
+	public ErodingFilter(
+			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
 			IMapper<TData, TPixel> dataToTPixelixelMapper,
-			IAdder<TPixel> pixelAdder, 
+			IPixelAccess<TPixel, TTile> pixelAccess, 
+			IAdder<TPixel> pixelAdder,
+			
 			int width,
 			int height,
 			int centerX, 
 			int centerY) {
 
-		super(toRelativeCoordinatesMapper);
+		super(dataToRelativeCoordinatesMapper, pixelAccess);
 		
 		this.dataToTPixelixelMapper = dataToTPixelixelMapper;
 		this.adder = pixelAdder;
+
 		this.width = width;
 		this.height = height;
 		this.centerX = centerX;
@@ -64,7 +68,7 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 	public void filter(
 			TData dataTPixeloint, 
 			RelativeCoordinates relativeCoordinates,
-			TPixel[] tileData, 
+			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
@@ -87,13 +91,8 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 					continue;
 				}
 				
-				
 				TPixel addable = this.dataToTPixelixelMapper.map(dataTPixeloint);
-				TPixel currentValue = Arrays2d.get(
-						x, y, 
-						tileData, 
-						tileSize.getWidth(), 
-						tileSize.getHeight());
+				TPixel currentValue = super.pixelAccess.get(relativeCoordinates, tile, tileSize);
 				
 				TPixel sum;
 				if (currentValue == null) {
@@ -102,11 +101,7 @@ extends AbstractRelativeCoordinatesMapperFilter<TData, TPixel[]> {
 					sum = this.adder.add(currentValue, addable);
 				}
 				
-				Arrays2d.set(
-						sum, x, y, 
-						tileData, 
-						tileSize.getWidth(), 
-						tileSize.getHeight());
+				super.pixelAccess.set(sum, relativeCoordinates, tile, tileSize);
 			}
 		}
 	}

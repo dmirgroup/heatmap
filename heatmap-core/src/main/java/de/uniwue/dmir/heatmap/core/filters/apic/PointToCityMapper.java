@@ -26,17 +26,17 @@ import java.util.Map.Entry;
 
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicGeoPoint;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
 @AllArgsConstructor
 public class PointToCityMapper 
-implements IMapper<ApicPoint, String> {
+implements IMapper<ApicGeoPoint, String> {
 
 	private Map<String, Path2D> cityToPath2DMap;
 
 	@Override
-	public String map(ApicPoint object) {
+	public String map(ApicGeoPoint object) {
 		
 		GeoCoordinates geoCoordinates = object.getGeoCoordinates();
 		if (geoCoordinates == null) {

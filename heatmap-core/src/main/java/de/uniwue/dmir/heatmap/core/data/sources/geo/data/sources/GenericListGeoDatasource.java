@@ -25,44 +25,54 @@ import java.util.List;
 
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
-public class ListGeoDatasource<TGroupDescription> 
-implements IGeoDatasource<SimpleGeoPoint<TGroupDescription>> {
+public class GenericListGeoDatasource<TData> 
+implements IGeoDatasource<TData> {
 
+	private IMapper<TData, GeoCoordinates> toGeoCoordinatesMapper;
+	
 	@Getter
-	private List<SimpleGeoPoint<TGroupDescription>> list;
+	private List<TData> list;
 	
-	public ListGeoDatasource() {
-		this.list = new ArrayList<SimpleGeoPoint<TGroupDescription>>();
+	public GenericListGeoDatasource(IMapper<TData, GeoCoordinates> toGeoCoordinatesMapper) {
+		this(new ArrayList<TData>(), toGeoCoordinatesMapper);
 	}
 	
-	public ListGeoDatasource(List<SimpleGeoPoint<TGroupDescription>> list) {
+	public GenericListGeoDatasource(
+			List<TData> list, 
+			IMapper<TData, GeoCoordinates> toGeoCoordinatesMapper) {
+		
 		this.list = list;
+		this.toGeoCoordinatesMapper = toGeoCoordinatesMapper;
 	}
 	
-	public List<SimpleGeoPoint<TGroupDescription>> getData(
-			GeoBoundingBox geoBoundingBox) {
+	public List<TData> getData(	GeoBoundingBox geoBoundingBox) {
 		
 		// return everything if no bounding box is given
 		if (geoBoundingBox == null) {
-			return new ArrayList<SimpleGeoPoint<TGroupDescription>>(this.list);
+			return new ArrayList<TData>(this.list);
 		}
 		
 		// calculate result
-		List<SimpleGeoPoint<TGroupDescription>> result = new ArrayList<SimpleGeoPoint<TGroupDescription>>();
-		for (SimpleGeoPoint<TGroupDescription> geoPoint : this.list) {
+		List<TData> result = new ArrayList<TData>();
+		for (TData d : this.list) {
+			
+			GeoCoordinates geoCoordinates = this.toGeoCoordinatesMapper.map(d);
+			
 			if (
-					geoPoint.getGeoCoordinates().getLongitude() 
+					geoCoordinates.getLongitude() 
 						>= geoBoundingBox.getMin().getLongitude()
-					&& geoPoint.getGeoCoordinates().getLongitude() 
+					&& geoCoordinates.getLongitude() 
 						<= geoBoundingBox.getMax().getLongitude()
-					&& geoPoint.getGeoCoordinates().getLatitude() 
+					&& geoCoordinates.getLatitude() 
 						>= geoBoundingBox.getMin().getLatitude()
-					&& geoPoint.getGeoCoordinates().getLatitude() 
+					&& geoCoordinates.getLatitude() 
 						<= geoBoundingBox.getMax().getLatitude()) {
-				result.add(geoPoint);
+				
+				result.add(d);
 			}
 		}
 		

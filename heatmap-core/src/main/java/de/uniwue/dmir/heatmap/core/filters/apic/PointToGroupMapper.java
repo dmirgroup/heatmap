@@ -21,19 +21,19 @@
 package de.uniwue.dmir.heatmap.core.filters.apic;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicPoint;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicGeoPoint;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
 @AllArgsConstructor
 public class PointToGroupMapper
-implements IMapper<ApicPoint, String>{
+implements IMapper<ApicGeoPoint, String>{
 
 	private IMapper<String, String> userToGroupMapper;
 	private IMapper<String, String> deviceToGroupMapper;
 	private IMapper<String, String> macToGroupMapper;
 	
 	@Override
-	public String map(ApicPoint object) {
+	public String map(ApicGeoPoint object) {
 		
 		String group = null;
 		

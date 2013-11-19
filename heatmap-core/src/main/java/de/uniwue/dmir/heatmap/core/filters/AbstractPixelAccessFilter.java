@@ -20,25 +20,29 @@
  */
 package de.uniwue.dmir.heatmap.core.filters;
 
-import java.util.Map;
-
-import de.uniwue.dmir.heatmap.core.filters.access.MapPixelAccess;
-import de.uniwue.dmir.heatmap.core.filters.operators.IAdder;
-import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.filters.access.IPixelAccess;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.IToRelativeCoordinatesMapper;
-import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 
-public class AddingMapFilter<TData, TPixel> 
-extends AddingFilter<TData, TPixel, Map<RelativeCoordinates, TPixel>> {
+/** 
+ * Abstract filter providing a {@link IPixelAccess} field for extending classes
+ * to use.
+ * 
+ * @author Martin Becker
+ *
+ * @param <TData> type of the data to be incorporated into the tile
+ * @param <TTile> type of the tile to incorporate data into
+ */
+public abstract class AbstractPixelAccessFilter<TData, TPixel, TTile> 
+extends AbstractRelativeCoordinatesMapperFilter<TData, TTile> {
 
-	public AddingMapFilter(
+	protected IPixelAccess<TPixel, TTile> pixelAccess;
+	
+	public AbstractPixelAccessFilter(
 			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> dataToPixelMapper, 
-			IAdder<TPixel> pixelAdder) {
-		super(
-				new MapPixelAccess<TPixel>(), 
-				toRelativeCoordinatesMapper,
-				dataToPixelMapper, 
-				pixelAdder);
+			IPixelAccess<TPixel, TTile> pixelAccess) {
+		
+		super(toRelativeCoordinatesMapper);
+		this.pixelAccess = pixelAccess;
 	}
+	
 }
