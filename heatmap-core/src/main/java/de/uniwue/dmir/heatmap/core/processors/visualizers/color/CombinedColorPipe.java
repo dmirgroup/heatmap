@@ -18,19 +18,34 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.colors;
+package de.uniwue.dmir.heatmap.core.processors.visualizers.color;
 
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IAlphaScheme;
+import java.awt.Color;
 
-public class SimpleAlphaPipe<T> implements IAlphaPipe<T> {
-	
-	private IToDoubleMapper<T> toDoubleMapper;
-	private IAlphaScheme alphaScheme;
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
+public class CombinedColorPipe<T> 
+implements IColorPipe<T> {
+
+	private IColorPipe<T> colorPipe;
+	private IAlphaPipe<T> alphaPipe;
 	
 	@Override
-	public int getAlpha(T object) {
-		double alphaValue = this.toDoubleMapper.map(object);
-		return this.alphaScheme.getColor(alphaValue);
+	public Color getColor(T object) {
+		
+		Color color = this.colorPipe.getColor(object);
+		
+		if (this.alphaPipe != null) {
+			int alphaCode = this.alphaPipe.getAlpha(object);
+			color = new Color(
+					color.getRed(), 
+					color.getGreen(), 
+					color.getBlue(), 
+					alphaCode);
+		}
+		
+		return color;
 	}
+
 }

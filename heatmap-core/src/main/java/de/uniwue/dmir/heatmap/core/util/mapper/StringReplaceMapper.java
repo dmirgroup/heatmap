@@ -18,8 +18,21 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.colors;
+package de.uniwue.dmir.heatmap.core.util.mapper;
 
-public interface IAlphaPipe<T> {
-	int getAlpha(T object);
+import lombok.AllArgsConstructor;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+
+@AllArgsConstructor
+public class StringReplaceMapper
+implements IMapper<String, String> {
+
+	private String regex;
+	private String replacement;
+	
+	@Override
+	public String map(String object) {
+		return object.replaceAll(this.regex, this.replacement);
+	}
+
 }

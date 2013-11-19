@@ -18,10 +18,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.colors;
+package de.uniwue.dmir.heatmap.core.processors.visualizers.color;
 
 import java.awt.Color;
 
-public interface IColorPipe<T> {
-	Color getColor(T object);
+import lombok.AllArgsConstructor;
+import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
+
+@AllArgsConstructor
+public class SimpleColorPipe<T> implements IColorPipe<T> {
+	
+	private IToDoubleMapper<T> toDoubleMapper;
+	private IColorScheme colorScheme;
+	
+	@Override
+	public Color getColor(T object) {
+		double colorValue = this.toDoubleMapper.map(object);
+		return new Color(this.colorScheme.getColor(colorValue));
+	}
 }

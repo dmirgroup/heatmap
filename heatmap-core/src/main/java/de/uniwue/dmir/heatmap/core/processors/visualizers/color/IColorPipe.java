@@ -18,21 +18,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.mappers;
+package de.uniwue.dmir.heatmap.core.processors.visualizers.color;
 
-import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import java.awt.Color;
 
-@AllArgsConstructor
-public class MapperCascade<TSource, TIntermediate, TResult> 
-implements IMapper<TSource, TResult>{
-
-	private IMapper<TSource, TIntermediate> sourceMapper;
-	private IMapper<TIntermediate, TResult> intermediateMapper;
-	
-	@Override
-	public TResult map(TSource object) {
-		TIntermediate intermediate = this.sourceMapper.map(object);
-		return this.intermediateMapper.map(intermediate);
-	}
+public interface IColorPipe<T> {
+	Color getColor(T object);
 }

@@ -18,15 +18,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.mappers;
+package de.uniwue.dmir.heatmap.core.util.mapper;
 
+import java.util.Map;
+
+import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
-public class IdentityMapper<T> implements IMapper<T, T>{
+@AllArgsConstructor
+public class MapMapper<T, P> 
+implements IMapper<T, P> {
 
+	private Map<T, P> map;
+	
 	@Override
-	public T map(T object) {
-		return object;
+	public P map(T object) {
+		return this.map.get(object);
 	}
 
 }

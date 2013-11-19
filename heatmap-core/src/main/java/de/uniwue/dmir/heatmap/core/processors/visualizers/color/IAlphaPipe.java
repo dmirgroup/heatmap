@@ -18,35 +18,8 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.mappers;
+package de.uniwue.dmir.heatmap.core.processors.visualizers.color;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
-
-@AllArgsConstructor
-public class MapperPipeline<T> implements IMapper<T, T> {
-
-	@Getter
-	private List<IMapper<T, T>> mappers;
-
-	public MapperPipeline() {
-		this(new ArrayList<IMapper<T,T>>());
-	}
-	
-	@Override
-	public T map(T object) {
-
-		T result = object;
-		for (IMapper<T, T> m : this.mappers) {
-			result = m.map(result);
-			System.out.println(result);
-		}
-		
-		return result;
-	}
-	
+public interface IAlphaPipe<T> {
+	int getAlpha(T object);
 }

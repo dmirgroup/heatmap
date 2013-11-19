@@ -45,9 +45,9 @@ import de.uniwue.dmir.heatmap.core.filters.operators.SumScalarMultiplier;
 import de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap;
 import de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.ImageColorScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.SumAlphaVisualizer;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
 import de.uniwue.dmir.heatmap.core.tiles.factories.ArrayTileFactory;
 import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
 

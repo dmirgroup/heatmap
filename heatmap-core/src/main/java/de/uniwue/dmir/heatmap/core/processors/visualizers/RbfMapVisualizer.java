@@ -38,6 +38,7 @@ import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
 import de.uniwue.dmir.heatmap.core.processors.WeightedSumToAverageMapper;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IAlphaScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.EuclidianDistance;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GaussianRbf;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;

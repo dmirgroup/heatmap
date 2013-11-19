@@ -18,44 +18,37 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.mappers;
+package de.uniwue.dmir.heatmap.core.util.mapper;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.impl.core.mybatis.BidirectionalMyBatisMapper;
 
-@AllArgsConstructor
-public class MapperPipe<TKey, TValue> 
-implements IMapper<TKey, TValue> {
 
-	private List<IMapper<TKey, TValue>> mappers;
-	private boolean first;
+public class StringLookupMapper 
+implements IMapper<String, String>{
+
+	private String instanceId;
+	private boolean returnNull;
 	
-	public MapperPipe(List<IMapper<TKey, TValue>> mappers) {
-		this(mappers, true);
+	@Autowired
+	private BidirectionalMyBatisMapper mapper;
+	
+	public StringLookupMapper(String instanceId) {
+		this.instanceId = instanceId;
+		this.returnNull = false;
 	}
 	
 	@Override
-	public TValue map(TKey object) {
+	public String map(String object) {
 		
-		TValue result = null;
+		String mapping = this.mapper.getResult(this.instanceId, object);
 		
-		for (IMapper<TKey, TValue> mapper : this.mappers) {
-			
-			if (result == null) {
-				result = mapper.map(object);
-			} else {
-				if (!this.first) {
-					TValue value = mapper.map(object);
-					if (value != null) {
-						result = value;
-					}
-				}
-			}
+		if (mapping == null && !this.returnNull) {
+			return object;
 		}
 		
-		return result;
+		return mapping;
 	}
-
 }

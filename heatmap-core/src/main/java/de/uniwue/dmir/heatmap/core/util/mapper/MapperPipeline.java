@@ -18,23 +18,35 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.colors;
+package de.uniwue.dmir.heatmap.core.util.mapper;
 
-import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
+import lombok.Getter;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
 @AllArgsConstructor
-public class SimpleColorPipe<T> implements IColorPipe<T> {
-	
-	private IToDoubleMapper<T> toDoubleMapper;
-	private IColorScheme colorScheme;
+public class MapperPipeline<T> implements IMapper<T, T> {
+
+	@Getter
+	private List<IMapper<T, T>> mappers;
+
+	public MapperPipeline() {
+		this(new ArrayList<IMapper<T,T>>());
+	}
 	
 	@Override
-	public Color getColor(T object) {
-		double colorValue = this.toDoubleMapper.map(object);
-		return new Color(this.colorScheme.getColor(colorValue));
+	public T map(T object) {
+
+		T result = object;
+		for (IMapper<T, T> m : this.mappers) {
+			result = m.map(result);
+			System.out.println(result);
+		}
+		
+		return result;
 	}
+	
 }

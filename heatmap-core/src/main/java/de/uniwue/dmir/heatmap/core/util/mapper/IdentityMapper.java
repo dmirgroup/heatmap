@@ -18,41 +18,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.util;
+package de.uniwue.dmir.heatmap.core.util.mapper;
 
-import java.awt.image.BufferedImage;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
-import lombok.AllArgsConstructor;
-
-import org.springframework.beans.factory.FactoryBean;
-
-import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
-
-@AllArgsConstructor
-public class RangeFactoryBean implements FactoryBean<double[]> {
-
-	private double min;
-	private double max;
-	
-	private int colors;
-	
-	public RangeFactoryBean(double min, double max, BufferedImage image) {
-		this(min, max, image.getHeight());
-	}
-	
-	@Override
-	public double[] getObject() throws Exception {
-		return ImageColorScheme.ranges(this.min, this.max, this.colors);
-	}
+public class IdentityMapper<T> implements IMapper<T, T>{
 
 	@Override
-	public Class<?> getObjectType() {
-		return double[].class;
-	}
-
-	@Override
-	public boolean isSingleton() {
-		return false;
+	public T map(T object) {
+		return object;
 	}
 
 }

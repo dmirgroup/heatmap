@@ -18,34 +18,32 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.colors;
+package de.uniwue.dmir.heatmap.core.util.mapper;
 
-import java.awt.Color;
+import java.security.NoSuchAlgorithmException;
 
 import lombok.AllArgsConstructor;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.util.HashUtils;
 
 @AllArgsConstructor
-public class CombinedColorPipe<T> 
-implements IColorPipe<T> {
+public class StringHashMapper implements IMapper<String, String> {
 
-	private IColorPipe<T> colorPipe;
-	private IAlphaPipe<T> alphaPipe;
+	public static final String MD5 = "MD5";
+	
+	private String hashAlgorithm;
+	
+	public StringHashMapper() {
+		this.hashAlgorithm = MD5;
+	}
 	
 	@Override
-	public Color getColor(T object) {
-		
-		Color color = this.colorPipe.getColor(object);
-		
-		if (this.alphaPipe != null) {
-			int alphaCode = this.alphaPipe.getAlpha(object);
-			color = new Color(
-					color.getRed(), 
-					color.getGreen(), 
-					color.getBlue(), 
-					alphaCode);
+	public String map(String object) {
+		try {
+			return HashUtils.digest(object, this.hashAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
 		}
-		
-		return color;
 	}
 
 }
