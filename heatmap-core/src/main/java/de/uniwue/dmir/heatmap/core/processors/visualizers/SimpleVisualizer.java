@@ -23,10 +23,6 @@ package de.uniwue.dmir.heatmap.core.processors.visualizers;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
@@ -35,19 +31,22 @@ import de.uniwue.dmir.heatmap.core.processors.visualizers.color.CombinedColorPip
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
-@AllArgsConstructor
 public class SimpleVisualizer<TTile, TPixel> 
-extends AbstractDebuggingVisualizer<TTile>
+extends AbstractGenericVisualizer<TTile, TPixel>
 implements IVisualizer<TTile> {
+	
+	public SimpleVisualizer(
+			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
+			CombinedColorPipe<TPixel> colorPipe) {
+		
+		super(pixelIteratorFactory);
+		this.colorPipe = colorPipe;
+	}
 
-	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	private IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory;
-	
 	private CombinedColorPipe<TPixel> colorPipe;
 	
 	@Override
-	public BufferedImage visualize(
+	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates coordinates) {
@@ -59,7 +58,7 @@ implements IVisualizer<TTile> {
 						BufferedImage.TYPE_INT_ARGB);
 		
 		IKeyValueIterator<RelativeCoordinates, TPixel> iterator = 
-				this.pixelIteratorFactory.iterator(tile);
+				super.pixelIteratorFactory.iterator(tile);
 
 		while (iterator.hasNext()) {
 			
@@ -74,7 +73,7 @@ implements IVisualizer<TTile> {
 					|| relativeCoordinates.getY() < 0 
 					|| relativeCoordinates.getY() >= tileSize.getHeight()) {
 				
-				this.logger.info(
+				super.logger.info(
 						"Skipping out of bounds coordinates: {}", 
 						relativeCoordinates);
 				
@@ -89,9 +88,6 @@ implements IVisualizer<TTile> {
 					relativeCoordinates.getY(), 
 					color.getRGB());
 		}
-		
-		// add debugging information
-		super.addDebugInformation(tileSize, coordinates, bufferedImage);
 		
 		return bufferedImage;
 	}

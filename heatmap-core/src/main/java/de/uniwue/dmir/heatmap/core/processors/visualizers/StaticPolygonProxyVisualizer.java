@@ -31,12 +31,12 @@ import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
-public class StaticPolygonProxyVisualizer<I>
-implements IVisualizer<I> {
+public class StaticPolygonProxyVisualizer<TTile>
+implements IVisualizer<TTile> {
 
 	public static final Color DEFAULT_COLOR = Color.WHITE;
 	
-	private IVisualizer<I> visualizer;
+	private IVisualizer<TTile> visualizer;
 	private Polygon polygon;
 	
 	@Getter
@@ -48,7 +48,7 @@ implements IVisualizer<I> {
 	private Color strokeColor;
 	
 	public StaticPolygonProxyVisualizer(
-			IVisualizer<I> visualizer,
+			IVisualizer<TTile> visualizer,
 			Polygon polygon) {
 		
 		this.visualizer = visualizer;
@@ -58,7 +58,7 @@ implements IVisualizer<I> {
 	
 	@Override
 	public BufferedImage visualize(
-			I tile, 
+			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates coordinates) {
 		

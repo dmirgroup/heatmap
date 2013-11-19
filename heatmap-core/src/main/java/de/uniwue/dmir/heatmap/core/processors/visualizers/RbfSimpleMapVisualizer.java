@@ -83,7 +83,7 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		this.alphaScheme = alphaScheme;
 	}
 	
-	public BufferedImage visualize(
+	public BufferedImage visualizeWithDebuggingInformation(
 			Map<RelativeCoordinates, T> data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
@@ -173,9 +173,6 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		
 //		System.out.println(Arrays2d.toStringDouble(values, width, height));
 		
-		// debugging
-		this.addDebugInformation(tileSize, coordinates, image);
-
 		super.logger.debug("Returning image.");
 		
 		return image;

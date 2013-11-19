@@ -45,7 +45,7 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 	@Setter
 	private double alpha;
 	
-	public BufferedImage visualize(
+	public BufferedImage visualizeWithDebuggingInformation(
 			Sum[] data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
@@ -75,9 +75,6 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 		WritableRaster alphaRaster = image.getAlphaRaster();
 		alphaRaster.setPixels(0, 0, width, height, alpha);
 
-		// debugging
-		this.addDebugInformation(tileSize, coordinates, image);
-		
 		return image;
 	}
 	

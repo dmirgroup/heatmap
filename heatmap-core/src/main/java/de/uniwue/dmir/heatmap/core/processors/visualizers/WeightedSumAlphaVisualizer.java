@@ -38,9 +38,6 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 	public static final Color DEFAULT_BACKGROUND_COLOR = new Color(0, 0, 0, 0);
 	
 	@Setter
-	private boolean debug = false;
-	
-	@Setter
 	private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
 	
 	@Setter
@@ -74,7 +71,7 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		}
 	}
 	
-	public BufferedImage visualize(
+	public BufferedImage visualizeWithDebuggingInformation(
 			WeightedSum[] data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
@@ -152,9 +149,6 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 				}
 			}
 		}
-		
-		// debugging
-		this.addDebugInformation(tileSize, coordinates, image);
 		
 		return image;
 	}

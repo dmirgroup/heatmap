@@ -24,16 +24,18 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.Getter;
-import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
-public abstract class AbstractDebuggingVisualizer<I> implements IVisualizer<I> {
+public abstract class AbstractDebuggingVisualizer<TTile> 
+implements IVisualizer<TTile> {
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -49,9 +51,27 @@ public abstract class AbstractDebuggingVisualizer<I> implements IVisualizer<I> {
 		this.debug = false;
 	}
 	
+	@Override
+	public BufferedImage visualize(TTile tile, TileSize tileSize,
+			TileCoordinates tileCoordinates) {
+		
+		BufferedImage image = this.visualizeWithDebuggingInformation(
+				tile, 
+				tileSize, 
+				tileCoordinates);
+		this.addDebugInformation(tileSize, tileCoordinates, image);
+		
+		return image;
+	}
+	
+	public abstract BufferedImage visualizeWithDebuggingInformation(
+			TTile tile, 
+			TileSize tileSize,
+			TileCoordinates tileCoordinates);
+	
 	public void addDebugInformation(
 			TileSize tileSize,
-			TileCoordinates coordinates,
+			TileCoordinates tileCoordinates,
 			BufferedImage image) {
 		
 		if (this.debug) {
@@ -66,9 +86,9 @@ public abstract class AbstractDebuggingVisualizer<I> implements IVisualizer<I> {
 
 			graphics.drawString(String.format(
 					"x:%d, y:%d, z:%d", 
-					coordinates.getX(),
-					coordinates.getY(),
-					coordinates.getZoom()),
+					tileCoordinates.getX(),
+					tileCoordinates.getY(),
+					tileCoordinates.getZoom()),
 					15, 15);
 
 		}

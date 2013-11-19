@@ -67,7 +67,7 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		this.alphaScheme = alphaScheme;
 	}
 	
-	public BufferedImage visualize(
+	public BufferedImage visualizeWithDebuggingInformation(
 			WeightedSum[] data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
@@ -178,9 +178,6 @@ extends AbstractDebuggingVisualizer<WeightedSum[]> {
 		
 //		System.out.println(Arrays2d.toStringDouble(values, width, height));
 		
-		// debugging
-		this.addDebugInformation(tileSize, coordinates, image);
-
 		super.logger.debug("Returning image.");
 		
 		return image;

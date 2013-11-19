@@ -18,18 +18,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors;
+package de.uniwue.dmir.heatmap.core.processors.visualizers;
 
-public interface IKeyValueIteratorFactory<TSource, TKey, TValue> {
-	
-	IKeyValueIterator<TKey, TValue> iterator(TSource source);
-	
-	public static interface IKeyValueIterator<TKey, TValue> {
+import de.uniwue.dmir.heatmap.core.TileSize;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
+import de.uniwue.dmir.heatmap.core.util.RelativeCoordinatesArrayKeyValueIteratorFactory;
 
-		boolean hasNext();
-		void next();
-		TKey getKey();
-		TValue getValue();
-		
+/**
+ * @see GenericAlphaVisualizer
+ * @author Martin Becker
+ *
+ */
+public class SumArrayAlphaVisualizer
+extends GenericAlphaVisualizer<Sum[], Sum> {
+
+	public SumArrayAlphaVisualizer(TileSize tileSize) {
+		super(new RelativeCoordinatesArrayKeyValueIteratorFactory<Sum>(
+				tileSize.getWidth(), 
+				tileSize.getHeight(), 
+				false));
 	}
+
 }

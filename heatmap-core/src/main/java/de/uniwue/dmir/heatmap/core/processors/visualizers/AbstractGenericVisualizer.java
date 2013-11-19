@@ -18,18 +18,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors;
+package de.uniwue.dmir.heatmap.core.processors.visualizers;
 
-public interface IKeyValueIteratorFactory<TSource, TKey, TValue> {
-	
-	IKeyValueIterator<TKey, TValue> iterator(TSource source);
-	
-	public static interface IKeyValueIterator<TKey, TValue> {
+import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 
-		boolean hasNext();
-		void next();
-		TKey getKey();
-		TValue getValue();
-		
+public abstract class AbstractGenericVisualizer<TTile, TPixel> 
+extends AbstractDebuggingVisualizer<TTile> {
+
+	protected IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory;
+	
+	public AbstractGenericVisualizer(
+			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory) {
+		this.pixelIteratorFactory = pixelIteratorFactory;
 	}
+	
 }
