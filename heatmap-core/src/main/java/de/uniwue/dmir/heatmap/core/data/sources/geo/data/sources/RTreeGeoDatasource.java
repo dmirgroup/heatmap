@@ -22,7 +22,7 @@ package de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources;
 
 import java.util.List;
 
-import org.apache.commons.lang3.time.StopWatch;
+import org.springframework.util.StopWatch;
 
 import com.newbrightidea.util.RTree;
 
@@ -95,7 +95,7 @@ public class RTreeGeoDatasource<S> extends AbstractCachedGeoDatasource<S> {
 		this.rtree.clear();
 		
 		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
+		stopWatch.start("getting data");
 		
 		List<S> data = super.dataSource.getData(null);
 		
@@ -103,8 +103,8 @@ public class RTreeGeoDatasource<S> extends AbstractCachedGeoDatasource<S> {
 		stopWatch.stop();
 		super.logger.debug("getting data: {}", stopWatch.toString());
 		
-		stopWatch.reset();
-		stopWatch.start();
+		stopWatch.stop();
+		stopWatch.start("adding data");
 		
 		for (S s : data) {
 			GeoCoordinates geoCoordinates = this.mapper.map(s);

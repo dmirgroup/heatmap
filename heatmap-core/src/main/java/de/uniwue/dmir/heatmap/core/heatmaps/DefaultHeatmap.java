@@ -25,9 +25,9 @@ import java.util.Iterator;
 import lombok.Getter;
 import lombok.Setter;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StopWatch;
 
 import de.uniwue.dmir.heatmap.core.HeatmapSettings;
 import de.uniwue.dmir.heatmap.core.IFilter;
@@ -114,8 +114,8 @@ implements IHeatmap<TTile> {
 		
 		this.logger.debug("Loading data seed.");
 		
-		stopWatch.reset();
-		stopWatch.start();
+		stopWatch.stop();
+		stopWatch.start("loading data seed");
 		
 		TTile tile = this.seed.getTile(projectedTileCoordinates);
 		
@@ -130,8 +130,8 @@ implements IHeatmap<TTile> {
 		
 		this.logger.debug("Loading data points.");
 		
-		stopWatch.reset();
-		stopWatch.start();
+		stopWatch.stop();
+		stopWatch.start("loading data points");
 		
 		Iterator<TData> externalData = this.dataSource.getData(
 				projectedTileCoordinates, 
@@ -161,8 +161,8 @@ implements IHeatmap<TTile> {
 
 		this.logger.debug("Adding data points to tile: {}", tileCoordinates);
 		
-		stopWatch.reset();
-		stopWatch.start();
+		stopWatch.stop();
+		stopWatch.start("adding data points to tile");
 		
 		int externalDataPointCount = 0;
 		while(externalData.hasNext()) {
