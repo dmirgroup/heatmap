@@ -23,6 +23,9 @@ package de.uniwue.dmir.heatmap.core.processors.visualizers;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.TileSize;
@@ -37,10 +40,12 @@ public class SimpleVisualizer<TTile, TPixel>
 extends AbstractDebuggingVisualizer<TTile>
 implements IVisualizer<TTile> {
 
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	private IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory;
 	
 	private CombinedColorPipe<TPixel> colorPipe;
-
+	
 	@Override
 	public BufferedImage visualize(
 			TTile tile, 
@@ -62,6 +67,20 @@ implements IVisualizer<TTile> {
 			
 			RelativeCoordinates relativeCoordinates = iterator.getKey();
 			TPixel pixel = iterator.getValue();
+			
+			if (
+					relativeCoordinates.getX() < 0 
+					|| relativeCoordinates.getX() >= tileSize.getWidth()
+					|| relativeCoordinates.getY() < 0 
+					|| relativeCoordinates.getY() >= tileSize.getHeight()) {
+				
+				this.logger.info(
+						"Skipping out of bounds coordinates: {}", 
+						relativeCoordinates);
+				
+				continue;
+			}
+			
 			
 			Color color = this.colorPipe.getColor(pixel);
 			

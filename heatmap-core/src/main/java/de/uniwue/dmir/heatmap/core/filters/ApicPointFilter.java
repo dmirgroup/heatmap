@@ -140,14 +140,14 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 			
 			GeoCoordinates geoCoordinates = dataPoint.getGeoCoordinates();
 			
-			r.inGameLocation = r.hasLocation 
+			r.inAreaLocation = r.hasLocation 
 					&& cityPath.contains(
 							geoCoordinates.getLongitude(), 
 							geoCoordinates.getLatitude());
 			
 			// adding in game point
 			
-			if (r.inGameTimestamp && (!this.limitToCityBounds || r.inGameLocation)) {
+			if (r.inGameTimestamp && (!this.limitToCityBounds || r.inAreaLocation)) {
 				
 				IMapProjection cityProjection = 
 						this.cityToMapProjectionMapper.map(r.city);
@@ -169,9 +169,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 								relativeCoordinates, 
 								r.groupTile.getPixels());
 				
-				
 			} 
-			
 
 		}
 		updateStatistics(dataPoint, tile, r);
@@ -216,8 +214,69 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 			// data point is valid
 			if (r.hasLocation && r.hasTimestamp) {
 				
+				// within game time
+				if (r.inGameTimestamp) {
+					
+					r.cityTile.measurementCountInTime ++;
+					r.groupTile.measurementCountInTime ++;
+					
+					if (r.cityTile.lastMeasurementInTime.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.cityTile.lastMeasurementInTime = dataPoint.getTimestampRecorded();
+					}
+					
+					if (r.groupTile.lastMeasurementInTime.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.groupTile.lastMeasurementInTime = dataPoint.getTimestampRecorded();
+					}
+					
+				}
+				
+				// within in area
+				if (r.inAreaLocation) {
+					
+					r.cityTile.measurementCountInArea ++;
+					r.groupTile.measurementCountInArea ++;
+					
+					if (r.cityTile.lastMeasurementInArea.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.cityTile.lastMeasurementInArea = dataPoint.getTimestampRecorded();
+					}
+					
+					if (r.groupTile.lastMeasurementInArea.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.groupTile.lastMeasurementInArea = dataPoint.getTimestampRecorded();
+					}
+				}
+				
+				// within time and area (this may be equal to "in game" if points outside area are not part of the game)
+				if (r.inGameTimestamp && r.inAreaLocation) {
+					
+					r.cityTile.measurementCountInTimeInArea ++;
+					r.groupTile.measurementCountInTimeInArea ++;
+					
+					if (r.cityTile.lastMeasurementInTimeInArea.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.cityTile.lastMeasurementInTimeInArea = dataPoint.getTimestampRecorded();
+					}
+					
+					if (r.groupTile.lastMeasurementInTimeInArea.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.groupTile.lastMeasurementInTimeInArea = dataPoint.getTimestampRecorded();
+					}
+				}
+				
+				// within time but outside area 
+				if (r.inGameTimestamp && !r.inAreaLocation) {
+					
+					r.cityTile.measurementCountInTimeOutArea ++;
+					r.groupTile.measurementCountInTimeOutArea ++;
+					
+					if (r.cityTile.lastMeasurementInTimeOutArea.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.cityTile.lastMeasurementInTimeOutArea = dataPoint.getTimestampRecorded();
+					}
+					
+					if (r.groupTile.lastMeasurementInTimeOutArea.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+						r.groupTile.lastMeasurementInTimeOutArea = dataPoint.getTimestampRecorded();
+					}
+				}
+				
 				// data point is "in game"
-				if (r.inGameLocation && r.inGameTimestamp) {
+				if (r.inGameTimestamp && (!this.limitToCityBounds || r.inAreaLocation)) {
 					
 					// measurements
 					
@@ -231,38 +290,124 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 					// points
 					
 					if (r.pointResultCity.pointReceived) {
+						
+						// points
+						
 						tile.measurementCountInGamePointsCities ++;
 						r.cityTile.measurementCountInGamePoints ++;
+						
+						if (r.inAreaLocation) {
+							r.cityTile.measurementCountInAreaPoints ++;
+						} else {
+							r.cityTile.measurementCountOutAreaPoints ++;
+						}
 
+						// time
+						
 						if (r.cityTile.lastMeasurementInGamePoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
 							r.cityTile.lastMeasurementInGamePoint = dataPoint.getTimestampRecorded();
+						}
+						
+						if (r.inAreaLocation) {
+							if (r.cityTile.lastMeasurementInAreaPoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.cityTile.lastMeasurementInAreaPoint = dataPoint.getTimestampRecorded();
+							}
+						} else {
+							if (r.cityTile.lastMeasurementOutAreaPoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.cityTile.lastMeasurementOutAreaPoint = dataPoint.getTimestampRecorded();
+							}
 						}
 					}
 					
 					if (r.pointResultGroup.pointReceived) {
+						
+						// points
+						
 						tile.measurementCountInGamePointsGroups ++;
 						r.groupTile.measurementCountInGamePoints ++;
 
+						if (r.inAreaLocation) {
+							r.groupTile.measurementCountInAreaPoints ++;
+						} else {
+							r.groupTile.measurementCountOutAreaPoints ++;
+						}
+						
+						// time
+						
 						if (r.groupTile.lastMeasurementInGamePoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
 							r.groupTile.lastMeasurementInGamePoint = dataPoint.getTimestampRecorded();
+						}
+						
+						if (r.inAreaLocation) {
+							if (r.groupTile.lastMeasurementInAreaPoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.groupTile.lastMeasurementInAreaPoint = dataPoint.getTimestampRecorded();
+							}
+						} else {
+							if (r.groupTile.lastMeasurementOutAreaPoint.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.groupTile.lastMeasurementOutAreaPoint = dataPoint.getTimestampRecorded();
+							}
 						}
 					}
 					
 					// pixels
 					
 					if (r.pointResultCity.isNewPixel()) {
+						
+						// pixels
+						
 						r.cityTile.pixelCountInGame ++;
+						
+						if (r.inAreaLocation) {
+							r.cityTile.pixelCountInArea ++;
+						} else {
+							r.cityTile.pixelCountOutArea ++;
+						}
+						
+						// time
 
 						if (r.cityTile.lastMeasurementInGamePixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
 							r.cityTile.lastMeasurementInGamePixel = dataPoint.getTimestampRecorded();
 						}
+						
+						if (r.inAreaLocation) {
+							if (r.cityTile.lastMeasurementInAreaPixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.cityTile.lastMeasurementInAreaPixel = dataPoint.getTimestampRecorded();
+							}
+						} else {
+							if (r.cityTile.lastMeasurementOutAreaPixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.cityTile.lastMeasurementOutAreaPixel = dataPoint.getTimestampRecorded();
+							}
+						}
+						
+						
 					}
 					
 					if (r.pointResultGroup.isNewPixel()) {
+						
+						// pixel
+						
 						r.groupTile.pixelCountInGame ++;
+						
+						if (r.inAreaLocation) {
+							r.groupTile.pixelCountInArea ++;
+						} else {
+							r.groupTile.pixelCountOutArea ++;
+						}
+						
+						// time
 						
 						if (r.groupTile.lastMeasurementInGamePixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
 							r.groupTile.lastMeasurementInGamePixel = dataPoint.getTimestampRecorded();
+						}
+						
+						if (r.inAreaLocation) {
+							if (r.groupTile.lastMeasurementInAreaPixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.groupTile.lastMeasurementInAreaPixel = dataPoint.getTimestampRecorded();
+							}
+						} else {
+							if (r.groupTile.lastMeasurementOutAreaPixel.getTime() < dataPoint.getTimestampRecorded().getTime()) {
+								r.groupTile.lastMeasurementOutAreaPixel = dataPoint.getTimestampRecorded();
+							}
 						}
 					}
 					
@@ -445,7 +590,7 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		private boolean hasTimestamp;
 		private boolean hasLocation;
 		private boolean inGameTimestamp;
-		private boolean inGameLocation;
+		private boolean inAreaLocation;
 		private ApicCityTile cityTile;
 		private ApicGroupTile groupTile;
 		private PointResult pointResultCity;
@@ -516,8 +661,19 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		protected int measurementCountOutGame;
 		protected int measurementCountInGame;
 
+		protected int measurementCountInTime;
+		protected int measurementCountOutTime;
+		protected int measurementCountInArea;
+		protected int measurementCountOutArea;
+		protected int measurementCountInTimeInArea;
+		protected int measurementCountInTimeOutArea;
+
+		protected int measurementCountInAreaPoints;
+		protected int measurementCountOutAreaPoints;
 		protected int measurementCountInGamePoints;
-		
+
+		protected int pixelCountInArea;
+		protected int pixelCountOutArea;
 		protected int pixelCountInGame;
 		
 		// time
@@ -528,16 +684,28 @@ extends AbstractConfigurableFilter<ApicPoint, ApicOverallTile> {
 		protected Date lastMeasurementOutGame = new Date(0);
 		protected Date lastMeasurementInGame = new Date(0);
 
+		protected Date lastMeasurementInTime = new Date(0);
+		protected Date lastMeasurementOutTime = new Date(0);
+		protected Date lastMeasurementInArea = new Date(0);
+		protected Date lastMeasurementOutArea = new Date(0);
+		protected Date lastMeasurementInTimeInArea = new Date(0);
+		protected Date lastMeasurementInTimeOutArea = new Date(0);
+		
+		protected Date lastMeasurementInAreaPoint = new Date(0);
+		protected Date lastMeasurementOutAreaPoint = new Date(0);
 		protected Date lastMeasurementInGamePoint = new Date(0);
+
+		protected Date lastMeasurementInAreaPixel = new Date(0);
+		protected Date lastMeasurementOutAreaPixel = new Date(0);
 		protected Date lastMeasurementInGamePixel = new Date(0);
 		
-		// relative coordinates
-
-		protected RelativeCoordinates min = 
-				new RelativeCoordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
-		
-		protected RelativeCoordinates max =
-			new RelativeCoordinates(Integer.MIN_VALUE, Integer.MIN_VALUE);
+//		// relative coordinates
+//
+//		protected RelativeCoordinates min = 
+//				new RelativeCoordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
+//		
+//		protected RelativeCoordinates max =
+//			new RelativeCoordinates(Integer.MIN_VALUE, Integer.MIN_VALUE);
 		
 	}
 

@@ -63,6 +63,9 @@ implements ITileProcessor<ApicOverallTile> {
 	private IMapper<String, TileSize> cityToTileSizeMapper;
 
 	@Setter
+	private IMapper<String, Polygon> cityToGeoBoundingBoxMapper;
+	
+	@Setter
 	private IMapper<String, Polygon> cityToPolygonMapper;
 	
 	@Setter
@@ -108,17 +111,52 @@ implements ITileProcessor<ApicOverallTile> {
 		
 		for (Entry<String, ApicCityTile> cityEntry : tile.getCityTiles().entrySet()) {
 
+			TileSize cityTileSize = this.cityToTileSizeMapper.map(cityEntry.getKey()); 
+			
 //			// calculate relative coordinate bounds
 //			
-//			RelativeCoordinates min = new RelativeCoordinates(Integer.MAX_VALUE, Integer.MAX_VALUE);
-//			RelativeCoordinates max = new RelativeCoordinates(Integer.MIN_VALUE, Integer.MIN_VALUE);
-			
+//			RelativeCoordinates min = new RelativeCoordinates(0, 0);
+//			RelativeCoordinates max = new RelativeCoordinates(
+//					cityTileSize.getWidth() - 1, 
+//					cityTileSize.getHeight() - 1);
+//			
+//			for (RelativeCoordinates r : cityEntry.getValue().getPixels().keySet()) {
+//				
+//				min.setX(Math.min(min.getX(), r.getX()));
+//				min.setY(Math.min(min.getY(), r.getY()));
+//				
+//				max.setX(Math.max(max.getX(), r.getX()));
+//				max.setY(Math.max(max.getY(), r.getY()));
+//			}
+//			
+//			// calculate actual offset
+//			int offsetX = - min.getX();
+//			int offsetY = - min.getY();
+//			
+//			// translate relative coordinates
+//			for (RelativeCoordinates r : cityEntry.getValue().getPixels().keySet()) {
+//				r.setX(r.getX() + offsetX);
+//				r.setY(r.getY() + offsetY);
+//			}
+//			
+//			// calculate new width and height
+//			
+//			int width = max.getX() - min.getX() + 1;
+//			int height = max.getY() - min.getY() + 1;
+//			
+//			// calculate new tile size
+//			TileSize newCityTileSize = new TileSize(width, height);
+					
 			// initialize visualizer
-			
-			Polygon cityPolygon = this.cityToPolygonMapper.map(cityEntry.getKey());
-			
+
 			IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
-			if (cityToPolygonMapper != null) {
+			if (this.cityToPolygonMapper != null) {
+				
+				Polygon cityPolygon = this.cityToPolygonMapper.map(cityEntry.getKey());
+				
+//				// translate city polygon
+//				cityPolygon.translate(offsetX, offsetY);
+				
 				StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSize>> polygonVisualizer = 
 						new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSize>>(
 								this.visualizer, 
@@ -131,8 +169,6 @@ implements ITileProcessor<ApicOverallTile> {
 			} else {
 				visualizer = this.visualizer;
 			}
-			
-			TileSize cityTileSize = this.cityToTileSizeMapper.map(cityEntry.getKey()); 
 			
 			ApicCityTile cityTile = cityEntry.getValue();
 			BufferedImage cityImage = visualizer.visualize(

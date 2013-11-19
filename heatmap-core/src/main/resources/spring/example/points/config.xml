@@ -368,7 +368,7 @@
 	<bean id="filter" 
 			class="de.uniwue.dmir.heatmap.core.filters.ApicPointFilter">
 		
-		<constructor-arg name="limitToCityBounds" value="true" />
+		<constructor-arg name="limitToCityBounds" value="false" />
 		
 		<constructor-arg name="minimumTimestampRecorded" ref="minimumTimestampRecorded" />	
 		<constructor-arg name="maximumTimestampRecorded" ref="maximumTimestampRecorded" />	
