@@ -39,31 +39,28 @@ import de.uniwue.dmir.heatmap.core.processors.WeightedSumToAverageMapper;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IAlphaScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.EuclidianDistance;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GaussianRbf;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IRadialBasisFunction;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.EuclidianDistance;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.rbfs.GaussianRbf;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSum;
-import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 public class RbfMapVisualizer<T extends IDataWithRelativeCoordinates>
 extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 	
-	public static final double EPSILON = 0.1;
+	public static final double EPSILON = 10;
 	
 	private IToDoubleMapper<T> toValueMapper;
-	private IToDoubleMapper<T> toAlphaMapper;
 	
-	private IDistanceFunction<IDataWithRelativeCoordinates> distanceFunction =
+	private IDistanceFunction<RelativeCoordinates> distanceFunction =
 			new EuclidianDistance();
-//
+
 	private IRadialBasisFunction radialBasisFunction = 
 			new GaussianRbf(EPSILON);
 	
 	private IColorScheme colorScheme;
-	private IAlphaScheme alphaScheme;
 	
 	public RbfMapVisualizer(
 			IToDoubleMapper<T> valueMapper,
@@ -72,10 +69,7 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 			IAlphaScheme alphaScheme) {
 		
 		this.toValueMapper = valueMapper;
-		this.toAlphaMapper = alphaMapper;
-
 		this.colorScheme = colorScheme;
-		this.alphaScheme = alphaScheme;
 	}
 	
 	public BufferedImage visualizeWithDebuggingInformation(
@@ -107,12 +101,13 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 			
 			double bValue = this.toValueMapper.map(rowPixel);
 			b.set(row, bValue);
-			System.out.println(bValue);
 			
 			int col = 0;
 			for (T colPixel : data.values()) {
 				
-				double distance = this.distanceFunction.distance(rowPixel, colPixel);
+				double distance = this.distanceFunction.distance(
+						rowPixel.getCoordinates(), 
+						colPixel.getCoordinates());
 				
 				double value = this.radialBasisFunction.value(distance);
 				
@@ -161,7 +156,9 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 					
 					tmp.setCoordinateValues(i, j);
 					
-					double distance = this.distanceFunction.distance(tmp, p);
+					double distance = this.distanceFunction.distance(
+							tmp.getCoordinates(), 
+							p.getCoordinates());
 					double value = this.radialBasisFunction.value(distance);
 
 					double weight = x.get(index);
@@ -193,17 +190,23 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				new HashMap<RelativeCoordinates, WeightedSum>();
 		
 		WeightedSum s1 = new WeightedSum(9);
-		s1.getCoordinates().setX(3);
-		s1.getCoordinates().setY(3);
+		s1.getCoordinates().setX(100);
+		s1.getCoordinates().setY(80);
 		map.put(s1.getCoordinates(), s1);
 		
 		WeightedSum s2 = new WeightedSum(5);
-		s2.getCoordinates().setX(5);
-		s2.getCoordinates().setY(7);
+		s2.getCoordinates().setX(80);
+		s2.getCoordinates().setY(90);
 		map.put(s2.getCoordinates(), s2);
 		
+
+		WeightedSum s3 = new WeightedSum(1);
+		s3.getCoordinates().setX(40);
+		s3.getCoordinates().setY(40);
+		map.put(s3.getCoordinates(), s3);
+		
 		BufferedImage colorImage = ImageIO.read(new File("src/main/resources/color-schemes/classic.png"));
-		double[] ranges = ImageColorScheme.ranges(0, 9, colorImage.getHeight());
+		double[] ranges = ImageColorScheme.equdistantRanges(0, 9, colorImage.getHeight());
 		ImageColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
 		
 		RbfMapVisualizer<WeightedSum> visualizer = new RbfMapVisualizer<WeightedSum>(
@@ -211,7 +214,7 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				null, 
 				colorScheme, 
 				null);
-		BufferedImage result = visualizer.visualize(map, new TileSize(9, 9), new TileCoordinates(0, 0, 0));
+		BufferedImage result = visualizer.visualize(map, new TileSize(128, 128), new TileCoordinates(0, 0, 0));
 		ImageIO.write(result, "png", new File("out/test.png"));
 	}
 

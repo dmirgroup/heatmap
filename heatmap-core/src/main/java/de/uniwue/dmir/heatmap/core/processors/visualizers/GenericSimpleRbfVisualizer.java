@@ -30,20 +30,20 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import de.uniwue.dmir.heatmap.core.TileSize;
-import de.uniwue.dmir.heatmap.core.data.types.IDataWithRelativeCoordinates;
-import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
+import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
 import de.uniwue.dmir.heatmap.core.processors.WeightedSumToAverageMapper;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IAlphaScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IRadialBasisFunction;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.EuclidianDistance;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.rbfs.GaussianRbf;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.ReferencedData;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.MaxRbfAggregator;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSum;
+import de.uniwue.dmir.heatmap.core.util.IAggregator;
+import de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory;
 
 /**
  * TODO: add r-tree and only consider points in a vicinity to calculate point 
@@ -53,34 +53,26 @@ import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSum;
  *
  * @param <T>
  */
-public class RbfSimpleMapVisualizer<T extends IDataWithRelativeCoordinates>
-extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
+public class GenericSimpleRbfVisualizer<TTile, TPixel>
+extends AbstractGenericVisualizer<TTile, TPixel> {
 	
-	public static final double EPSILON = 50;
-	
-	private IToDoubleMapper<T> toValueMapper;
-	
-	private IDistanceFunction<RelativeCoordinates> distanceFunction =
-			new EuclidianDistance();
-//
-	private IRadialBasisFunction radialBasisFunction = 
-			new GaussianRbf(EPSILON);
+	private IAggregator<ReferencedData<TPixel>, Double> aggegator;
 	
 	private IColorScheme colorScheme;
 	
-	public RbfSimpleMapVisualizer(
-			IToDoubleMapper<T> valueMapper,
-			IToDoubleMapper<T> alphaMapper,
-			IColorScheme colorScheme,
-			IAlphaScheme alphaScheme) {
+	public GenericSimpleRbfVisualizer(
+			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
+			IAggregator<ReferencedData<TPixel>, Double> aggregator,
+			IColorScheme colorScheme) {
 		
-		this.toValueMapper = valueMapper;
-
+		super(pixelIteratorFactory);
+		
+		this.aggegator = aggregator;
 		this.colorScheme = colorScheme;
 	}
 	
 	public BufferedImage visualizeWithDebuggingInformation(
-			Map<RelativeCoordinates, T> data,
+			TTile data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
 
@@ -89,10 +81,6 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 				tileSize.getWidth(),
 				tileSize.getHeight());
 
-		super.logger.debug(
-				"Relevant points: {}.", 
-				data.size());
-		
 		// create matrices
 		
 		int width = tileSize.getWidth();
@@ -111,66 +99,34 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 
 		super.logger.debug("Writing image values.");
 
-		double max = Double.MIN_VALUE;
-		ValuePixel tmp = new ValuePixel(0, 0, Double.NaN);
+		ReferencedData<TPixel> referencedData = new ReferencedData<TPixel>();
+		referencedData.setReferenceCoordaintes(new RelativeCoordinates(0, 0));
+		
 		for (int i = 0; i < width; i ++) {
 			for (int j = 0; j < height; j ++) {
 				
-				double sumOfValues = 0;
-				double sumOfWeights = 0;
+				this.aggegator.reset();
 				
-//				double sumOfSizes = 0;
-//				double sumOfSizeWeights = 0;
-				for (T p : data.values()) {
-					
-					tmp.setCoordinateValues(i, j);
+				referencedData.getReferenceCoordaintes().setXY(i, j);
 
-					double distance = this.distanceFunction.distance(
-							tmp.getCoordinates(), 
-							p.getCoordinates());
-//					System.out.println(tmp.getCoordinates());
-//					System.out.println(p.getCoordinates());
-//					System.out.println("distance:       " + distance);
+				IKeyValueIterator<RelativeCoordinates, TPixel> iterator =
+						this.pixelIteratorFactory.iterator(data);
+				
+				while (iterator.hasNext()) { 
 					
-					double distanceWeight = this.radialBasisFunction.value(distance);
-//					System.out.println("weight:         " + weight);
+					iterator.next();
+					referencedData.setDataCoordinates(iterator.getKey());
+					referencedData.setData(iterator.getValue());
 					
-					double value = this.toValueMapper.map(p);
-//					System.out.println("value of point: " + value);
-					
-					double size = ((WeightedSum) p).getSize();
-
-//					System.out.println("size:           " + size);
-					sumOfValues += value * distanceWeight * size;
-					sumOfWeights += distanceWeight * size;
-					
-//					sumOfSizes += distanceWeight * distanceWeight * size;
-//					sumOfSizeWeights += distanceWeight;
+					this.aggegator.addData(referencedData);
 				}
 				
-				double value = sumOfWeights == 0 ? 0 : sumOfValues / sumOfWeights;
-//				double alpha = sumOfSizes / sumOfSizeWeights;
-//				System.out.println(value);
-//				System.out.println(alpha);
 				
-//				System.out.println(sumOfValues + "/" + sumOfWeights);
-//				System.out.println(value);
-//				System.out.println("---");
-				max = Math.max(max, sumOfValues);
-				
+				double value = this.aggegator.getAggregate();
 				int color = this.colorScheme.getColor(value);
-				Color c = new Color(color);
-				c = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) 255);
-//				c = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) Math.min(alpha * 255, 255));
-				
-				image.setRGB(i, j, c.getRGB());
+				image.setRGB(i, j, color);
 			}
 		}
-		
-
-		super.logger.debug("Done writing image values. Max Value: {}", max);
-		
-//		System.out.println(Arrays2d.toStringDouble(values, width, height));
 		
 		super.logger.debug("Returning image.");
 		
@@ -202,12 +158,51 @@ extends AbstractDebuggingVisualizer<Map<RelativeCoordinates, T>> {
 		double[] ranges = ImageColorScheme.equdistantRanges(0, 9, colorImage.getHeight());
 		ImageColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
 		
-		RbfSimpleMapVisualizer<WeightedSum> visualizer = new RbfSimpleMapVisualizer<WeightedSum>(
-				new WeightedSumToAverageMapper(),
-				null, 
-				colorScheme, 
-				null);
-		BufferedImage result = visualizer.visualize(map, new TileSize(128, 128), new TileCoordinates(0, 0, 0));
+		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum> visualizerColor = 
+				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSum>(),
+						new QuadraticRbfAggregator<WeightedSum>(
+								new WeightedSumToAverageMapper(), 
+								10),
+						colorScheme);
+		
+		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum> visualizerAlpha = 
+				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSum>(),
+						new MaxRbfAggregator<WeightedSum>(
+								new IToDoubleMapper<WeightedSum>() {
+									
+									@Override
+									public Double map(WeightedSum object) {
+										if (object != null && object.getSize() > 0) {
+											return 1.;
+										} else {
+											return 0.;
+										}
+									}
+									
+								},
+								20),
+						new IColorScheme() {
+							
+							@Override
+							public int getColor(double value) {
+								Color color = new Color(0,0,0, (int) (value * 255));
+								return color.getRGB();
+							}
+							
+						});
+		
+		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSum>> proxyVisualizer =
+				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates,WeightedSum>>(
+						visualizerColor, 
+						visualizerAlpha);
+		
+		BufferedImage result = proxyVisualizer.visualize(
+				map, 
+				new TileSize(128, 128),
+				new TileCoordinates(0, 0, 0));
+		
 		ImageIO.write(result, "png", new File("out/test.png"));
 		
 	}

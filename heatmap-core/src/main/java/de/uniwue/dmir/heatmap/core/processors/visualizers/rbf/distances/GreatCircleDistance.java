@@ -18,10 +18,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.rbf;
+package de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances;
 
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 
 /**
  * Resources:

@@ -30,6 +30,10 @@ public class ImageColorScheme implements IColorScheme {
 	private BufferedImage image;
 	private double[] ranges;
 	
+	public ImageColorScheme(BufferedImage image, double min, double max) {
+		this(image, equdistantRanges(min, max, image.getHeight()));
+	}
+	
 	@Override
 	public int getColor(double value) {
 		int index = colorIndex(value);
@@ -45,7 +49,7 @@ public class ImageColorScheme implements IColorScheme {
 		return this.image.getHeight() - 1;
 	}
 	
-	public static double[] ranges(double min, double max, int colors) {
+	public static double[] equdistantRanges(double min, double max, int colors) {
 		
 		double[] ranges = new double[colors - 2];
 		ranges[0] = min;

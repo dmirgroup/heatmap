@@ -51,6 +51,11 @@ public class RelativeCoordinates {
 	private int x;
 	private int y;
 	
+	public void setXY(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+	
 	public List<TileCoordinates> overlappingTiles(
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter,

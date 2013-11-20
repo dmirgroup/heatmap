@@ -42,7 +42,7 @@ public class RangeFactoryBean implements FactoryBean<double[]> {
 	
 	@Override
 	public double[] getObject() throws Exception {
-		return ImageColorScheme.ranges(this.min, this.max, this.colors);
+		return ImageColorScheme.equdistantRanges(this.min, this.max, this.colors);
 	}
 
 	@Override

@@ -27,10 +27,10 @@ import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.core.filters.AbstractConfigurableFilter;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Cosine;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.EquidistantApproximation;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Haversine;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.GreatCircleDistance;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.GreatCircleDistance.Cosine;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.GreatCircleDistance.EquidistantApproximation;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.GreatCircleDistance.Haversine;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 

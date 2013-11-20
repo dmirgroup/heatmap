@@ -20,36 +20,6 @@
  */
 package de.uniwue.dmir.heatmap;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import de.uniwue.dmir.heatmap.core.HeatmapSettings;
-import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.data.sources.GeoHeatmapDatasource;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToGeoCoordinateMapper;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection;
-import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
-import de.uniwue.dmir.heatmap.core.data.types.mappers.ValuePixelToSumMapper;
-import de.uniwue.dmir.heatmap.core.filters.ImageFilter;
-import de.uniwue.dmir.heatmap.core.filters.operators.SumAdder;
-import de.uniwue.dmir.heatmap.core.filters.operators.SumScalarMultiplier;
-import de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap;
-import de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy;
-import de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.SumArrayAlphaVisualizer;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
-import de.uniwue.dmir.heatmap.core.tiles.factories.ArrayTileFactory;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
 
 public class SpringTest2 {
 

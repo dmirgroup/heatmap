@@ -18,35 +18,20 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors.visualizers.rbf;
+package de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances;
 
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
+import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 
-public class GaussianRbf implements IRadialBasisFunction {
+public class EuclidianDistance implements IDistanceFunction<RelativeCoordinates> {
 
-	public static final double EPSILON = 10;
-	
-	private double epsilon;
-	
-	public GaussianRbf(double epsilon) {
-		this.epsilon = epsilon;
-	}
-	
-	public GaussianRbf() {
-		this(EPSILON);
-	}
-	
 	@Override
-	public double value(double value) {
+	public double distance(RelativeCoordinates o1, RelativeCoordinates o2) {
 		
-		double weightedValue = value / this.epsilon;
+		double diffX = o1.getX() - o2.getX();
+		double diffY = o1.getY() - o2.getY();
 		
-		return Math.exp(-weightedValue * weightedValue);
-	}
-	
-	public static void main(String[] args) {
-		GaussianRbf rbf = new GaussianRbf();
-		double v = rbf.value(1);
-		System.out.println(v);
+		return Math.sqrt(diffX * diffX + diffY * diffY);
 	}
 
 }
