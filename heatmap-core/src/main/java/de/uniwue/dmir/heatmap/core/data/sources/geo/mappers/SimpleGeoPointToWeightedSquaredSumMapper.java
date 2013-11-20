@@ -18,7 +18,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.data.types.mappers;
+package de.uniwue.dmir.heatmap.core.data.sources.geo.mappers;
 
 import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;

@@ -31,7 +31,7 @@
 		<constructor-arg name="aggregator">
 			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator">
 				<constructor-arg name="pixelToValueMapper">
-					<bean class="de.uniwue.dmir.heatmap.core.processors.WeightedSumToAverageMapper" />
+					<bean class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.WeightedSumToAverageMapper" />
 				</constructor-arg>
 				<constructor-arg name="pointRadius" value="20" />
 			</bean>

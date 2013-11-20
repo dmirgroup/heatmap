@@ -10,13 +10,25 @@
 			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
 	</bean>
 
-	<bean id="tileWriter"
+	<bean id="proxiedTileWriter"
 			class="de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor">
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
 		<constructor-arg name="fileFormat" value="png" />
 		
 		<constructor-arg name="parentFolder" value="${out.tiles}" />
+	</bean>
+	
+	<bean id="tileWriter"
+			class="de.uniwue.dmir.heatmap.core.processors.ProxyGroupFileWriter">
+	
+		<constructor-arg name="fileWriter" ref="proxiedTileWriter" />
+		
+		<constructor-arg name="groupIteratorFactory" >
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
+		</constructor-arg>
+		
+		<constructor-arg name="parentFolder" value="${out.tiles}" />	
 	</bean>
 
 </beans>

@@ -36,18 +36,16 @@ implements IMapper<T, List<String>> {
 	@Setter
 	private String overallGroupId;
 	
-	protected abstract List<String> mapInteral(T object);
+	protected abstract void add(T object, List<String> ids);
 	
 	@Override
 	public List<String> map(T object) {
 		
-		List<String> ids = this.mapInteral(object);
+		List<String> ids = new ArrayList<String>();
 		if (this.overallGroupId != null) {
-			if (ids == null) {
-				ids = new ArrayList<String>();
-			}
 			ids.add(this.overallGroupId);
 		}
+		this.add(object, ids);
 		
 		return ids;
 	}
