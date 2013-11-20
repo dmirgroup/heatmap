@@ -21,7 +21,7 @@
 package de.uniwue.dmir.heatmap.core.processors.visualizers;
 
 import de.uniwue.dmir.heatmap.core.TileSize;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.SumPixel;
 import de.uniwue.dmir.heatmap.core.util.RelativeCoordinatesArrayKeyValueIteratorFactory;
 
 /**
@@ -30,10 +30,10 @@ import de.uniwue.dmir.heatmap.core.util.RelativeCoordinatesArrayKeyValueIterator
  *
  */
 public class SumArrayAlphaVisualizer
-extends GenericAlphaVisualizer<Sum[], Sum> {
+extends GenericAlphaVisualizer<SumPixel[], SumPixel> {
 
 	public SumArrayAlphaVisualizer(TileSize tileSize) {
-		super(new RelativeCoordinatesArrayKeyValueIteratorFactory<Sum>(
+		super(new RelativeCoordinatesArrayKeyValueIteratorFactory<SumPixel>(
 				tileSize.getWidth(), 
 				tileSize.getHeight(), 
 				false));

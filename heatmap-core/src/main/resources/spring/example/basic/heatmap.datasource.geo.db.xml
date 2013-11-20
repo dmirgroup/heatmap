@@ -28,23 +28,20 @@
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" >
+			<list>
+				<value>#{systemProperties.workdir}/geo.xml</value>
+			</list>
+		</property>
 	</bean>
 	
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 		<property name="basePackage" value="
-			de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.mapper" />
+			de.uniwue.dmir.heatmap.impl.core.mybatis" />
 	</bean>
-	
-	<!-- ############# Enable and use component scan. ############# -->
 
-	<!-- Enable things like "@Autowired" and "@Component" annotations. -->
-<!-- 	<context:annotation-config /> -->
-
-	<!-- Recursively (!) scans the classpath of this application for @Components to deploy as beans. -->
-<!-- 	<context:component-scan base-package="" /> -->
-	
-	<!-- ############# Data sources. ############# -->
+	<!-- ############# Datasource. ############# -->
 	
 	<bean id="dataSource"
 			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -55,43 +52,26 @@
 		<property name="password"			value="${db.core.password}" />
 	</bean>
 	
-	<bean id="geoDataSource"
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.DatabaseGeoDataSource">
-		<constructor-arg name="request" ref="request" />
+	<!-- ############# GeoDatasource. ############# -->
+	
+	<bean id="minimumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="${timestamp.received.min}" />
 	</bean>
 	
-	<bean id="abstractRequest" 
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.database.RequestGeo" 
-			abstract="true">
-			
-		<constructor-arg name="table" value="data_airprobe" />
-		<constructor-arg name="longitudeAttribute" value="geo_lon" />
-		<constructor-arg name="latitudeAttribute" value="geo_lat" />
-		
-		<property name="valueAttribute" value="data_no2_1" />
+	<bean id="maximumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="${timestamp.received.max}" />
 	</bean>
 	
-	<bean id="request" parent="abstractRequest" />
+	<bean id="geoSettings" 
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.TimeGeoSettings" >
+		<property name="minimumTimestamp" ref="minimumTimestampReceived" />
+		<property name="maximumTimestamp" ref="maximumTimestampReceived" />
+	</bean>
 	
-	<beans profile="minmax">
+	<bean id="geoDatasource" 
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.DatabaseGeoDatasource">
 	
-		<bean id="dateFactory" class="java.text.SimpleDateFormat">
-			<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
-		</bean>
-		
-		<bean id="min" factory-bean="dateFactory" factory-method="parse">
-			<constructor-arg value="#{systemProperties.min}" />
-		</bean>
-		
-		<bean id="max" factory-bean="dateFactory" factory-method="parse">
-			<constructor-arg value="#{systemProperties.max}" />
-		</bean>
-	
-		<bean id="request" parent="abstractRequest" >
-			<property name="timestampAttribute" value="meta_timestamp_received" />
-			<property name="minimumTimestamp" ref="min" />
-			<property name="maximumTimestamp" ref="max" />
-		</bean>
-	</beans>
+		<constructor-arg name="settings" ref="geoSettings" />		
+	</bean>
 	
 </beans>

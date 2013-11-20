@@ -23,8 +23,6 @@ package de.uniwue.dmir.heatmap.core.util;
 import java.util.Iterator;
 import java.util.Map;
 
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
-
 public class MapKeyValueIteratorFactory<TKey, TValue> 
 implements IKeyValueIteratorFactory<Map<TKey, TValue>, TKey, TValue>{
 

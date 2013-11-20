@@ -27,8 +27,9 @@ import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory.IKeyValueIterator;
 
 /**
  * 

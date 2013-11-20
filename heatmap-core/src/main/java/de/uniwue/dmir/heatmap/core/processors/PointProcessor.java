@@ -36,10 +36,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import de.uniwue.dmir.heatmap.core.ITileProcessor;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSizePixel;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory.IKeyValueIterator;
 
 public class PointProcessor<TTile, TGroupTile>
 implements ITileProcessor<TTile> {
@@ -47,7 +48,7 @@ implements ITileProcessor<TTile> {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private IKeyValueIteratorFactory<TTile, String, TGroupTile> groupIteratorFactory;
-	private IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSize> pixelIteratorFactory;
+	private IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSizePixel> pixelIteratorFactory;
 	
 	private String file;
 	private IMapper<String, String> groupIdMapper;
@@ -60,7 +61,7 @@ implements ITileProcessor<TTile> {
 			String file, 
 			IMapper<String, String> groupIdMapper,
 			IKeyValueIteratorFactory<TTile, String, TGroupTile> groupIteratorFactory,
-			IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSize> pixelIteratorFactory) {
+			IKeyValueIteratorFactory<TGroupTile, RelativeCoordinates, PointSizePixel> pixelIteratorFactory) {
 		
 		this.file = file;
 		this.groupIdMapper = groupIdMapper;
@@ -98,14 +99,14 @@ implements ITileProcessor<TTile> {
 			}
 			
 			TGroupTile groupTile = groupIterator.getValue();
-			IKeyValueIterator<RelativeCoordinates, PointSize> pixelIterator = 
+			IKeyValueIterator<RelativeCoordinates, PointSizePixel> pixelIterator = 
 					this.pixelIteratorFactory.iterator(groupTile);
 			
 			while(pixelIterator.hasNext()) {
 				
 				pixelIterator.next();
 				
-				PointSize pointSize = pixelIterator.getValue();
+				PointSizePixel pointSize = pixelIterator.getValue();
 			
 				pointContainer.setPoints(pointContainer.getPoints() + pointSize.getPoints());
 				pointContainer.setSize(pointContainer.getSize() + pointSize.getSize());

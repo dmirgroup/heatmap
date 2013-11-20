@@ -22,13 +22,13 @@ package de.uniwue.dmir.heatmap.core.data.types.mappers;
 
 import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.SumPixel;
 
-public class ValuePixelToWeightedSquaredSumMapper
-implements IMapper<ValuePixel, WeightedSquaredSum> {
+public class ValuePixelToSumPixelMapper
+implements IMapper<ValuePixel, SumPixel> {
 	
-	public WeightedSquaredSum map(ValuePixel object) {
-		WeightedSquaredSum sum = new WeightedSquaredSum(object.getValue());
+	public SumPixel map(ValuePixel object) {
+		SumPixel sum = new SumPixel(1, object.getValue());
 		sum.setCoordinateValues(object.getCoordinates());
 		return sum;
 	}

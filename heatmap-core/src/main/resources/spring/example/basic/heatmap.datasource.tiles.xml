@@ -16,31 +16,22 @@
 		http://www.springframework.org/schema/tx/spring-tx.xsd">
 
 	<bean id="projection"
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.MercatorMapProjection">
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.projections.MercatorMapProjection">
+
 		<constructor-arg name="tileSize" value="#{heatmapSettings.tileSize}" />
 		<constructor-arg name="zoomLevelMapper" value="#{heatmapSettings.zoomLevelMapper}" />
 	</bean>
 	
-	<bean id="coordinateMapper"
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToGeoCoordinateMapper" />
+	<bean id="toGeoCoordinatesMapper"
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToGeoCoordinateMapper" />
 		
-	<bean id="externalDataMapper"
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.GeoPointToValuePixelMapper" />
 	
-<!-- 	<bean id="rtreeGeoDataSource"
-			class="de.uniwue.dmir.heatmap.impl.core.data.source.geo.RTreeGeoDataSource">
+	<bean id="heatmapDatasource"
+			class="de.uniwue.dmir.heatmap.core.data.sources.GeoHeatmapDatasource" >
 			
-		<constructor-arg name="dataSource" ref="geoDataSource" />
-		<constructor-arg name="mapper" ref="coordinateMapper" />
-	</bean> -->
-	
-	<bean id="tileDatasource"
-			class="de.uniwue.dmir.heatmap.core.data.source.geo.GeoTileDataSource" >
-			
-		<constructor-arg name="geoDataSource" ref="geoDataSource"/>
+		<constructor-arg name="geoDatasource" ref="geoDatasource"/>
 		<constructor-arg name="projection" ref="projection" />
-		<constructor-arg name="externalDataMapper" ref="externalDataMapper" />
-		<constructor-arg name="coordinateMapper" ref="coordinateMapper" />
+		<constructor-arg name="toGeoCoordinatesMapper" ref="toGeoCoordinatesMapper" />
 	</bean>
 
 </beans>

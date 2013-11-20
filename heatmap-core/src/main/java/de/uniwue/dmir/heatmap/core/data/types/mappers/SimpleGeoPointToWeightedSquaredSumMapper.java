@@ -18,15 +18,17 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors;
+package de.uniwue.dmir.heatmap.core.data.types.mappers;
 
-import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
+import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSumPixel;
 
-public class PointSizeToPointsMapper implements IToDoubleMapper<PointSize> {
-
-	@Override
-	public Double map(PointSize object) {
-		return object.getPoints();
+public class SimpleGeoPointToWeightedSquaredSumMapper<TGroupDescription>
+implements IMapper<SimpleGeoPoint<TGroupDescription>, WeightedSquaredSumPixel> {
+	
+	public WeightedSquaredSumPixel map(SimpleGeoPoint<TGroupDescription> object) {
+		WeightedSquaredSumPixel sum = new WeightedSquaredSumPixel(object.getValue());
+		return sum;
 	}
-
 }

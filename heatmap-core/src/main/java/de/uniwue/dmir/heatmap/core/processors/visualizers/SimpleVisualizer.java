@@ -25,11 +25,11 @@ import java.awt.image.BufferedImage;
 
 import de.uniwue.dmir.heatmap.core.IVisualizer;
 import de.uniwue.dmir.heatmap.core.TileSize;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.CombinedColorPipe;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory.IKeyValueIterator;
 
 public class SimpleVisualizer<TTile, TPixel> 
 extends AbstractGenericVisualizer<TTile, TPixel>

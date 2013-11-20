@@ -12,36 +12,32 @@
 		<constructor-arg name="resource" value="${visualizer.colorscheme}" />
 	</bean>
 	
-	<bean id="ranges"
-			class="de.uniwue.dmir.heatmap.core.util.RangeFactoryBean">
-
-		<constructor-arg name="min" value="${visualizer.range.min}" />
-		<constructor-arg name="max" value="${visualizer.range.max}" />
-		<constructor-arg name="image" ref="colorImage" />
-	</bean>
-	
 	<bean id="colorScheme"
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.ImageColorScheme">
+			class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme">
 
 		<constructor-arg name="image" ref="colorImage" />
-		<constructor-arg name="ranges" ref="ranges" />
+		<constructor-arg name="min" value="0" />
+		<constructor-arg name="max" value="10" />
 	</bean>
 	
-	<bean id="valueMapper"
-			class="de.uniwue.dmir.heatmap.core.processing.WeightedSumToAverageMapper">
-	</bean>
 	
 	<bean id="visualizer"
-			class="de.uniwue.dmir.heatmap.impl.core.visualizer.RbfSimpleMapVisualizer">
+			class="de.uniwue.dmir.heatmap.core.processors.visualizers.GenericSimpleRbfVisualizer">
 
-		<constructor-arg name="valueMapper" ref="valueMapper" />
-		<constructor-arg name="alphaMapper" >
-			<null />
+		<constructor-arg name="pixelIteratorFactory">
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
 		</constructor-arg>
+		
+		<constructor-arg name="aggregator">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator">
+				<constructor-arg name="pixelToValueMapper">
+					<bean class="de.uniwue.dmir.heatmap.core.processors.WeightedSumToAverageMapper" />
+				</constructor-arg>
+				<constructor-arg name="pointRadius" value="20" />
+			</bean>
+		</constructor-arg>
+		
 		<constructor-arg name="colorScheme" ref="colorScheme" />
-		<constructor-arg name="alphaScheme" >
-			<null />
-		</constructor-arg>
 		
 		<property name="debug" value="true" />
 	</bean>

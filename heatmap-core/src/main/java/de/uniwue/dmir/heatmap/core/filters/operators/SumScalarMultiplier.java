@@ -20,12 +20,12 @@
  */
 package de.uniwue.dmir.heatmap.core.filters.operators;
 
-import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.SumPixel;
 
 public class SumScalarMultiplier
-implements IScalarMultiplier<Sum> {
+implements IScalarMultiplier<SumPixel> {
 
-	public void multiply(Sum object, double multiplicator) {
+	public void multiply(SumPixel object, double multiplicator) {
 		double value = object.getSum();
 		value *= multiplicator;
 		object.setSum(value);

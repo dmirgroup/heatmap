@@ -30,20 +30,20 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import de.uniwue.dmir.heatmap.core.TileSize;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory.IKeyValueIterator;
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
-import de.uniwue.dmir.heatmap.core.processors.WeightedSumToAverageMapper;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.IColorScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.ReferencedData;
+import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.DefaultRbfAggregator;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.MaxRbfAggregator;
-import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSumPixel;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.WeightedSumToAverageMapper;
 import de.uniwue.dmir.heatmap.core.util.IAggregator;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory.IKeyValueIterator;
 
 /**
  * TODO: add r-tree and only consider points in a vicinity to calculate point 
@@ -135,45 +135,38 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	
 	public static void main(String[] args) throws IOException {
 		
-		Map<RelativeCoordinates, WeightedSum> map = 
-				new HashMap<RelativeCoordinates, WeightedSum>();
+		Map<RelativeCoordinates, WeightedSumPixel> map = 
+				new HashMap<RelativeCoordinates, WeightedSumPixel>();
 		
-		WeightedSum s1 = new WeightedSum(9);
-		s1.getCoordinates().setX(100);
-		s1.getCoordinates().setY(80);
-		map.put(s1.getCoordinates(), s1);
+		WeightedSumPixel s1 = new WeightedSumPixel(9);
+		map.put(new RelativeCoordinates(100, 80), s1);
 		
-		WeightedSum s2 = new WeightedSum(5);
-		s2.getCoordinates().setX(80);
-		s2.getCoordinates().setY(90);
-		map.put(s2.getCoordinates(), s2);
-		
+		WeightedSumPixel s2 = new WeightedSumPixel(5);
+		map.put(new RelativeCoordinates(80, 90), s2);
 
-		WeightedSum s3 = new WeightedSum(1);
-		s3.getCoordinates().setX(40);
-		s3.getCoordinates().setY(40);
-		map.put(s3.getCoordinates(), s3);
+		WeightedSumPixel s3 = new WeightedSumPixel(1);
+		map.put(new RelativeCoordinates(40, 40), s3);
 		
 		BufferedImage colorImage = ImageIO.read(new File("src/main/resources/color-schemes/classic.png"));
 		double[] ranges = ImageColorScheme.equdistantRanges(0, 9, colorImage.getHeight());
 		ImageColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
 		
-		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum> visualizerColor = 
-				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum>(
-						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSum>(),
-						new QuadraticRbfAggregator<WeightedSum>(
+		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> visualizerColor = 
+				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(),
+						new DefaultRbfAggregator<WeightedSumPixel>(
 								new WeightedSumToAverageMapper(), 
-								10),
+								30),
 						colorScheme);
 		
-		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum> visualizerAlpha = 
-				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSum>, WeightedSum>(
-						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSum>(),
-						new MaxRbfAggregator<WeightedSum>(
-								new IToDoubleMapper<WeightedSum>() {
+		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> visualizerAlpha = 
+				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(),
+						new MaxRbfAggregator<WeightedSumPixel>(
+								new IMapper<WeightedSumPixel, Double>() {
 									
 									@Override
-									public Double map(WeightedSum object) {
+									public Double map(WeightedSumPixel object) {
 										if (object != null && object.getSize() > 0) {
 											return 1.;
 										} else {
@@ -193,8 +186,8 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 							
 						});
 		
-		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSum>> proxyVisualizer =
-				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates,WeightedSum>>(
+		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSumPixel>> proxyVisualizer =
+				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates,WeightedSumPixel>>(
 						visualizerColor, 
 						visualizerAlpha);
 		

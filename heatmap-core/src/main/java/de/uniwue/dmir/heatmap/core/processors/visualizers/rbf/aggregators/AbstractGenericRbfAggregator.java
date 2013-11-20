@@ -21,7 +21,7 @@
 package de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IRadialBasisFunction;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.ReferencedData;
@@ -34,12 +34,12 @@ import de.uniwue.dmir.heatmap.core.util.IAggregator;
 public abstract class AbstractGenericRbfAggregator<TData>
 implements IAggregator<ReferencedData<TData>, Double> {
 
-	private IToDoubleMapper<TData> pixelToValueMapper;
+	private IMapper<TData, Double> pixelToValueMapper;
 	private IDistanceFunction<RelativeCoordinates> distanceFunction;
 	private IRadialBasisFunction radialBasisFunction;
 	
 	public AbstractGenericRbfAggregator(
-			IToDoubleMapper<TData> pixelToValueMapper,
+			IMapper<TData, Double> pixelToValueMapper,
 			double pointRadius) {
 		
 		this.pixelToValueMapper = pixelToValueMapper;

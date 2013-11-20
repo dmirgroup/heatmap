@@ -39,7 +39,7 @@ import de.uniwue.dmir.heatmap.core.filters.ApicPointFilter.ApicOverallTile;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSizePixel;
 import de.uniwue.dmir.heatmap.core.util.GeoPolygon;
 
 @AllArgsConstructor
@@ -537,15 +537,15 @@ extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 	public PointResult addPointToGrid(
 			ApicGeoPoint dataPoint,
 			RelativeCoordinates relativeCoordinates,
-			Map<RelativeCoordinates, PointSize> pixels) {
+			Map<RelativeCoordinates, PointSizePixel> pixels) {
 
-		PointSize groupTilePixel = pixels.get(relativeCoordinates);
+		PointSizePixel groupTilePixel = pixels.get(relativeCoordinates);
 		
 		if (groupTilePixel == null) {
 			
 			// create new group tile pixel if no pixel exists yet
 			
-			groupTilePixel = new PointSize();
+			groupTilePixel = new PointSizePixel();
 			groupTilePixel.setCoordinates(relativeCoordinates);
 			groupTilePixel.setMaxDate(dataPoint.getTimestampRecorded());
 			groupTilePixel.setPoints(POINTS);
@@ -650,8 +650,8 @@ extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 	public static class ApicGroupTile {
 
 		@JsonIgnore
-		private Map<RelativeCoordinates, PointSize> pixels =
-				new HashMap<RelativeCoordinates, PointSize>();
+		private Map<RelativeCoordinates, PointSizePixel> pixels =
+				new HashMap<RelativeCoordinates, PointSizePixel>();
 
 		// measurements
 		

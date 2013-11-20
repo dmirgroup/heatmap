@@ -20,18 +20,23 @@
  */
 package de.uniwue.dmir.heatmap.core.tiles.pixels;
 
-import de.uniwue.dmir.heatmap.core.data.types.BasicDataWithRelativeCoordinates;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class Size extends BasicDataWithRelativeCoordinates {
-	private double size;
+public class SquaredSumPixel extends SumPixel {
+	
+	private double squaredSum;
+	
+	public SquaredSumPixel(double value) {
+		this(1, value, value * value);
+	}
+	
+	public SquaredSumPixel(int size, double sum, double squaredSum) {
+		super(size, squaredSum);
+		this.squaredSum = squaredSum;
+	}
 }

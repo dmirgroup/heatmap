@@ -29,7 +29,7 @@ import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.SumPixel;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 /**
@@ -39,14 +39,14 @@ import de.uniwue.dmir.heatmap.core.util.Arrays2d;
  *
  */
 public class SumAndSizeBinaryVisualizer 
-extends AbstractDebuggingVisualizer<Sum[]> {
+extends AbstractDebuggingVisualizer<SumPixel[]> {
 
 	@Getter
 	@Setter
 	private double alpha;
 	
 	public BufferedImage visualizeWithDebuggingInformation(
-			Sum[] data,
+			SumPixel[] data,
 			TileSize tileSize,
 			TileCoordinates coordinates) {
 		
@@ -60,7 +60,7 @@ extends AbstractDebuggingVisualizer<Sum[]> {
 
 		for (int i  = 0; i < width; i++) {
 			for (int j  = 0; j < height; j++) {
-				Sum object = Arrays2d.get(i, j, data, width, height);
+				SumPixel object = Arrays2d.get(i, j, data, width, height);
 				if (object != null && object.getSum() > 0) {
 					image.setRGB(i, j, Color.BLACK.getRGB());
 				} else {

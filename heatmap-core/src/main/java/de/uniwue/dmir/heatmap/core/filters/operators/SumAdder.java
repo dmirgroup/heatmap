@@ -20,15 +20,15 @@
  */
 package de.uniwue.dmir.heatmap.core.filters.operators;
 
-import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.SumPixel;
 
 
 public class SumAdder
-implements IAdder<Sum> {
+implements IAdder<SumPixel> {
 
-	public Sum add(Sum o1, Sum o2) {
+	public SumPixel add(SumPixel o1, SumPixel o2) {
 		
-		Sum sum = new Sum(
+		SumPixel sum = new SumPixel(
 				o1.getSize() + o2.getSize(),
 				o1.getSum() + o2.getSum());
 		

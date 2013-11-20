@@ -20,6 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core.processors;
 
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

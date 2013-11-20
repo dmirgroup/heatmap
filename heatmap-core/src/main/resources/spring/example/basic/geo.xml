@@ -7,26 +7,23 @@
 	<select 
 			id="getData" 
 			parameterType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.GeoRequest" 
-			resultType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicGeoPoint">
+			resultType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint">
 
 		SELECT 
-			id							AS id,
 			geo_lon 					AS 'geoCoordinates.longitude',
 			geo_lat 					AS 'geoCoordinates.latitude',
-			geo_provider				AS geoProvider,
-			meta_timestamp_received		AS timestampReceived,
-			meta_timestamp_recorded		AS timestampRecorded,
-			meta_user_id				AS userId,
-			meta_device_id				AS deviceId,
-			data_sensorbox_mac			AS mac
+			
+			data_bc_1					AS value,
+			meta_timestamp_recorded		AS timestamp,
+			meta_user_id				AS groupDescription
 			
 		FROM data_airprobe
 		
 		WHERE 
 			meta_timestamp_received BETWEEN #{settings.minimumTimestamp} AND #{settings.maximumTimestamp}
 			<if test="geoBoundingBox != null">
-				AND geo_lon BETWEEN #{west} AND #{east}
-				AND geo_lat BETWEEN #{south} AND #{north}
+				AND geo_lon BETWEEN #{geoBoundingBox.min.longitude} AND #{geoBoundingBox.max.latitude}
+				AND geo_lat BETWEEN #{geoBoundingBox.min.latitude} AND #{geoBoundingBox.max.latitude}
 			</if>
 		ORDER BY meta_timestamp_recorded ASC
 	</select>

@@ -30,16 +30,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class WeightedSquaredSum extends WeightedSum {
+public class WeightedSquaredSumPixel extends WeightedSumPixel {
 
 	protected double sumOfSquaredValues;
 	protected double sumOfWeightedSquaredValues;
 	
-	public WeightedSquaredSum(double value) {
+	public WeightedSquaredSumPixel(double value) {
 		this(value, 1);
 	}
 	
-	public WeightedSquaredSum(double value, double weight) {
+	public WeightedSquaredSumPixel(double value, double weight) {
 		this(
 				1, 
 				value, 
@@ -49,7 +49,7 @@ public class WeightedSquaredSum extends WeightedSum {
 				weight);
 	}
 	
-	public WeightedSquaredSum(
+	public WeightedSquaredSumPixel(
 			
 			double size,
 			
@@ -87,22 +87,22 @@ public class WeightedSquaredSum extends WeightedSum {
 	
 	public static void main(String[] args) {
 		
-		WeightedSquaredSum sum = new WeightedSquaredSum(2);
+		WeightedSquaredSumPixel sum = new WeightedSquaredSumPixel(2);
 		System.out.println(sum);
 		sum.scaleWeights(0.5);
 		System.out.println(sum);
 
 		WeightedSquaredSumAdder adder = new WeightedSquaredSumAdder();
 		
-		WeightedSquaredSum sum2 = new WeightedSquaredSum(4);
+		WeightedSquaredSumPixel sum2 = new WeightedSquaredSumPixel(4);
 		sum2.scaleWeights(1. / 3);
 		System.out.println(sum2);
 		
-		WeightedSquaredSum sum3 = new WeightedSquaredSum(1);
+		WeightedSquaredSumPixel sum3 = new WeightedSquaredSumPixel(1);
 		sum3.scaleWeights(2. / 3);
 		System.out.println(sum3);
 
-		WeightedSquaredSum sum4 = adder.add(sum2, sum3);
+		WeightedSquaredSumPixel sum4 = adder.add(sum2, sum3);
 		System.out.println(sum4);
 		
 		System.out.println(sum4.getSumOfWeightedValues() / sum4.getSumOfWeights());

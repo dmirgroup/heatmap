@@ -18,25 +18,17 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.tiles.pixels;
+package de.uniwue.dmir.heatmap.core.data.types.mappers;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSumPixel;
 
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper= true)
-public class Sum extends Size {
+public class ValuePixelToWeightedSquaredSumPixelMapper
+implements IMapper<ValuePixel, WeightedSquaredSumPixel> {
 	
-	private double sum;
-	
-	public Sum(double sum) {
-		this(1, sum);
-	}
-	
-	public Sum(double size, double sum) {
-		super(size);
-		this.sum = sum;
+	public WeightedSquaredSumPixel map(ValuePixel object) {
+		WeightedSquaredSumPixel sum = new WeightedSquaredSumPixel(object.getValue());
+		return sum;
 	}
 }

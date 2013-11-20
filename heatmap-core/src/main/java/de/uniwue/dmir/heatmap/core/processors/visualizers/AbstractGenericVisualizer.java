@@ -20,8 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.core.processors.visualizers;
 
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory;
 
 public abstract class AbstractGenericVisualizer<TTile, TPixel> 
 extends AbstractDebuggingVisualizer<TTile> {

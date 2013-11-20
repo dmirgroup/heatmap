@@ -7,14 +7,14 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="dataFileStrategy"
-			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
-		<constructor-arg name="folder" value="${out.data}" />
+			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
 	</bean>
 
 	<bean id="dataWriter"
-			class="de.uniwue.dmir.heatmap.core.processing.DataFileWriter">
+			class="de.uniwue.dmir.heatmap.core.processors.JsonFileWriterProcessor">
 		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
 		<constructor-arg name="gzip" value="true" />
+		<constructor-arg name="parentFolder" value="${out.data}" />
 	</bean>
 
 </beans>

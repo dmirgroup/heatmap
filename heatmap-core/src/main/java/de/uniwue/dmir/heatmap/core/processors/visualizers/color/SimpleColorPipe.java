@@ -23,12 +23,12 @@ package de.uniwue.dmir.heatmap.core.processors.visualizers.color;
 import java.awt.Color;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
 @AllArgsConstructor
 public class SimpleColorPipe<T> implements IColorPipe<T> {
 	
-	private IToDoubleMapper<T> toDoubleMapper;
+	private IMapper<T, Double> toDoubleMapper;
 	private IColorScheme colorScheme;
 	
 	@Override

@@ -50,7 +50,7 @@ implements IHeatmap<TTile> {
 	/**
 	 * Data source providing the data points for the tiles.
 	 */
-	private IHeatmapDatasource<TData> dataSource;
+	private IHeatmapDatasource<TData> datasource;
 	
 	/**
 	 * Filter used to add points to tiles.
@@ -93,7 +93,7 @@ implements IHeatmap<TTile> {
 		}
 		
 		this.tileFactory = tileFactory;
-		this.dataSource = dataSource;
+		this.datasource = dataSource;
 		this.filter = filter;
 		this.settings = settings;
 	}
@@ -114,7 +114,6 @@ implements IHeatmap<TTile> {
 		
 		this.logger.debug("Loading data seed.");
 		
-		stopWatch.stop();
 		stopWatch.start("loading data seed");
 		
 		TTile tile = this.seed.getTile(projectedTileCoordinates);
@@ -130,10 +129,9 @@ implements IHeatmap<TTile> {
 		
 		this.logger.debug("Loading data points.");
 		
-		stopWatch.stop();
 		stopWatch.start("loading data points");
 		
-		Iterator<TData> externalData = this.dataSource.getData(
+		Iterator<TData> externalData = this.datasource.getData(
 				projectedTileCoordinates, 
 				this.filter);
 		
@@ -161,7 +159,6 @@ implements IHeatmap<TTile> {
 
 		this.logger.debug("Adding data points to tile: {}", tileCoordinates);
 		
-		stopWatch.stop();
 		stopWatch.start("adding data points to tile");
 		
 		int externalDataPointCount = 0;
@@ -199,7 +196,7 @@ implements IHeatmap<TTile> {
 					zoomLevel);
 			
 			Iterator<TileCoordinates> iterator =
-					this.dataSource.getTileCoordinatesWithContent(
+					this.datasource.getTileCoordinatesWithContent(
 							zoomLevel, 
 							this.filter);
 			

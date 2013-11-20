@@ -46,7 +46,7 @@ import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.StaticPolygonProxyVisualizer;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSize;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSizePixel;
 
 public class ApicPointProcessor 
 implements ITileProcessor<ApicOverallTile> {
@@ -59,7 +59,7 @@ implements ITileProcessor<ApicOverallTile> {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private String folder;
-	private IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
+	private IVisualizer<Map<RelativeCoordinates, PointSizePixel>> visualizer;
 	private IMapper<String, TileSize> cityToTileSizeMapper;
 
 	@Setter
@@ -78,7 +78,7 @@ implements ITileProcessor<ApicOverallTile> {
 	
 	public ApicPointProcessor(
 			String folder,
-			IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer,
+			IVisualizer<Map<RelativeCoordinates, PointSizePixel>> visualizer,
 			IMapper<String, TileSize> cityToTileSizeMapper) {
 		
 		super();
@@ -149,7 +149,7 @@ implements ITileProcessor<ApicOverallTile> {
 					
 			// initialize visualizer
 
-			IVisualizer<Map<RelativeCoordinates, PointSize>> visualizer;
+			IVisualizer<Map<RelativeCoordinates, PointSizePixel>> visualizer;
 			if (this.cityToPolygonMapper != null) {
 				
 				Polygon cityPolygon = this.cityToPolygonMapper.map(cityEntry.getKey());
@@ -157,8 +157,8 @@ implements ITileProcessor<ApicOverallTile> {
 //				// translate city polygon
 //				cityPolygon.translate(offsetX, offsetY);
 				
-				StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSize>> polygonVisualizer = 
-						new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSize>>(
+				StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSizePixel>> polygonVisualizer = 
+						new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSizePixel>>(
 								this.visualizer, 
 								cityPolygon);
 				polygonVisualizer.setFillColor(this.polygonFillColor);

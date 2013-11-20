@@ -29,16 +29,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class WeightedSum extends WeightedSize {
+public class WeightedSumPixel extends WeightedSizePixel {
 
 	protected double sumOfValues;
 	protected double sumOfWeightedValues;
 	
-	public WeightedSum(double value) {
+	public WeightedSumPixel(double value) {
 		this(value, 1);
 	}
 	
-	public WeightedSum(double value, double weight) {
+	public WeightedSumPixel(double value, double weight) {
 		this(
 				1, 
 				value, 
@@ -46,7 +46,7 @@ public class WeightedSum extends WeightedSize {
 				weight);
 	}
 	
-	public WeightedSum(
+	public WeightedSumPixel(
 			double size,
 			double sumOfValues,
 			double sumOfWeightedValues,

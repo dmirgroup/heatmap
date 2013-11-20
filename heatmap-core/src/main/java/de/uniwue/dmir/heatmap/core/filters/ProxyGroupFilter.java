@@ -30,7 +30,7 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
 /**
  * Allows to create tiles which contain grouped data, i.e.,
- * the tile containes a set of tiles: one tile for each group.
+ * the tile containers a set of tiles: one tile for each group.
  * 
  * @author Martin Becker
  *

@@ -20,23 +20,21 @@
  */
 package de.uniwue.dmir.heatmap.core.filters.operators;
 
-import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSumPixel;
 
 
 public class WeightedSquaredSumAdder
-implements IAdder<WeightedSquaredSum> {
+implements IAdder<WeightedSquaredSumPixel> {
 
-	public WeightedSquaredSum add(WeightedSquaredSum o1, WeightedSquaredSum o2) {
+	public WeightedSquaredSumPixel add(WeightedSquaredSumPixel o1, WeightedSquaredSumPixel o2) {
 		
-		WeightedSquaredSum sum = new WeightedSquaredSum(
+		WeightedSquaredSumPixel sum = new WeightedSquaredSumPixel(
 				o1.getSize()						+ o2.getSize(),
 				o1.getSumOfValues() 				+ o2.getSumOfValues(),
 				o1.getSumOfSquaredValues() 			+ o2.getSumOfSquaredValues(),
 				o1.getSumOfWeightedValues() 		+ o2.getSumOfWeightedValues(),
 				o1.getSumOfWeightedSquaredValues() 	+ o2.getSumOfWeightedSquaredValues(),
 				o1.getSumOfWeights() 				+ o2.getSumOfWeights());
-		
-		sum.setCoordinates(o1.getCoordinates());
 		
 		return sum;
 	}

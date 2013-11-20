@@ -18,18 +18,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.data.types.mappers;
+package de.uniwue.dmir.heatmap.core.tiles.pixels.mappers;
 
-import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
-import de.uniwue.dmir.heatmap.core.tiles.pixels.Sum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSumPixel;
 
-public class ValuePixelToSumMapper
-implements IMapper<ValuePixel, Sum> {
-	
-	public Sum map(ValuePixel object) {
-		Sum sum = new Sum(1, object.getValue());
-		sum.setCoordinateValues(object.getCoordinates());
-		return sum;
+public class WeightedSumToAverageMapper 
+implements IMapper<WeightedSumPixel, Double> {
+
+	@Override
+	public Double map(WeightedSumPixel object) {
+		return object.getSumOfValues() / object.getSize();
 	}
+
+	
 }

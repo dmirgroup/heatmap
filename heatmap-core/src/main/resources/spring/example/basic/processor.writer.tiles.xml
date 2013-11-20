@@ -7,15 +7,16 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<bean id="tileFileStrategy"
-			class="de.uniwue.dmir.heatmap.core.processing.DefaultFileStrategy">
-		<constructor-arg name="folder" value="${out.tiles}" />
+			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
 	</bean>
 
 	<bean id="tileWriter"
-			class="de.uniwue.dmir.heatmap.core.processing.VisualizationFileWriter">
+			class="de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor">
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
 		<constructor-arg name="fileFormat" value="png" />
+		
+		<constructor-arg name="parentFolder" value="${out.tiles}" />
 	</bean>
 
 </beans>

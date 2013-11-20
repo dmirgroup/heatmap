@@ -18,17 +18,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.processors;
+package de.uniwue.dmir.heatmap.core.tiles.pixels;
 
-import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSum;
+import java.util.Date;
 
-public class WeightedSumToAverageMapper 
-implements IToDoubleMapper<WeightedSum> {
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-	@Override
-	public Double map(WeightedSum object) {
-		return object.getSumOfValues() / object.getSize();
-	}
-
-	
+@Data
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class PointSizePixel extends SizePixel {
+	private Date maxDate;
+	private double points;
 }

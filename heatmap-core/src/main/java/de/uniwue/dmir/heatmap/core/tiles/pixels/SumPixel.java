@@ -20,43 +20,23 @@
  */
 package de.uniwue.dmir.heatmap.core.tiles.pixels;
 
-import de.uniwue.dmir.heatmap.core.data.types.BasicDataWithRelativeCoordinates;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class WeightedSize extends BasicDataWithRelativeCoordinates {
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper= true)
+public class SumPixel extends SizePixel {
 	
-	protected double size;
-	protected double sumOfWeights;
+	private double sum;
 	
-	public WeightedSize() {
-		this(1);
+	public SumPixel(double sum) {
+		this(1, sum);
 	}
 	
-	public WeightedSize(double size) {
-		this(size, 1);
-	}
-	
-	public WeightedSize(double size, double sumOfWeights) {
-		super();
-		this.size = size;
-		this.sumOfWeights = sumOfWeights;
-	}
-	
-	
-	/**
-	 * Multiplies the sum of weights with the given scaling factor. 
-	 * 
-	 * <p>Useful for weighting later when initializing this class 
-	 * with weight = 1;</p>
-	 * 
-	 * @param scalingFactor the scaling factor to multiply with
-	 */
-	public void scaleWeights(double scalingFactor) {
-		this.sumOfWeights *= scalingFactor;
+	public SumPixel(double size, double sum) {
+		super(size);
+		this.sum = sum;
 	}
 }

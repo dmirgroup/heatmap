@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.core.util;
 import java.util.NoSuchElementException;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.core.processors.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
 
 @AllArgsConstructor

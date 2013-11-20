@@ -20,12 +20,12 @@
  */
 package de.uniwue.dmir.heatmap.core.filters.operators;
 
-import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSum;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.WeightedSquaredSumPixel;
 
 public class WeightedSquaredSumScalarMultiplier
-implements IScalarMultiplier<WeightedSquaredSum> {
+implements IScalarMultiplier<WeightedSquaredSumPixel> {
 
-	public void multiply(WeightedSquaredSum object, double multiplicator) {
+	public void multiply(WeightedSquaredSumPixel object, double multiplicator) {
 		object.scaleWeights(multiplicator);
 	}
 

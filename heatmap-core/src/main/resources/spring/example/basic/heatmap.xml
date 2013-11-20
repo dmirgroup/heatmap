@@ -19,17 +19,18 @@
 	<!-- Defining heat map. -->
 	
 	<bean id="tileFactory"
-			class="de.uniwue.dmir.heatmap.core.MapTileFactory">
+			class="de.uniwue.dmir.heatmap.core.tiles.factories.GenericMapTileFactory">
 	</bean>
 	
 	<bean id="heatmap"
-			class="de.uniwue.dmir.heatmap.core.Heatmap">
+			class="de.uniwue.dmir.heatmap.core.heatmaps.DefaultHeatmap">
 
 		<constructor-arg name="tileFactory" ref="tileFactory" />
-		<constructor-arg name="dataSource" ref="tileDatasource" />
+		<constructor-arg name="dataSource" ref="heatmapDatasource" />
 		<constructor-arg name="filter" ref="filter" />
 		<constructor-arg name="settings" ref="heatmapSettings" />
-		<constructor-arg name="seed" ref="seed" />
+		
+<!-- 		<property name="seed" ref="seed" /> -->
 	</bean>
 
 </beans>

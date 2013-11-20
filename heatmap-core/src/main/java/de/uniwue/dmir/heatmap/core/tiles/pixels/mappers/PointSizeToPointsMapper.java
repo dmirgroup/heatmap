@@ -18,18 +18,17 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap.core.tiles.pixels;
+package de.uniwue.dmir.heatmap.core.tiles.pixels.mappers;
 
-import java.util.Date;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.core.tiles.pixels.PointSizePixel;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+public class PointSizeToPointsMapper 
+implements IMapper<PointSizePixel, Double> {
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
-public class PointSize extends Size {
-	private Date maxDate;
-	private double points;
+	@Override
+	public Double map(PointSizePixel object) {
+		return object.getPoints();
+	}
+
 }

@@ -20,11 +20,11 @@
  */
 package de.uniwue.dmir.heatmap.core.processors.visualizers.color;
 
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 
 public class SimpleAlphaPipe<T> implements IAlphaPipe<T> {
 	
-	private IToDoubleMapper<T> toDoubleMapper;
+	private IMapper<T, Double> toDoubleMapper;
 	private IAlphaScheme alphaScheme;
 	
 	@Override

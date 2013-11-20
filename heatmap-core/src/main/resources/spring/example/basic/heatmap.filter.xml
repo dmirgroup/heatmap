@@ -8,22 +8,28 @@
 
 	<!-- Defining filter. -->
 	
-	<bean id="internalMapper"
-			class="de.uniwue.dmir.heatmap.impl.core.data.type.mapper.ValuePixelToWeightedSquaredSumMapper" />
+	<bean id="dataToPixelMapper"
+			class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.SimpleGeoPointToWeightedSquaredSumMapper" />
 			
-	<bean id="adder"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.operators.WeightedSquaredSumAdder" />
-			
-	<bean id="filter"
-			class="de.uniwue.dmir.heatmap.impl.core.filter.AddingMapFilter">
-	
-		<constructor-arg name="mapper" ref="internalMapper" />
-		<constructor-arg name="adder" ref="adder" />
+	<bean id="dataToRelativeCoordinatesMapper"
+			class="de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToRelativeCoordinatesMapper">
 		
-		<property name="width" value="120" />
-		<property name="height" value="120" />
-		<property name="centerX" value="60" />
-		<property name="centerY" value="60" />
+		<constructor-arg name="mapProjection" ref="projection" />
+	</bean>
+			
+	<bean id="pixelAdder"
+			class="de.uniwue.dmir.heatmap.core.filters.operators.WeightedSquaredSumAdder" />
+			
+	<bean id="pixelAccess"
+			class="de.uniwue.dmir.heatmap.core.filters.access.MapPixelAccess" />
+	
+	<bean id="filter"
+			class="de.uniwue.dmir.heatmap.core.filters.AddingFilter">
+	
+		<constructor-arg name="dataToPixelMapper" ref="dataToPixelMapper" />
+		<constructor-arg name="dataToRelativeCoordinatesMapper" ref="dataToRelativeCoordinatesMapper" />
+		<constructor-arg name="pixelAccess" ref="pixelAccess" />
+		<constructor-arg name="pixelAdder" ref="pixelAdder" />
 	</bean>
 	
 </beans>

@@ -20,7 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators;
 
-import de.uniwue.dmir.heatmap.core.processors.IToDoubleMapper;
+import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.IRadialBasisFunction;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
@@ -29,14 +29,14 @@ public abstract class AbstractWeightedRbfAggregator<TData>
 extends AbstractGenericRbfAggregator<TData> {
 
 	public AbstractWeightedRbfAggregator(
-			IToDoubleMapper<TData> pixelToValueMapper,
+			IMapper<TData, Double> pixelToValueMapper,
 			IDistanceFunction<RelativeCoordinates> distanceFunction,
 			IRadialBasisFunction radialBasisFunction) {
 		super(pixelToValueMapper, distanceFunction, radialBasisFunction);
 	}
 	
 	public AbstractWeightedRbfAggregator(
-			IToDoubleMapper<TData> pixelToValueMapper,
+			IMapper<TData, Double> pixelToValueMapper,
 			double pointRadius) {
 		super(pixelToValueMapper, pointRadius);
 	}
