@@ -70,6 +70,10 @@ implements IHeatmap<TTile> {
 	@Getter
 	private HeatmapSettings settings;
 	
+	@Getter
+	@Setter
+	private boolean returnSeedTilesWithNoExternalData;
+	
 	public DefaultHeatmap(
 			ITileFactory<TTile> tileFactory,
 			IHeatmapDatasource<TData> dataSource,
@@ -96,6 +100,7 @@ implements IHeatmap<TTile> {
 		this.datasource = dataSource;
 		this.filter = filter;
 		this.settings = settings;
+		this.returnSeedTilesWithNoExternalData = false;
 	}
 	
 	@Override
@@ -141,11 +146,22 @@ implements IHeatmap<TTile> {
 				stopWatch.toString());
 		
 		// return null if no data was found
-		if (tile == null && (externalData == null || !externalData.hasNext())) {
-			this.logger.debug("No data for this tile and no data seed available: returning null.");
-			return null;
-		
-		} 
+		if (externalData == null || !externalData.hasNext()) {
+
+			this.logger.debug("No external data found for this tile: {}", tileCoordinates);
+			
+			if (tile == null) {
+				
+				this.logger.debug("No data seed available for his tile: returnung null.");
+				return null;
+				
+			} else if (!this.returnSeedTilesWithNoExternalData) {
+				
+				this.logger.debug("Data seed available, but no external data found: returning null.");
+				return null;
+			}
+
+		}
 		
 		// initializing tile if no seed is available
 		if (tile == null) {
