@@ -14,7 +14,9 @@
 			class="de.uniwue.dmir.heatmap.core.processors.JsonFileWriterProcessor">
 		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
 		<constructor-arg name="gzip" value="true" />
-		<constructor-arg name="parentFolder" value="${out.data}" />
+		<constructor-arg name="parentFolder">
+			<null />
+		</constructor-arg>
 	</bean>
 	
 	<bean id="dataWriter"
@@ -26,7 +28,7 @@
 			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		
-		<constructor-arg name="parentFolder" value="${out.tiles}" />	
+		<constructor-arg name="parentFolder" value="${out.data}" />	
 	</bean>
 
 </beans>

@@ -16,12 +16,12 @@
 			class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme">
 
 		<constructor-arg name="image" ref="colorImage" />
-		<constructor-arg name="min" value="0" />
+		<constructor-arg name="min" value="0.5" />
 		<constructor-arg name="max" value="10" />
 	</bean>
 	
 	
-	<bean id="visualizer"
+	<bean id="averageVisualizer"
 			class="de.uniwue.dmir.heatmap.core.processors.visualizers.GenericSimpleRbfVisualizer">
 
 		<constructor-arg name="pixelIteratorFactory">
@@ -33,13 +33,42 @@
 				<constructor-arg name="pixelToValueMapper">
 					<bean class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.WeightedSumToAverageMapper" />
 				</constructor-arg>
-				<constructor-arg name="pointRadius" value="20" />
+				<constructor-arg name="pointRadius" value="10" />
 			</bean>
 		</constructor-arg>
 		
 		<constructor-arg name="colorScheme" ref="colorScheme" />
 		
-		<property name="debug" value="true" />
+		<property name="debug" value="false" />
+	</bean>
+
+	<bean id="alphaVisualizer"
+			class="de.uniwue.dmir.heatmap.core.processors.visualizers.GenericSimpleRbfVisualizer">
+
+		<constructor-arg name="pixelIteratorFactory">
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
+		</constructor-arg>
+		
+		<constructor-arg name="aggregator">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.MaxRbfAggregator">
+				<constructor-arg name="pixelToValueMapper">
+					<bean class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.WeightedSumToOnOffSizeMapper" />
+				</constructor-arg>
+				<constructor-arg name="pointRadius" value="10" />
+			</bean>
+		</constructor-arg>
+		
+		<constructor-arg name="colorScheme">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.SimpleAlphaColorScheme" />
+		</constructor-arg>
+		
+		<property name="debug" value="false" />
+	</bean>
+	
+	<bean name="visualizer" class="de.uniwue.dmir.heatmap.core.processors.visualizers.AlphaMaskProxyVisualizer">
+		<constructor-arg name="color" ref="averageVisualizer" />
+		<constructor-arg name="alpha" ref="alphaVisualizer" />
+		<property name="debug" value="false" />
 	</bean>
 	
 </beans>

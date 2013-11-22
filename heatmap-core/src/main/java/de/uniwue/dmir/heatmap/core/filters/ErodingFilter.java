@@ -21,6 +21,8 @@
 package de.uniwue.dmir.heatmap.core.filters;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.filters.access.IPixelAccess;
 import de.uniwue.dmir.heatmap.core.filters.operators.IAdder;
@@ -31,9 +33,21 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.core.util.Arrays2d;
 
 @Getter
+@Setter
+@ToString(callSuper = true)
 public class ErodingFilter<TData, TPixel, TTile>
 extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 
+	protected int erodingWidth;
+	protected int erodingHeight;
+	protected int erodingCenterX;
+	protected int erodingCenterY;;
+	
+	private IMapper<TData, TPixel> dataToTPixelixelMapper;
+	private IAdder<TPixel> adder;
+	
+	private boolean skipOutOfBoundsPoints;
+	
 	public ErodingFilter(
 			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
 			IMapper<TData, TPixel> dataToTPixelixelMapper,
@@ -50,20 +64,13 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 		this.dataToTPixelixelMapper = dataToTPixelixelMapper;
 		this.adder = pixelAdder;
 
-		this.width = width;
-		this.height = height;
-		this.centerX = centerX;
-		this.centerY = centerY;
+		this.erodingWidth = 	this.width = 	width;
+		this.erodingHeight = 	this.height = 	height;
+		this.erodingCenterX = 	this.centerX = 	centerX;
+		this.erodingCenterY = 	this.centerY = 	centerY;
+		
+		this.skipOutOfBoundsPoints = false;
 	}
-
-	private IMapper<TData, TPixel> dataToTPixelixelMapper;
-	private IAdder<TPixel> adder;
-	
-	private int width;
-	private int height;
-	
-	private int centerX;
-	private int centerY;
 
 	public void filter(
 			TData dataTPixeloint, 
@@ -74,20 +81,21 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 		
 		int startX = relativeCoordinates.getX();
 		int startY = relativeCoordinates.getY();
-		startX -= this.centerX;
-		startY -= this.centerY;
+		startX -= this.erodingCenterX;
+		startY -= this.erodingCenterY;
 		
-		int stopX = startX + this.width;
-		int stopY = startY + this.height;
+		int stopX = startX + this.erodingWidth;
+		int stopY = startY + this.erodingHeight;
 		
 		for (int x = startX; x < stopX; x++) {
 			for (int y = startY; y < stopY; y ++) {
 				
-				if (!Arrays2d.isIndexWithinBounds(
-						x, 
-						y, 
-						tileSize.getWidth(), 
-						tileSize.getHeight())) {
+				if (this.skipOutOfBoundsPoints
+						&& !Arrays2d.isIndexWithinBounds(
+								x, 
+								y, 
+								tileSize.getWidth(), 
+								tileSize.getHeight())) {
 					continue;
 				}
 				

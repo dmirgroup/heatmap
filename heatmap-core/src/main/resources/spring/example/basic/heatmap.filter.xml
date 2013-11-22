@@ -30,6 +30,12 @@
 		<constructor-arg name="dataToRelativeCoordinatesMapper" ref="dataToRelativeCoordinatesMapper" />
 		<constructor-arg name="pixelAccess" ref="pixelAccess" />
 		<constructor-arg name="pixelAdder" ref="pixelAdder" />
+		
+		<property name="width" value="120" />
+		<property name="height" value="120" />
+		
+		<property name="centerX" value="60" />
+		<property name="centerY" value="60" />
 	</bean>
 	
 	

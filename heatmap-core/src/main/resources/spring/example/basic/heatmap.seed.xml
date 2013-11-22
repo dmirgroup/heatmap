@@ -12,7 +12,7 @@
 	
 		<constructor-arg name="settings" ref="heatmapSettings" />
 		<constructor-arg name="clazz" value="java.util.Map" />
-		<constructor-arg name="parentFolder" value="${in.data}" />
+		<constructor-arg name="parentFolder" value="${out.tiles}" />
 		<constructor-arg name="gzip" value="true" />
 	</bean>
 

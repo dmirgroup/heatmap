@@ -54,5 +54,4 @@ extends ErodingFilter<TData, TPixel, TTile> {
 				0,
 				0);
 	}
-	
 }

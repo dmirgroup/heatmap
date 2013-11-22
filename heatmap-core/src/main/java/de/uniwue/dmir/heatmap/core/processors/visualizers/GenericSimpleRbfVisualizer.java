@@ -175,7 +175,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 									}
 									
 								},
-								20),
+								10),
 						new IColorScheme() {
 							
 							@Override

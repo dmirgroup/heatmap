@@ -67,7 +67,7 @@ map.events.register('zoomend', map, function() {
 
 // This is the layer that uses the locally stored tiles
 var newLayer = new OpenLayers.Layer.XYZ("Custom Tiles",
-		"../../../out/tiles/${z}/${x}/${y}.png", {
+		"../../../out/tiles/OVERALL/${z}/${x}/${y}.png", {
 			numZoomLevels : 19,
 			alpha : true,
 			isBaseLayer : false

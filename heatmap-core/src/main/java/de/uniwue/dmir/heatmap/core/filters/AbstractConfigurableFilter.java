@@ -20,9 +20,10 @@
  */
 package de.uniwue.dmir.heatmap.core.filters;
 
-import de.uniwue.dmir.heatmap.core.IFilter;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import de.uniwue.dmir.heatmap.core.IFilter;
 
 /**
  * Abstract implementation of the {@link IFilter} interface implementing
@@ -48,12 +49,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public abstract class AbstractConfigurableFilter<TData, TTile> 
 extends AbstractFilter<TData, TTile> {
 
-	private int width = 1;
-	private int height = 1;
-	private int centerX = 0;
-	private int centerY = 0;
+	protected int width = 1;
+	protected int height = 1;
+	protected int centerX = 0;
+	protected int centerY = 0;
 	
 }

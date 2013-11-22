@@ -20,6 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.core.filters;
 
+import lombok.ToString;
 import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.IToRelativeCoordinatesMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
@@ -34,6 +35,7 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
  * @param <TData> type of the data to be incorporated into the tile
  * @param <TTile> type of the tile to incorporate data into
  */
+@ToString(callSuper = true)
 public abstract class AbstractRelativeCoordinatesMapperFilter<TData, TTile> 
 extends AbstractConfigurableFilter<TData, TTile> {
 

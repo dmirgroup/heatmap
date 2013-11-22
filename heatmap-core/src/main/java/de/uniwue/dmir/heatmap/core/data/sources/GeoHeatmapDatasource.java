@@ -25,13 +25,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.core.IFilter;
 import de.uniwue.dmir.heatmap.core.IHeatmapDatasource;
+import de.uniwue.dmir.heatmap.core.TileSize;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.core.data.sources.geo.IMapProjection;
+import de.uniwue.dmir.heatmap.core.filters.AbstractConfigurableFilter;
 import de.uniwue.dmir.heatmap.core.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 
@@ -48,6 +53,8 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 public class GeoHeatmapDatasource<TData> 
 implements IHeatmapDatasource<TData> {
 
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	private IGeoDatasource<TData> geoDatasource;
 	private IMapProjection projection;
 
@@ -57,10 +64,31 @@ implements IHeatmapDatasource<TData> {
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter) {
 		
+		this.logger.debug(
+				"Filter dimensions: width={}, height={}, centerX={}, centerY={}",
+				filter.getWidth(), 
+				filter.getHeight(), 
+				filter.getCenterX(), 
+				filter.getCenterY());
+		
+		this.logger.debug(
+				"Tile bounding box: {}", 
+				this.projection.fromTileCoordinatesToGeoBoundingBox(
+						tileCoordinates, 
+						new AbstractConfigurableFilter<Object, Object>() {
+							@Override
+							public void filter(Object dataPoint, Object tile,
+									TileSize tileSize,
+									TileCoordinates tileCoordinates) {
+							}
+						}));
+		
 		GeoBoundingBox geoBoundingBox = 
 				this.projection.fromTileCoordinatesToGeoBoundingBox(
 						tileCoordinates, 
 						filter);
+		
+		this.logger.debug("Extended bounding box: {}", geoBoundingBox);
 		
 		List<TData> sourceData = this.geoDatasource.getData(geoBoundingBox);
 		

@@ -16,7 +16,9 @@
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
 		<constructor-arg name="fileFormat" value="png" />
 		
-		<constructor-arg name="parentFolder" value="${out.tiles}" />
+		<constructor-arg name="parentFolder">
+			<null />
+		</constructor-arg>
 	</bean>
 	
 	<bean id="tileWriter"
