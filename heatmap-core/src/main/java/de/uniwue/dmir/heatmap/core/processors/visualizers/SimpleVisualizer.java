@@ -58,7 +58,7 @@ implements IVisualizer<TTile> {
 						BufferedImage.TYPE_INT_ARGB);
 		
 		IKeyValueIterator<RelativeCoordinates, TPixel> iterator = 
-				super.pixelIteratorFactory.iterator(tile);
+				super.pixelIteratorFactory.instance(tile);
 
 		while (iterator.hasNext()) {
 			

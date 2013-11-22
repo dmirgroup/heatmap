@@ -26,10 +26,18 @@ import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
 @Data
 public class DefaultFileStrategy implements IFileStrategy {
 
+	private String parentFolder;
+	
 	@Override
 	public String getFileName(TileCoordinates coordinates, String extension) {
 		
-		String file = String.format("%d%s%d%s%d.%s",
+		String parentFolder = 
+				this.parentFolder == null 
+				? "" 
+				: this.parentFolder + System.getProperty("file.separator");
+		
+		String file = String.format("%s%d%s%d%s%d.%s",
+				parentFolder,
 				coordinates.getZoom(),
 				System.getProperty("file.separator"),
 				coordinates.getX(),

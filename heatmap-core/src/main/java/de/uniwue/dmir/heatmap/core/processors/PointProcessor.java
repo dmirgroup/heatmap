@@ -79,7 +79,7 @@ implements ITileProcessor<TTile> {
 		Map<String, PointContainer> points = new HashMap<String, PointContainer>();
 
 		IKeyValueIterator<String, TGroupTile> groupIterator = 
-				this.groupIteratorFactory.iterator(tile);
+				this.groupIteratorFactory.instance(tile);
 		
 		while(groupIterator.hasNext()) {
 		
@@ -100,7 +100,7 @@ implements ITileProcessor<TTile> {
 			
 			TGroupTile groupTile = groupIterator.getValue();
 			IKeyValueIterator<RelativeCoordinates, PointSizePixel> pixelIterator = 
-					this.pixelIteratorFactory.iterator(groupTile);
+					this.pixelIteratorFactory.instance(groupTile);
 			
 			while(pixelIterator.hasNext()) {
 				

@@ -44,7 +44,7 @@ public class RelativeCoordinatesArrayKeyValueIteratorFactoryTest {
 						3,2, false);
 		
 		IKeyValueIterator<RelativeCoordinates, String> iterator = 
-				factory.iterator(strings);
+				factory.instance(strings);
 		
 		ArrayList<String> test1 = new ArrayList<String>();
 		while (iterator.hasNext()) {
@@ -73,7 +73,7 @@ public class RelativeCoordinatesArrayKeyValueIteratorFactoryTest {
 						3,2, true);
 		
 		IKeyValueIterator<RelativeCoordinates, String> iterator = 
-				factory.iterator(strings);
+				factory.instance(strings);
 		
 		ArrayList<String> test1 = new ArrayList<String>();
 		while (iterator.hasNext()) {

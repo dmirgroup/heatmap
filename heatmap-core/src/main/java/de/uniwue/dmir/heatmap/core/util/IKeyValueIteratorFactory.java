@@ -22,7 +22,7 @@ package de.uniwue.dmir.heatmap.core.util;
 
 public interface IKeyValueIteratorFactory<TSource, TKey, TValue> {
 	
-	IKeyValueIterator<TKey, TValue> iterator(TSource source);
+	IKeyValueIterator<TKey, TValue> instance(TSource source);
 	
 	public static interface IKeyValueIterator<TKey, TValue> {
 

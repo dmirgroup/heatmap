@@ -110,7 +110,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 				referencedData.getReferenceCoordaintes().setXY(i, j);
 
 				IKeyValueIterator<RelativeCoordinates, TPixel> iterator =
-						this.pixelIteratorFactory.iterator(data);
+						this.pixelIteratorFactory.instance(data);
 				
 				while (iterator.hasNext()) { 
 					

@@ -8,6 +8,7 @@
 
 	<bean id="dataFileStrategy"
 			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
+		<property name="parentFolder" value="${inner.group.path.data}" />
 	</bean>
 
 	<bean id="proxiedDataWriter"

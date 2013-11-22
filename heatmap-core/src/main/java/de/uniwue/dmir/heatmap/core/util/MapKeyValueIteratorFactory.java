@@ -27,7 +27,7 @@ public class MapKeyValueIteratorFactory<TKey, TValue>
 implements IKeyValueIteratorFactory<Map<TKey, TValue>, TKey, TValue>{
 
 	@Override
-	public IKeyValueIterator<TKey, TValue> iterator(final Map<TKey, TValue> source) {
+	public IKeyValueIterator<TKey, TValue> instance(final Map<TKey, TValue> source) {
 		
 		return new IKeyValueIterator<TKey, TValue>() {
 

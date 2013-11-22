@@ -31,11 +31,11 @@
 		<constructor-arg name="pixelAccess" ref="pixelAccess" />
 		<constructor-arg name="pixelAdder" ref="pixelAdder" />
 		
-		<property name="width" value="120" />
-		<property name="height" value="120" />
+		<property name="width" value="${filter.width}" />
+		<property name="height" value="${filter.height}" />
 		
-		<property name="centerX" value="60" />
-		<property name="centerY" value="60" />
+		<property name="centerX" value="${filter.center.x}" />
+		<property name="centerY" value="${filter.center.y}" />
 	</bean>
 	
 	

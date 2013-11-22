@@ -1,28 +1,32 @@
 # settings
 
 # where to read tiles
-TILE_FOLDER=/home/everyaware/heatmap-processor/workspace/basic/out/tiles
+DATA_FOLDER=./out/tiles
 
 # where to put archive
-OUT_FOLDER=/home/everyaware/heatmap-processor/workspace/basic/out
-OUT_FILE_NAME=tiles
+ARCHIVE_FOLDER=./out/archives
+ARCHIVE_FILE_NAME=tiles
 
 # where to copy archive
-REMOTE_FOLDER=/var/www/tiles/airprobe
-REMOTE_USER=mysql
-REMOTE_HOST=cs.everyaware.eu
+REMOTE_BASE_FOLDER=/tmp/tiles
+REMOTE_USER=becker
+REMOTE_HOST=localhost
 
 # code
 
-if [ ! -d "$TILE_FOLDER" ]; then
-	echo "Folder does not exist: $TILE_FOLDER"
+if [ ! -d "$DATA_FOLDER" ]; then
+	echo "Folder does not exist: $DATA_FOLDER"
 	exit
 fi
 
-OUT_FILE=$OUT_FOLDER/$OUT_FILE_NAME.tar.gz
+if [ ! -d "$ARCHIVE_FOLDER" ]; then
+	mkdir $ARCHIVE_FOLDER
+fi
 
-cd $TILE_FOLDER
-tar -zcf $OUT_FILE *
+ARCHIVE_FILE=$ARCHIVE_FOLDER/$ARCHIVE_FILE_NAME.tar.gz
+
+cd $DATA_FOLDER
+tar -zcf $ARCHIVE_FILE *
 
 # copy to remote and extract
 

@@ -71,7 +71,7 @@ implements ITileProcessor<TGroupContainer> {
 			TileCoordinates tileCoordinates) {
 		
 		IKeyValueIterator<String, TGroupData> iterator = 
-				this.groupIteratorFactory.iterator(tile);
+				this.groupIteratorFactory.instance(tile);
 		
 		while (iterator.hasNext()) {
 			

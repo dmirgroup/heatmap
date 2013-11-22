@@ -11,8 +11,8 @@
 	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>#{systemProperties.workdir}/config.default.properties</value>
-				<value>#{systemProperties.workdir}/config.properties</value>
+				<value>#{systemProperties.configDir}/config.default.properties</value>
+				<value>#{systemProperties.configDir}/config.properties</value>
 			</list>
 		</property>
 		<property name="order" value="150" />

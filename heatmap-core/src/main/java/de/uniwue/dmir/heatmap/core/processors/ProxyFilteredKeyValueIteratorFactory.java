@@ -31,8 +31,8 @@ implements IKeyValueIteratorFactory <TSource, TKey, TValue>{
 	private IKeyValueFilter<TKey, TValue> filter;
 	
 	@Override
-	public IKeyValueIterator<TKey, TValue> iterator(TSource source) {
-		IKeyValueIterator<TKey, TValue> iterator = this.factory.iterator(source);
+	public IKeyValueIterator<TKey, TValue> instance(TSource source) {
+		IKeyValueIterator<TKey, TValue> iterator = this.factory.instance(source);
 		return new FilteredKeyValueIterator(iterator);
 	}
 	

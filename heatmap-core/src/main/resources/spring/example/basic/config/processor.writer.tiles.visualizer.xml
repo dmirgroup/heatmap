@@ -16,8 +16,8 @@
 			class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme">
 
 		<constructor-arg name="image" ref="colorImage" />
-		<constructor-arg name="min" value="0.5" />
-		<constructor-arg name="max" value="10" />
+		<constructor-arg name="min" value="${visualizer.range.min}" />
+		<constructor-arg name="max" value="${visualizer.range.max}" />
 	</bean>
 	
 	

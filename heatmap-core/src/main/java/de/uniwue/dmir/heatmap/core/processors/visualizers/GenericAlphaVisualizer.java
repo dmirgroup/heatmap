@@ -102,7 +102,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		// run through pixels
 		
 		IKeyValueIterator<RelativeCoordinates, TPixel> iterator = 
-				this.pixelIteratorFactory.iterator(data);
+				this.pixelIteratorFactory.instance(data);
 		
 		while (iterator.hasNext()) {
 			

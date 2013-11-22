@@ -34,7 +34,7 @@ implements IKeyValueIteratorFactory<TValue[], RelativeCoordinates, TValue>{
 	private boolean returnNullValues;
 	
 	@Override
-	public IKeyValueIterator<RelativeCoordinates, TValue> iterator(final TValue[] source) {
+	public IKeyValueIterator<RelativeCoordinates, TValue> instance(final TValue[] source) {
 		
 		return new IKeyValueIterator<RelativeCoordinates, TValue>() {
 

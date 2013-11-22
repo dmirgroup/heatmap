@@ -30,7 +30,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" >
 			<list>
-				<value>#{systemProperties.workdir}/geo.xml</value>
+				<value>#{systemProperties.configDir}/geo.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -55,11 +55,11 @@
 	<!-- ############# GeoDatasource. ############# -->
 	
 	<bean id="minimumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
-		<constructor-arg value="${timestamp.received.min}" />
+		<constructor-arg value="#{systemProperties.minTimestamp}" />
 	</bean>
 	
 	<bean id="maximumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
-		<constructor-arg value="${timestamp.received.max}" />
+		<constructor-arg value="#{systemProperties.maxTimestamp}" />
 	</bean>
 	
 	<bean id="geoSettings" 

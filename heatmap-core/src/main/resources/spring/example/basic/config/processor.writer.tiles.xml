@@ -8,6 +8,7 @@
 	
 	<bean id="tileFileStrategy"
 			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
+		<property name="parentFolder" value="${inner.group.path.tiles}" />
 	</bean>
 
 	<bean id="proxiedTileWriter"
