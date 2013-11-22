@@ -10,8 +10,8 @@
 	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>#{systemProperties.configdir}/config.default.properties</value>
-				<value>#{systemProperties.configdir}/config.properties</value>
+				<value>#{systemProperties.configDir}/config.default.properties</value>
+				<value>#{systemProperties.configDir}/config.properties</value>
 			</list>
 		</property>
 		<property name="order" value="150" />
@@ -35,7 +35,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" >
 			<list>
-				<value>#{systemProperties.configdir}/geo.xml</value>
+				<value>#{systemProperties.configDir}/geo.xml</value>
 			</list>
 		</property>
 	</bean>

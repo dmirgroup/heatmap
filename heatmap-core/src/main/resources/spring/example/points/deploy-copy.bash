@@ -1,14 +1,14 @@
 # settings
 
 # where to read tiles
-DATA_FOLDER=../../../../../../out/basic/work-jar/tiles
+DATA_FOLDER=../../../../../../out/points/work-jar
 
 # where to put archive
-ARCHIVE_FOLDER=../../../../../../out/basic/work-process/archives
-ARCHIVE_FILE_NAME=tiles.tar.gz
+ARCHIVE_FOLDER=../../../../../../out/points/work-process/archives
+ARCHIVE_FILE_NAME=points.tar.gz
 
 # where to copy archive
-REMOTE_FOLDER=/tmp/basic/tiles
+REMOTE_FOLDER=/tmp/points/tiles
 REMOTE_USER=becker
 REMOTE_HOST=localhost
 
