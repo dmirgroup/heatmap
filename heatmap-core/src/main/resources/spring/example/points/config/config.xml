@@ -106,7 +106,7 @@
 		<constructor-arg name="heightMeters" value="${height.meters}" />
 		<constructor-arg name="northReference" value="${north.reference}" />
 		<constructor-arg name="distanceFunction">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.GreatCircleDistance.Haversine" />
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.distances.GreatCircleDistance.Haversine" />
 		</constructor-arg>	
 	</bean>
 	
@@ -250,7 +250,7 @@
 	</bean>
 	
 	
-	<bean id="userToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+	<bean id="userToGroupMapper" class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 		<constructor-arg name="map">
 			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
 				<constructor-arg name="mapIdentifier" value="apic2013-user2group" />
@@ -258,7 +258,7 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="deviceToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+	<bean id="deviceToGroupMapper" class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 		<constructor-arg name="map">
 			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
 				<constructor-arg name="mapIdentifier" value="apic2013-device2group" />
@@ -266,7 +266,7 @@
 		</constructor-arg>
 	</bean>
 	
-	<bean id="macToGroupMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+	<bean id="macToGroupMapper" class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 		<constructor-arg name="map">
 			<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
 				<constructor-arg name="mapIdentifier" value="apic2013-mac2group" />
@@ -283,17 +283,17 @@
 	
 	</bean>
 	
-	<bean id="groupToCityMapper" class="de.uniwue.dmir.heatmap.core.processors.mappers.MapperPipe">
+	<bean id="groupToCityMapper" class="de.uniwue.dmir.heatmap.core.util.mapper.MapperPipe">
 		<constructor-arg name="mappers">
 			<list>
-				<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+				<bean class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 					<constructor-arg name="map">
 						<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
 							<constructor-arg name="mapIdentifier" value="apic2013-group2city" />
 						</bean>
 					</constructor-arg>
 				</bean>
-				<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+				<bean class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 					<constructor-arg name="map">
 						<bean class="de.uniwue.dmir.heatmap.core.util.MapFactoryBean">
 							<constructor-arg name="mapIdentifier" value="apic2013-mac2city" />
@@ -334,7 +334,7 @@
 	</bean> -->
 	
 	<bean id="cityToMapProjectionMapper" 
-			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 			
 		<constructor-arg name="map">
 			<map>
@@ -353,7 +353,7 @@
 	</bean>
 	
 	<bean id="cityToPolygonMapper"
-			class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 			
 		<constructor-arg name="map" >
 			<map>
@@ -377,7 +377,7 @@
 		<constructor-arg name="pointToCityMapper" ref="pointToCityMapper" />
 		<constructor-arg name="groupToCityMapper" ref="groupToCityMapper" />
 		<constructor-arg name="cityToGeoPolygonMapper" >
-			<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			<bean class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 				<constructor-arg name="map" ref="cityToGeoPolygonMap" />
 			</bean>
 		</constructor-arg>
@@ -428,18 +428,18 @@
 			class="de.uniwue.dmir.heatmap.core.processors.visualizers.SimpleVisualizer">
 			
 		<constructor-arg name="pixelIteratorFactory">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.MapKeyValueIteratorFactory" />
+			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 
 		<constructor-arg name="colorPipe">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.colors.CombinedColorPipe">
+			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.CombinedColorPipe">
 				<constructor-arg name="colorPipe">
-					<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.colors.SimpleColorPipe">
+					<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.SimpleColorPipe">
 						<constructor-arg name="toDoubleMapper">
-							<bean class="de.uniwue.dmir.heatmap.core.processors.PointSizeToPointsMapper" />
+							<bean class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.PointSizeToPointsMapper" />
 						</constructor-arg>
 						<constructor-arg name="colorScheme">
-							<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.ImageColorScheme" >
+							<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme" >
 								<constructor-arg name="image" ref="colorImage" />
 								<constructor-arg name="ranges" ref="ranges" />
 							</bean> 
@@ -460,7 +460,7 @@
 		<constructor-arg name="folder" value="${out.folder}" />
 		<constructor-arg name="visualizer" ref="simpleVisualizer" />
 		<constructor-arg name="cityToTileSizeMapper">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.mappers.MapMapper">
+			<bean class="de.uniwue.dmir.heatmap.core.util.mapper.MapMapper">
 				<constructor-arg name="map">
 					<map key-type="java.lang.String" value-type="java.awt.geom.Path2D">
 						<entry key="Antwerp" value-ref="tileSizeAntwerp" />
