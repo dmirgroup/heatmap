@@ -25,9 +25,12 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+
+import com.newbrightidea.util.RTree;
 
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.operators.IMapper;
@@ -46,8 +49,7 @@ import de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
 
 /**
- * TODO: add r-tree and only consider points in a vicinity to calculate point 
- * value
+ * TODO: test r-tree
  * 
  * @author Martin Becker
  *
@@ -59,6 +61,12 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	private IAggregator<ReferencedData<TPixel>, Double> aggegator;
 	
 	private IColorScheme colorScheme;
+	
+	private boolean useRtree;
+	private int width;
+	private int height;
+	private int centerX;
+	private int centerY;
 	
 	public GenericSimpleRbfVisualizer(
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
@@ -95,30 +103,76 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 				height,
 				BufferedImage.TYPE_INT_ARGB);
 		
+		// prepare R-Tree
+		RTree<ReferencedData<TPixel>> rtree = null;
+		
+		if (this.useRtree) {
+			rtree = new RTree<ReferencedData<TPixel>>();
+			
+			IKeyValueIterator<RelativeCoordinates, TPixel> iterator =
+					this.pixelIteratorFactory.instance(data);
+			
+			while (iterator.hasNext()) { 
+	
+				iterator.next();
+				
+				ReferencedData<TPixel> referencedData = new ReferencedData<TPixel>();
+				referencedData.setReferenceCoordinates(new RelativeCoordinates(0, 0));
+				referencedData.setDataCoordinates(iterator.getKey());
+				referencedData.setData(iterator.getValue());
+				
+				rtree.insert(
+						new float[] {
+							referencedData.getDataCoordinates().getX(),
+							referencedData.getDataCoordinates().getY()
+						}, 
+						referencedData);
+			}
+
+		}
+		
 		// write image values
 
 		super.logger.debug("Writing image values.");
 
 		ReferencedData<TPixel> referencedData = new ReferencedData<TPixel>();
-		referencedData.setReferenceCoordaintes(new RelativeCoordinates(0, 0));
+		referencedData.setReferenceCoordinates(new RelativeCoordinates(0, 0));
 		
 		for (int i = 0; i < width; i ++) {
 			for (int j = 0; j < height; j ++) {
 				
 				this.aggegator.reset();
 				
-				referencedData.getReferenceCoordaintes().setXY(i, j);
-
-				IKeyValueIterator<RelativeCoordinates, TPixel> iterator =
-						this.pixelIteratorFactory.instance(data);
-				
-				while (iterator.hasNext()) { 
+				if (this.useRtree) {
+					List<ReferencedData<TPixel>> neighbours = rtree.search(
+							new float[] {
+								0 - this.centerX,
+								0 - this.centerY
+							}, 
+							new float[] {
+								this.width,
+								this.height
+							});
 					
-					iterator.next();
-					referencedData.setDataCoordinates(iterator.getKey());
-					referencedData.setData(iterator.getValue());
+					for (ReferencedData<TPixel> r : neighbours) {
+						r.getReferenceCoordinates().setXY(i, j);
+						this.aggegator.addData(referencedData);
+					}
 					
-					this.aggegator.addData(referencedData);
+				} else {
+					referencedData.getReferenceCoordinates().setXY(i, j);
+	
+					IKeyValueIterator<RelativeCoordinates, TPixel> iterator =
+							this.pixelIteratorFactory.instance(data);
+					
+					while (iterator.hasNext()) { 
+						
+						iterator.next();
+						referencedData.setDataCoordinates(iterator.getKey());
+						referencedData.setData(iterator.getValue());
+						
+						this.aggegator.addData(referencedData);
+					}
 				}
 				
 				

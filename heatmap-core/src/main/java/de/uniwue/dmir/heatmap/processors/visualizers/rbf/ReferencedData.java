@@ -25,7 +25,7 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 
 @Data
 public class ReferencedData<TData> {
-	private RelativeCoordinates referenceCoordaintes;
+	private RelativeCoordinates referenceCoordinates;
 	private RelativeCoordinates dataCoordinates;
 	private TData data;
 }
