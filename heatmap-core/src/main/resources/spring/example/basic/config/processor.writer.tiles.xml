@@ -7,12 +7,12 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<bean id="tileFileStrategy"
-			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
+			class="de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy">
 		<property name="parentFolder" value="${inner.group.path.tiles}" />
 	</bean>
 
 	<bean id="proxiedTileWriter"
-			class="de.uniwue.dmir.heatmap.core.processors.VisualizationFileWriterProcessor">
+			class="de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor">
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
 		<constructor-arg name="fileFormat" value="png" />
@@ -23,12 +23,12 @@
 	</bean>
 	
 	<bean id="tileWriter"
-			class="de.uniwue.dmir.heatmap.core.processors.ProxyGroupFileWriter">
+			class="de.uniwue.dmir.heatmap.processors.ProxyGroupFileWriterProcessor">
 	
 		<constructor-arg name="fileWriter" ref="proxiedTileWriter" />
 		
 		<constructor-arg name="groupIteratorFactory" >
-			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
+			<bean class="de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		
 		<constructor-arg name="parentFolder" value="${out.tiles}" />	

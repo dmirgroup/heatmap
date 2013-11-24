@@ -9,22 +9,22 @@
 	<!-- Defining filter. -->
 	
 	<bean id="dataToPixelMapper"
-			class="de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.SimpleGeoPointToWeightedSquaredSumMapper" />
+			class="de.uniwue.dmir.heatmap.filters.pointmappers.geo.SimpleGeoPointToWeightedSquaredSumPixelMapper" />
 			
 	<bean id="dataToRelativeCoordinatesMapper"
-			class="de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.GeoPointToRelativeCoordinatesMapper">
+			class="de.uniwue.dmir.heatmap.tiles.coordinates.geo.GeoPointToRelativeCoordinatesMapper">
 		
 		<constructor-arg name="mapProjection" ref="projection" />
 	</bean>
 			
 	<bean id="pixelAdder"
-			class="de.uniwue.dmir.heatmap.core.filters.operators.WeightedSquaredSumAdder" />
+			class="de.uniwue.dmir.heatmap.filters.operators.WeightedSquaredSumAdder" />
 			
 	<bean id="pixelAccess"
-			class="de.uniwue.dmir.heatmap.core.filters.access.MapPixelAccess" />
+			class="de.uniwue.dmir.heatmap.filters.pixelaccess.MapPixelAccess" />
 	
 	<bean id="proxiedFilter"
-			class="de.uniwue.dmir.heatmap.core.filters.AddingFilter">
+			class="de.uniwue.dmir.heatmap.filters.AddingFilter">
 	
 		<constructor-arg name="dataToPixelMapper" ref="dataToPixelMapper" />
 		<constructor-arg name="dataToRelativeCoordinatesMapper" ref="dataToRelativeCoordinatesMapper" />
@@ -40,18 +40,18 @@
 	
 	
 	<bean id="filter"
-			class="de.uniwue.dmir.heatmap.core.filters.ProxyGroupFilter">
+			class="de.uniwue.dmir.heatmap.filters.ProxyGroupFilter">
 	
 		<constructor-arg name="filter" ref="proxiedFilter"/>
 		<constructor-arg name="groupAccess">
-			<bean class="de.uniwue.dmir.heatmap.core.filters.access.MapGroupAccess">
+			<bean class="de.uniwue.dmir.heatmap.filters.groupaccess.MapGroupAccess">
 				<constructor-arg name="tileFactory">
-					<bean class="de.uniwue.dmir.heatmap.core.tiles.factories.GenericMapTileFactory" />
+					<bean class="de.uniwue.dmir.heatmap.tiles.factories.MapTileFactory" />
 				</constructor-arg>
 			</bean>
 		</constructor-arg>
 		<constructor-arg name="groupIdMapper">
-			<bean class="de.uniwue.dmir.heatmap.core.data.sources.geo.mappers.SimpleGeoPointToGroupIdMapper">
+			<bean class="de.uniwue.dmir.heatmap.filters.groupaccess.SimpleGeoPointToGroupIdMapper">
 				<property name="overallGroupId" value="OVERALL" />
 			</bean>
 		</constructor-arg>

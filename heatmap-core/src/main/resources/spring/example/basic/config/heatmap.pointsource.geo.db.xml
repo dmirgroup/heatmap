@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<!-- ############# Transaction management access. ############# -->
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- <tx:annotation-driven /> -->
+
+
+	<!-- ############# MyBatis. ############# -->
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" >
+			<list>
+				<value>#{systemProperties.configDir}/geo.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="
+			de.uniwue.dmir.heatmap.impl.core.mybatis" />
+	</bean>
+
+	<!-- ############# Datasource. ############# -->
+	
+	<bean id="dataSource"
+			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName"	value="${db.core.driver}" />
+		<property name="url"				value="${db.core.url}" />
+		<property name="username"			value="${db.core.user}" />
+		<property name="password"			value="${db.core.password}" />
+	</bean>
+	
+	<!-- ############# GeoDatasource. ############# -->
+	
+	<bean id="minimumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="#{systemProperties.minTimestamp}" />
+	</bean>
+	
+	<bean id="maximumTimestampReceived" factory-bean="dateFactory" factory-method="parse">
+		<constructor-arg value="#{systemProperties.maxTimestamp}" />
+	</bean>
+	
+	<bean id="geoSettings" 
+			class="de.uniwue.dmir.heatmap.point.sources.geo.datasources.database.TimeGeoSettings" >
+		<property name="minimumTimestamp" ref="minimumTimestampReceived" />
+		<property name="maximumTimestamp" ref="maximumTimestampReceived" />
+	</bean>
+	
+	<bean id="geoDatasource" 
+			class="de.uniwue.dmir.heatmap.point.sources.geo.datasources.DatabaseGeoDatasource">
+	
+		<constructor-arg name="settings" ref="geoSettings" />		
+	</bean>
+	
+</beans>

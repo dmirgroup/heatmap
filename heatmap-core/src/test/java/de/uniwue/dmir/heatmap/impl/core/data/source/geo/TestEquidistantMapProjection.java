@@ -25,15 +25,15 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.core.IFilter;
-import de.uniwue.dmir.heatmap.core.TileSize;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.projections.EquidistantProjection;
-import de.uniwue.dmir.heatmap.core.data.types.ValuePixel;
-import de.uniwue.dmir.heatmap.core.filters.AbstractConfigurableFilter;
-import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
-import de.uniwue.dmir.heatmap.core.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.IFilter;
+import de.uniwue.dmir.heatmap.TileSize;
+import de.uniwue.dmir.heatmap.filters.AbstractConfigurableFilter;
+import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.point.sources.geo.projections.EquidistantProjection;
+import de.uniwue.dmir.heatmap.point.types.ValuePoint;
+import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 public class TestEquidistantMapProjection {
 	
@@ -91,10 +91,10 @@ public class TestEquidistantMapProjection {
 						new GeoCoordinates(10 + offset, 10 + offset)), 
 				new TileSize(10, 10));
 		
-		IFilter<?, ?> filter = new AbstractConfigurableFilter<ValuePixel, Object>() {
+		IFilter<?, ?> filter = new AbstractConfigurableFilter<ValuePoint, Object>() {
 			@Override
 			public void filter(
-					ValuePixel dataPoint, 
+					ValuePoint dataPoint, 
 					Object tile,
 					TileSize tileSize,
 					TileCoordinates tileCoordinates) {

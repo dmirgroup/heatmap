@@ -26,10 +26,10 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoBoundingBox;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.GeoCoordinates;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.IGeoDatasource;
-import de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint;
+import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
+import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
+import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
 
 public class SpringTest {
 

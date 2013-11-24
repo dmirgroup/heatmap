@@ -24,7 +24,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.core.util.HashUtils;
+import de.uniwue.dmir.heatmap.util.HashUtils;
 
 public class HashUtil {
 	

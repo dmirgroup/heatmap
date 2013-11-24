@@ -7,12 +7,12 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="dataFileStrategy"
-			class="de.uniwue.dmir.heatmap.core.processors.DefaultFileStrategy">
+			class="de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy">
 		<property name="parentFolder" value="${inner.group.path.data}" />
 	</bean>
 
 	<bean id="proxiedDataWriter"
-			class="de.uniwue.dmir.heatmap.core.processors.JsonFileWriterProcessor">
+			class="de.uniwue.dmir.heatmap.processors.JsonFileWriterProcessor">
 		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
 		<constructor-arg name="gzip" value="true" />
 		<constructor-arg name="parentFolder">
@@ -21,12 +21,12 @@
 	</bean>
 	
 	<bean id="dataWriter"
-			class="de.uniwue.dmir.heatmap.core.processors.ProxyGroupFileWriter">
+			class="de.uniwue.dmir.heatmap.processors.ProxyGroupFileWriterProcessor">
 	
 		<constructor-arg name="fileWriter" ref="proxiedDataWriter" />
 		
 		<constructor-arg name="groupIteratorFactory" >
-			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
+			<bean class="de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		
 		<constructor-arg name="parentFolder" value="${out.data}" />	

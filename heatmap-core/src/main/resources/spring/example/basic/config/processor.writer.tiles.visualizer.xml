@@ -7,13 +7,13 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<bean id="colorImage"
-			class="de.uniwue.dmir.heatmap.core.util.BufferedImageFactoryBean">
+			class="de.uniwue.dmir.heatmap.util.beans.BufferedImageFactoryBean">
 
 		<constructor-arg name="resource" value="${visualizer.colorscheme}" />
 	</bean>
 	
 	<bean id="colorScheme"
-			class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.ImageColorScheme">
+			class="de.uniwue.dmir.heatmap.processors.visualizers.color.ImageColorScheme">
 
 		<constructor-arg name="image" ref="colorImage" />
 		<constructor-arg name="min" value="${visualizer.range.min}" />
@@ -22,16 +22,16 @@
 	
 	
 	<bean id="averageVisualizer"
-			class="de.uniwue.dmir.heatmap.core.processors.visualizers.GenericSimpleRbfVisualizer">
+			class="de.uniwue.dmir.heatmap.processors.visualizers.GenericSimpleRbfVisualizer">
 
 		<constructor-arg name="pixelIteratorFactory">
-			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
+			<bean class="de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		
 		<constructor-arg name="aggregator">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator">
 				<constructor-arg name="pixelToValueMapper">
-					<bean class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.WeightedSumToAverageMapper" />
+					<bean class="de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToAverageMapper" />
 				</constructor-arg>
 				<constructor-arg name="pointRadius" value="10" />
 			</bean>
@@ -43,29 +43,29 @@
 	</bean>
 
 	<bean id="alphaVisualizer"
-			class="de.uniwue.dmir.heatmap.core.processors.visualizers.GenericSimpleRbfVisualizer">
+			class="de.uniwue.dmir.heatmap.processors.visualizers.GenericSimpleRbfVisualizer">
 
 		<constructor-arg name="pixelIteratorFactory">
-			<bean class="de.uniwue.dmir.heatmap.core.util.MapKeyValueIteratorFactory" />
+			<bean class="de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory" />
 		</constructor-arg>
 		
 		<constructor-arg name="aggregator">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.rbf.aggregators.MaxRbfAggregator">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.MaxRbfAggregator">
 				<constructor-arg name="pixelToValueMapper">
-					<bean class="de.uniwue.dmir.heatmap.core.tiles.pixels.mappers.WeightedSumToOnOffSizeMapper" />
+					<bean class="de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToOnOffSizeMapper" />
 				</constructor-arg>
 				<constructor-arg name="pointRadius" value="10" />
 			</bean>
 		</constructor-arg>
 		
 		<constructor-arg name="colorScheme">
-			<bean class="de.uniwue.dmir.heatmap.core.processors.visualizers.color.SimpleAlphaColorScheme" />
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.color.SimpleAlphaColorScheme" />
 		</constructor-arg>
 		
 		<property name="debug" value="false" />
 	</bean>
 	
-	<bean name="visualizer" class="de.uniwue.dmir.heatmap.core.processors.visualizers.AlphaMaskProxyVisualizer">
+	<bean name="visualizer" class="de.uniwue.dmir.heatmap.processors.visualizers.AlphaMaskProxyVisualizer">
 		<constructor-arg name="color" ref="averageVisualizer" />
 		<constructor-arg name="alpha" ref="alphaVisualizer" />
 		<property name="debug" value="false" />

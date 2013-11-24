@@ -25,8 +25,8 @@ import java.io.IOException;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import de.uniwue.dmir.heatmap.core.IHeatmap;
-import de.uniwue.dmir.heatmap.core.ITileProcessor;
+import de.uniwue.dmir.heatmap.IHeatmap;
+import de.uniwue.dmir.heatmap.ITileProcessor;
 
 public class SpringTest3 {
 

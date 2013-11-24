@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.core.tiles.coordinates.RelativeCoordinates;
-import de.uniwue.dmir.heatmap.core.util.RelativeCoordinatesArrayKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.core.util.IKeyValueIteratorFactory.IKeyValueIterator;
+import de.uniwue.dmir.heatmap.processors.pixeliterators.RelativeCoordinatesArrayKeyValueIteratorFactory;
+import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
 
 public class RelativeCoordinatesArrayKeyValueIteratorFactoryTest {
 	

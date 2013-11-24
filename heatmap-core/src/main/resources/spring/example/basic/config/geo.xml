@@ -6,8 +6,8 @@
 <mapper namespace="de.uniwue.dmir.heatmap.impl.core.mybatis.GeoMapper">
 	<select 
 			id="getData" 
-			parameterType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.GeoRequest" 
-			resultType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.SimpleGeoPoint">
+			parameterType="de.uniwue.dmir.heatmap.core.point.sources.geo.datasources.database.GeoRequest" 
+			resultType="de.uniwue.dmir.heatmap.core.point.types.geo.SimpleGeoPoint">
 
 		SELECT 
 			geo_lon 					AS 'geoCoordinates.longitude',
