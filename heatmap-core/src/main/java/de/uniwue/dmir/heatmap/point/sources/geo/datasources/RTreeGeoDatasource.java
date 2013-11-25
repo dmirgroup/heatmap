@@ -103,7 +103,6 @@ public class RTreeGeoDatasource<S> extends AbstractCachedGeoDatasource<S> {
 		stopWatch.stop();
 		super.logger.debug("getting data: {}", stopWatch.toString());
 		
-		stopWatch.stop();
 		stopWatch.start("adding data");
 		
 		for (S s : data) {

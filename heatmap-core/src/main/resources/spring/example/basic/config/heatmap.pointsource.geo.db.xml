@@ -68,10 +68,19 @@
 		<property name="maximumTimestamp" ref="maximumTimestampReceived" />
 	</bean>
 	
-	<bean id="geoDatasource" 
+	<bean id="geoDatasourceCached" 
 			class="de.uniwue.dmir.heatmap.point.sources.geo.datasources.DatabaseGeoDatasource">
 	
 		<constructor-arg name="settings" ref="geoSettings" />		
+	</bean>
+	
+	<bean id="geoDatasource"
+			class="de.uniwue.dmir.heatmap.point.sources.geo.datasources.RTreeGeoDatasource">
+	
+		<constructor-arg name="dataSource" ref="geoDatasourceCached" />
+		<constructor-arg name="mapper">
+			<bean class="de.uniwue.dmir.heatmap.point.types.geo.GeoPointToGeoCoordinateMapper" />
+		</constructor-arg>
 	</bean>
 	
 </beans>
