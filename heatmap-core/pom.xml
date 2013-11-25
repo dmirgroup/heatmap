@@ -235,7 +235,7 @@
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addClasspath>true</addClasspath>
-							<mainClass>de.uniwue.dmir.heatmap.core.EntryPoint</mainClass>
+							<mainClass>de.uniwue.dmir.heatmap.EntryPoint</mainClass>
 							<classpathPrefix>./lib/</classpathPrefix>
 						</manifest>
 					</archive>

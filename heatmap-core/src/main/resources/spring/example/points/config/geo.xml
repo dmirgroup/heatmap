@@ -3,11 +3,11 @@
 	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="de.uniwue.dmir.heatmap.impl.core.mybatis.GeoMapper">
+<mapper namespace="de.uniwue.dmir.heatmap.mybatis.GeoMapper">
 	<select 
 			id="getData" 
-			parameterType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.sources.database.GeoRequest" 
-			resultType="de.uniwue.dmir.heatmap.core.data.sources.geo.data.types.ApicGeoPoint">
+			parameterType="de.uniwue.dmir.heatmap.point.sources.geo.datasources.database.GeoRequest" 
+			resultType="de.uniwue.dmir.heatmap.point.types.geo.ApicGeoPoint">
 
 		SELECT 
 			id							AS id,
