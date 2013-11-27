@@ -23,10 +23,14 @@ package de.uniwue.dmir.heatmap.processors;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -60,6 +64,29 @@ extends AbstractFileWriterProcessor<I> {
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+	
+	public static class Factory<TTile>
+	implements IFileWriterProcessorFactory<TTile> {
+
+		protected IFileStrategy fileStrategy;
+
+		public Factory(IFileStrategy fileStrategy) {
+			this.fileStrategy = fileStrategy;
+		}
+		
+		@Setter
+		@Getter
+		private boolean gzip;
+		
+		@Override
+		public ITileProcessor<TTile> getInstance(String parentFolder) {
+			return new JsonFileWriterProcessor<TTile>(
+					parentFolder, 
+					this.fileStrategy, 
+					this.gzip);
+		}
+		
 	}
 
 }

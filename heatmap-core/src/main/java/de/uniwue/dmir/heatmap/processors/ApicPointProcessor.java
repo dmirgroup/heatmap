@@ -205,5 +205,8 @@ implements ITileProcessor<ApicOverallTile> {
 		}
 	}
 
+	@Override
+	public void close() {
+	}
 
 }

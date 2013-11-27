@@ -22,11 +22,15 @@ package de.uniwue.dmir.heatmap.processors;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor.IFileWriterProcessorFactory;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
@@ -41,13 +45,15 @@ import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIt
 public class ProxyGroupFileWriterProcessor<TGroupData, TGroupContainer> 
 implements ITileProcessor<TGroupContainer> {
 
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass()); 
+	
 	@Getter
 	@Setter
 	private String nullGroup = "NULL";
 	
 	private IKeyValueIteratorFactory<TGroupContainer, String, TGroupData> groupIteratorFactory;
 	private String parentFolder;
-	private AbstractFileWriterProcessor<TGroupData> fileWriter;
+	private IFileWriterProcessorFactory<TGroupData> fileWriter;
 	
 	@Getter
 	@Setter
@@ -55,7 +61,7 @@ implements ITileProcessor<TGroupContainer> {
 	
 	public ProxyGroupFileWriterProcessor(
 			IKeyValueIteratorFactory<TGroupContainer, String, TGroupData> groupIteratorFactory,
-			AbstractFileWriterProcessor<TGroupData> fileWriter,
+			IFileWriterProcessorFactory<TGroupData> fileWriter,
 			String parentFolder) {
 
 		this.groupIteratorFactory = groupIteratorFactory;
@@ -69,6 +75,11 @@ implements ITileProcessor<TGroupContainer> {
 			TGroupContainer tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
+		
+		if (tile == null) {
+			this.logger.warn("Tile data was null: {}", tileCoordinates);
+			return;
+		}
 		
 		IKeyValueIterator<String, TGroupData> iterator = 
 				this.groupIteratorFactory.instance(tile);
@@ -86,13 +97,23 @@ implements ITileProcessor<TGroupContainer> {
 				groupId = this.groupIdMapper.map(groupId);
 			}
 			
+			this.logger.debug("Writing file for group: {}", groupId);
+
 			TGroupData groupData = iterator.getValue();
 			
-			File parentFolder = new File(this.parentFolder, groupId);
+			File parentFolder = 
+					new File(this.parentFolder, groupId);
 			
-			this.fileWriter.setParentFolder(parentFolder.toString());
-			this.fileWriter.process(groupData, tileSize, tileCoordinates);
+			ITileProcessor<TGroupData> fileWriter = 
+					this.fileWriter.getInstance(parentFolder.toString());
+			
+			fileWriter.process(groupData, tileSize, tileCoordinates);
+			fileWriter.close();
 		}
+	}
+
+	@Override
+	public void close() {
 	}
 
 }

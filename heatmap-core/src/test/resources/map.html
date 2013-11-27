@@ -12,7 +12,7 @@
 </style>
 </head>
 <body>
-	<div style="width: 256px; height: 256px" id="map"></div>
+	<div style="width: 1800px; height: 900px" id="map"></div>
 	<div>Zoom level: <span id="zoomlevel"></span></div>
 	<script defer='defer' type='text/javascript'>
 
@@ -67,7 +67,7 @@ map.events.register('zoomend', map, function() {
 
 // This is the layer that uses the locally stored tiles
 var newLayer = new OpenLayers.Layer.XYZ("Custom Tiles",
-		"../../../out/tiles/OVERALL/${z}/${x}/${y}.png", {
+		"../../../out/basic/work-jar/tiles/OVERALL/airprobe/heatmap/bc/tiles/${z}/${x}/${y}.png", {
 			numZoomLevels : 19,
 			alpha : true,
 			isBaseLayer : false

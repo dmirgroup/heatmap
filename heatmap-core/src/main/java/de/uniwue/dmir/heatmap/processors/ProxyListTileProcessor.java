@@ -30,7 +30,7 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 @Data
 @AllArgsConstructor
-public class ProxyTileProcessor<I> implements ITileProcessor<I> {
+public class ProxyListTileProcessor<I> implements ITileProcessor<I> {
 
 	private List<ITileProcessor<I>> processors;
 	
@@ -40,5 +40,13 @@ public class ProxyTileProcessor<I> implements ITileProcessor<I> {
 			p.process(tile, tileSize, coordinates);
 		}
 	}
+
+	@Override
+	public void close() {
+		for (ITileProcessor<I> p : this.processors) {
+			p.close();
+		}
+	}
+	
 
 }

@@ -20,10 +20,16 @@
  */
 package de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators;
 
+import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.IRadialBasisFunction;
+import de.uniwue.dmir.heatmap.processors.visualizers.rbf.ReferencedData;
+import de.uniwue.dmir.heatmap.processors.visualizers.rbf.distances.EuclidianDistance;
+import de.uniwue.dmir.heatmap.processors.visualizers.rbf.rbfs.GaussianRbf;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.util.IAggregator;
+import de.uniwue.dmir.heatmap.util.IAggregatorFactory;
 
 public class DefaultRbfAggregator<TData> 
 extends AbstractWeightedRbfAggregator<TData> {
@@ -50,6 +56,35 @@ extends AbstractWeightedRbfAggregator<TData> {
 	protected void addData(double value, double distanceWeight) {
 		this.sumOfWeightedValues += value * distanceWeight;
 		this.sumOfWeights += distanceWeight;
+	}
+	
+	@AllArgsConstructor
+	public static final class Factory<TData>
+	implements IAggregatorFactory<ReferencedData<TData>, Double> {
+		
+		private IMapper<TData, Double> pixelToValueMapper;
+		private IDistanceFunction<RelativeCoordinates> distanceFunction;
+		private IRadialBasisFunction radialBasisFunction;
+
+		public Factory(
+				IMapper<TData, Double> pixelToValueMapper,
+				double pointRadius) {
+			
+			this(
+					pixelToValueMapper,
+					new EuclidianDistance(),
+					new GaussianRbf(pointRadius));
+		}
+		
+		
+		@Override
+		public IAggregator<ReferencedData<TData>, Double> getInstance() {
+			return new MaxRbfAggregator<TData>(
+					this.pixelToValueMapper, 
+					this.distanceFunction,
+					this.radialBasisFunction);
+		}
+		
 	}
 	
 }

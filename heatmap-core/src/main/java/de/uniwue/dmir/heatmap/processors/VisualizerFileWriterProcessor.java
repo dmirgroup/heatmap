@@ -26,9 +26,13 @@ import java.io.OutputStream;
 
 import javax.imageio.ImageIO;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
@@ -65,6 +69,37 @@ extends AbstractFileWriterProcessor<I> {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static class Factory<TTile>
+	implements IFileWriterProcessorFactory<TTile> {
+
+		protected IFileStrategy fileStrategy;
+		protected String fileFormat;
+		protected IVisualizer<TTile> visualizer;
+
+		public Factory(
+				IFileStrategy fileStrategy,
+				String fileFormat,
+				IVisualizer<TTile> visualizer) {
+			this.fileStrategy = fileStrategy;
+			this.fileFormat = fileFormat;
+			this.visualizer = visualizer;
+		}
+		
+		@Setter
+		@Getter
+		private boolean gzip;
+		
+		@Override
+		public ITileProcessor<TTile> getInstance(String parentFolder) {
+			return new VisualizerFileWriterProcessor<TTile>(
+					parentFolder, 
+					this.fileStrategy, 
+					this.fileFormat, 
+					this.visualizer);
+		}
+		
 	}
 
 }

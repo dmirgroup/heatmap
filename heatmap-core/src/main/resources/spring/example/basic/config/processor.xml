@@ -6,14 +6,21 @@
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="writer"
-			class="de.uniwue.dmir.heatmap.processors.ProxyTileProcessor">
+	<bean id="scheduledWriter"
+			class="de.uniwue.dmir.heatmap.processors.ProxyListTileProcessor">
 		<constructor-arg name="processors">
 			<list>
 				<ref bean="tileWriter" />
 				<ref bean="dataWriter" />
 			</list>
 		</constructor-arg>
+	</bean>
+	
+	<bean id="writer" 
+			class="de.uniwue.dmir.heatmap.processors.ProxyScheduledExecutorProcessor">
+	
+		<constructor-arg name="tileProcessor" ref="scheduledWriter" />
+		<constructor-arg name="numberOfSimultaneousThreads" value="4" />
 	</bean>
 
 </beans>

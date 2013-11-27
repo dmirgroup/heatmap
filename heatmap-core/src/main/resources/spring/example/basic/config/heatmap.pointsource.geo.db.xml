@@ -30,7 +30,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="mapperLocations" >
 			<list>
-				<value>#{systemProperties.configDir}/geo.xml</value>
+				<value>file:#{systemProperties.configDir}/geo.xml</value>
 			</list>
 		</property>
 	</bean>

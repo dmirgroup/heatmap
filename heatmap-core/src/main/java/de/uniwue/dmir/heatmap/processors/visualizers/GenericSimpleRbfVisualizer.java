@@ -30,6 +30,9 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import com.newbrightidea.util.RTree;
 
 import de.uniwue.dmir.heatmap.TileSize;
@@ -44,9 +47,10 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.tiles.pixels.WeightedSumPixel;
 import de.uniwue.dmir.heatmap.util.IAggregator;
+import de.uniwue.dmir.heatmap.util.IAggregatorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
+import de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory;
 
 /**
  * TODO: test r-tree
@@ -55,10 +59,12 @@ import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIt
  *
  * @param <T>
  */
+@Getter
+@Setter
 public class GenericSimpleRbfVisualizer<TTile, TPixel>
 extends AbstractGenericVisualizer<TTile, TPixel> {
 	
-	private IAggregator<ReferencedData<TPixel>, Double> aggegator;
+	private IAggregatorFactory<ReferencedData<TPixel>, Double> aggegator;
 	
 	private IColorScheme colorScheme;
 	
@@ -70,7 +76,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	
 	public GenericSimpleRbfVisualizer(
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
-			IAggregator<ReferencedData<TPixel>, Double> aggregator,
+			IAggregatorFactory<ReferencedData<TPixel>, Double> aggregator,
 			IColorScheme colorScheme) {
 		
 		super(pixelIteratorFactory);
@@ -85,7 +91,8 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 			TileCoordinates coordinates) {
 
 		super.logger.debug(
-				"Visualizing tile of size {} x {}.", 
+				"Visualizing tile {} of size {} x {}.", 
+				coordinates,
 				tileSize.getWidth(),
 				tileSize.getHeight());
 
@@ -138,16 +145,20 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		ReferencedData<TPixel> referencedData = new ReferencedData<TPixel>();
 		referencedData.setReferenceCoordinates(new RelativeCoordinates(0, 0));
 		
+		int overallComparisonCount = 0;
+		int lastComparisonCount = 0;
 		for (int i = 0; i < width; i ++) {
 			for (int j = 0; j < height; j ++) {
 				
-				this.aggegator.reset();
+				IAggregator<ReferencedData<TPixel>, Double> aggregator =
+						this.aggegator.getInstance();
+				lastComparisonCount = 0;
 				
 				if (this.useRtree) {
 					List<ReferencedData<TPixel>> neighbours = rtree.search(
 							new float[] {
-								0 - this.centerX,
-								0 - this.centerY
+								i - this.centerX,
+								j - this.centerY
 							}, 
 							new float[] {
 								this.width,
@@ -156,7 +167,9 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 					
 					for (ReferencedData<TPixel> r : neighbours) {
 						r.getReferenceCoordinates().setXY(i, j);
-						this.aggegator.addData(referencedData);
+						aggregator.addData(r);
+						overallComparisonCount ++;
+						lastComparisonCount ++;
 					}
 					
 				} else {
@@ -171,16 +184,21 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 						referencedData.setDataCoordinates(iterator.getKey());
 						referencedData.setData(iterator.getValue());
 						
-						this.aggegator.addData(referencedData);
+						aggregator.addData(referencedData);
+						overallComparisonCount ++;
+						lastComparisonCount ++;
 					}
 				}
 				
 				
-				double value = this.aggegator.getAggregate();
+				double value = aggregator.getAggregate();
 				int color = this.colorScheme.getColor(value);
 				image.setRGB(i, j, color);
 			}
 		}
+
+		super.logger.debug("Last comparison count: {}", lastComparisonCount);
+		super.logger.debug("Overall comparison count: {}", overallComparisonCount);
 		
 		super.logger.debug("Returning image.");
 		
@@ -208,7 +226,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> visualizerColor = 
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel>(
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(),
-						new DefaultRbfAggregator<WeightedSumPixel>(
+						new DefaultRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToAverageMapper(), 
 								30),
 						colorScheme);
@@ -216,7 +234,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> visualizerAlpha = 
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel>(
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(),
-						new MaxRbfAggregator<WeightedSumPixel>(
+						new MaxRbfAggregator.Factory<WeightedSumPixel>(
 								new IMapper<WeightedSumPixel, Double>() {
 									
 									@Override

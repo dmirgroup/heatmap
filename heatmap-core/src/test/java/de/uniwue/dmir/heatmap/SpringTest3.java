@@ -37,18 +37,16 @@ public class SpringTest3 {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void testHeatmap() throws IOException {
 		
-//		System.setProperty("min", "1920-01-01 00:00:00");
-//		System.setProperty("max", "2013-01-01 00:00:00");
 
-//		System.setProperty("min", "2013-06-01 00:00:00");
-//		System.setProperty("max", "2013-10-01 00:00:00");
-		System.setProperty("workdir", "classpath:spring/example/basic");
+		System.setProperty("minTimestamp", "2013-06-01 00:00:00");
+		System.setProperty("maxTimestamp", "2013-07-30 00:00:00");
+		System.setProperty("workDir", "out/basic/work-jar");
+		System.setProperty("configDir", "src/main/resources/spring/example/basic/config");
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
-						new String[] {"spring/example/basic/config.xml"},
+						new String[] {"spring/example/basic/config/config.xml"},
 						false);
-//		appContext.getEnvironment().setActiveProfiles("minmax");
 		appContext.refresh();
 		
 		IHeatmap heatmap = 
@@ -59,6 +57,7 @@ public class SpringTest3 {
 		
 		heatmap.processTiles(tileProcessor);
 		
+		tileProcessor.close();
 		appContext.close();
 	}
 	

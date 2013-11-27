@@ -29,7 +29,7 @@
 		</constructor-arg>
 		
 		<constructor-arg name="aggregator">
-			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator.Factory">
 				<constructor-arg name="pixelToValueMapper">
 					<bean class="de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToAverageMapper" />
 				</constructor-arg>
@@ -38,6 +38,12 @@
 		</constructor-arg>
 		
 		<constructor-arg name="colorScheme" ref="colorScheme" />
+		
+		<property name="useRtree" value="true" />
+		<property name="width" value="60" />
+		<property name="height" value="60" />
+		<property name="centerX" value="30" />
+		<property name="centerY" value="30" />
 		
 		<property name="debug" value="false" />
 	</bean>
@@ -50,7 +56,7 @@
 		</constructor-arg>
 		
 		<constructor-arg name="aggregator">
-			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.MaxRbfAggregator">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.MaxRbfAggregator.Factory">
 				<constructor-arg name="pixelToValueMapper">
 					<bean class="de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToOnOffSizeMapper" />
 				</constructor-arg>
@@ -62,13 +68,19 @@
 			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.color.SimpleAlphaColorScheme" />
 		</constructor-arg>
 		
+		<property name="useRtree" value="true" />
+		<property name="width" value="60" />
+		<property name="height" value="60" />
+		<property name="centerX" value="30" />
+		<property name="centerY" value="30" />
+		
 		<property name="debug" value="false" />
 	</bean>
 	
 	<bean name="visualizer" class="de.uniwue.dmir.heatmap.processors.visualizers.AlphaMaskProxyVisualizer">
 		<constructor-arg name="color" ref="averageVisualizer" />
 		<constructor-arg name="alpha" ref="alphaVisualizer" />
-		<property name="debug" value="false" />
+		<property name="debug" value="true" />
 	</bean>
 	
 </beans>

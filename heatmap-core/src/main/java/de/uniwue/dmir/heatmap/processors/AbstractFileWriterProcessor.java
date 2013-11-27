@@ -90,4 +90,11 @@ implements ITileProcessor<I> {
 		return this.parentFolder == null ? null : new File(this.parentFolder);
 	}
 	
+	public void close() {
+	}
+	
+	public interface IFileWriterProcessorFactory<TTile> {
+		ITileProcessor<TTile> getInstance(String parentFolder);
+	}
+	
 }

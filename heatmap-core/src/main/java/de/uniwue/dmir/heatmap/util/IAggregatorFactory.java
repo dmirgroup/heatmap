@@ -18,11 +18,8 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap;
+package de.uniwue.dmir.heatmap.util;
 
-import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
-
-public interface ITileProcessor<TTile> {
-	void process(TTile tile, TileSize tileSize, TileCoordinates tileCoordinates);
-	void close();
+public interface IAggregatorFactory<TData, TAggregate> {
+	IAggregator<TData, TAggregate> getInstance();
 }

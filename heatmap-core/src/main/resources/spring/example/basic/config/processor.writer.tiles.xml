@@ -12,14 +12,11 @@
 	</bean>
 
 	<bean id="proxiedTileWriter"
-			class="de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor">
+			class="de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor.Factory">
+			
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />
 		<constructor-arg name="fileFormat" value="png" />
-		
-		<constructor-arg name="parentFolder">
-			<null />
-		</constructor-arg>
 	</bean>
 	
 	<bean id="tileWriter"

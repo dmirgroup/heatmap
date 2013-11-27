@@ -57,6 +57,7 @@ public class EntryPoint {
 		
 		heatmap.processTiles(tileProcessor);
 
+		tileProcessor.close();
 		appContext.close();
 	}
 }
