@@ -52,6 +52,7 @@ implements IAggregator<ReferencedData<TData>, Double> {
 		double distance = this.distanceFunction.distance(
 				dataContainer.getReferenceCoordinates(), 
 				dataContainer.getDataCoordinates());
+
 		double distanceWeight = this.radialBasisFunction.value(distance);
 		double value = this.pixelToValueMapper.map(dataContainer.getData());
 		this.addData(value, distanceWeight);

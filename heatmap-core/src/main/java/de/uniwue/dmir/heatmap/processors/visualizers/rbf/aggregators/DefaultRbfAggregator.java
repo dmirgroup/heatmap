@@ -79,7 +79,7 @@ extends AbstractWeightedRbfAggregator<TData> {
 		
 		@Override
 		public IAggregator<ReferencedData<TData>, Double> getInstance() {
-			return new MaxRbfAggregator<TData>(
+			return new DefaultRbfAggregator<TData>(
 					this.pixelToValueMapper, 
 					this.distanceFunction,
 					this.radialBasisFunction);
