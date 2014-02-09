@@ -25,8 +25,8 @@ import java.util.List;
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.groupaccess.IGroupAccess;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 /**
  * Allows to create tiles which contain grouped data, i.e.,
@@ -41,14 +41,14 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 public class ProxyGroupFilter<TData, TGroupTile, TGroupContainerTile> 
 extends AbstractProxyFilter<TData, TGroupTile, TGroupContainerTile> {
 
-	private IMapper<TData, List<String>> groupIdMapper;
+	private IMapper<? super TData, List<String>> groupIdMapper;
 	private IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess;
-	
+
 	public ProxyGroupFilter(
-			IMapper<TData, List<String>> groupIdMapper,
+			IMapper<? super TData, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
 			IFilter<TData, TGroupTile> filter) {
-		
+
 		super(filter);
 		this.groupIdMapper = groupIdMapper;
 		this.groupAccess = groupAccess;
@@ -64,9 +64,9 @@ extends AbstractProxyFilter<TData, TGroupTile, TGroupContainerTile> {
 		List<String> groupIds = this.groupIdMapper.map(dataPoint);
 		for (String groupId : groupIds) {
 			TGroupTile groupData = this.groupAccess.get(
-					groupId, 
-					tile, 
-					tileSize, 
+					groupId,
+					tile,
+					tileSize,
 					tileCoordinates);
 			
 			super.filter.filter(

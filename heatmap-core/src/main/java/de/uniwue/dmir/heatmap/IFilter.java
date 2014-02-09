@@ -25,7 +25,7 @@ import java.util.Collection;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
- * A filter merges a given data point into the given tile.
+ * A filter merges a given data point into a given tile.
  * 
  * @author Martin Becker
  *

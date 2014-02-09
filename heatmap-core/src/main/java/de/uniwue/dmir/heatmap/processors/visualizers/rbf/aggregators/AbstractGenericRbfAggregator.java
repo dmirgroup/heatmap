@@ -21,7 +21,6 @@
 package de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.IRadialBasisFunction;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.ReferencedData;
@@ -29,6 +28,7 @@ import de.uniwue.dmir.heatmap.processors.visualizers.rbf.distances.EuclidianDist
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.rbfs.GaussianRbf;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.util.IAggregator;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @AllArgsConstructor
 public abstract class AbstractGenericRbfAggregator<TData>

@@ -25,13 +25,13 @@ import java.awt.image.BufferedImage;
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.filters.operators.IScalarMultiplier;
 import de.uniwue.dmir.heatmap.filters.pixelaccess.IPixelAccess;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.Arrays2d;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @Getter
 public class ImageFilter<TData, TPixel, TTile> 

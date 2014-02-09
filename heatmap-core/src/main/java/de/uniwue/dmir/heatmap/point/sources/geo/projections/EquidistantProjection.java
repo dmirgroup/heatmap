@@ -33,6 +33,8 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
+ * Equidistant projection centered on a given {@link GeoBoundingBox}.
+ * 
  * @author Martin Becker
  */
 public class EquidistantProjection implements IMapProjection {

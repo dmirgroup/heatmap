@@ -20,10 +20,10 @@
  */
 package de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.IDistanceFunction;
 import de.uniwue.dmir.heatmap.processors.visualizers.rbf.IRadialBasisFunction;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public abstract class AbstractWeightedRbfAggregator<TData> 
 extends AbstractGenericRbfAggregator<TData> {

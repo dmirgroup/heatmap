@@ -35,7 +35,7 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * {@link IFilter#getCenterY()} 
  * values are adjusted accordingly.
  * 
- * TODO: finish
+ * TODO: finish (width, height, x and y need to be derived from the given filters)
  * 
  * @author Martin Becker
  *

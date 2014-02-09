@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class GenericListGeoDatasource<TData> 
 implements IGeoDatasource<TData> {

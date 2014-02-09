@@ -21,7 +21,6 @@
 package de.uniwue.dmir.heatmap.util.mapper;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 
 @AllArgsConstructor
 public class MapperCascade<TSource, TIntermediate, TResult> 

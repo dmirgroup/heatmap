@@ -20,8 +20,9 @@
  */
 package de.uniwue.dmir.heatmap.point.types.geo;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.point.types.IGeoPoint;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class GeoPointToGeoCoordinateMapper<TPoint extends IGeoPoint>
 implements IMapper<TPoint, GeoCoordinates> {

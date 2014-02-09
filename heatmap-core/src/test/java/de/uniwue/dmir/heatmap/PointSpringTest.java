@@ -37,14 +37,15 @@ public class PointSpringTest {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testHeatmap() throws IOException {
 
-		System.setProperty("workdir", "classpath:spring/example/points");
+		System.setProperty("configDir", "classpath:spring/example/points/config");
+		System.setProperty("workDir", "out/points/work-jar");
 //		System.setProperty("spring.profiles.active", "minmax");
 //		System.setProperty("min", "2013-06-01 00:00:00");
 //		System.setProperty("max", "2013-07-01 00:00:00");
 		
 		ClassPathXmlApplicationContext appContext = 
 				new ClassPathXmlApplicationContext(
-						new String[] {"spring/example/points/config.xml"},
+						new String[] {"spring/example/points/config/config.xml"},
 						false);
 		appContext.refresh();
 		

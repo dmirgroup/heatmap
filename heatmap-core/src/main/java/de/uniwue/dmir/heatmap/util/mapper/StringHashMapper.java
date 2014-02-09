@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.util.mapper;
 import java.security.NoSuchAlgorithmException;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.util.HashUtils;
 
 @AllArgsConstructor

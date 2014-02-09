@@ -39,22 +39,21 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * top-left oriented way of indexing tiles can be altered.</p>
  * 
  * <h1>Process</h1>
- * We need the following components are needed to define a heatmap:
+ * We need the following components to define a heatmap:
  * <ul>
  * 	<li>
  * 		the heat map's dimensions are set via {@link IHeatmapDimensions},
  * 	</li>
  * 	<li>
- * 		an {@link IPointsource}, to get the data according to tile coordinates
+ * 		an {@link IPointsource}, to get the data for each tile 
  * 	</li>
  * 	<li>
- * 		a {@link IFilter} to merge data points into a tile.
+ * 		a {@link IFilter} to incorporate data points into a tile.
  * 	</li>
  * </ul>
  * 
  * Heat maps can be written to images using the {@link IHeatmapWriter} and a
  * matching {@link IVisualizer}.
- * 
  * 
  * @author Martin Becker
  */
@@ -67,7 +66,7 @@ public interface IHeatmap<TTile> {
 	public static final int DEFAULT_MAX_ZOOM_LEVEL = 18;
 	
 	/**
-	 * @return heatmap settings
+	 * @return current heatmap settings
 	 */
 	HeatmapSettings getSettings();
 	
@@ -79,5 +78,14 @@ public interface IHeatmap<TTile> {
 	 */
 	TTile getTile(TileCoordinates coordinates);
 	
+	/**
+	 * Processes all tiles. 
+	 * The order of the tiles being processed is determined by the heatmap 
+	 * implementation.
+	 * Thus, the heatmap implementation can optimize internal tile and data 
+	 * access.
+	 * 
+	 * @param processor the processor to process the tiles
+	 */
 	void processTiles(ITileProcessor<TTile> processor);
 }

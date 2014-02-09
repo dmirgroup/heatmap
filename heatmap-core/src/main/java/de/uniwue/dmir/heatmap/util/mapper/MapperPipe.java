@@ -23,8 +23,18 @@ package de.uniwue.dmir.heatmap.util.mapper;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 
+/**
+ * A mapper pipe will utilizes a list of mappers. 
+ * The first mapper will be applied to the given value.
+ * If the resulting object is <code>null</code> the next mapper is applied
+ * and so on.
+ * 
+ * @author Martin Becker
+ *
+ * @param <TKey>
+ * @param <TValue>
+ */
 @AllArgsConstructor
 public class MapperPipe<TKey, TValue> 
 implements IMapper<TKey, TValue> {

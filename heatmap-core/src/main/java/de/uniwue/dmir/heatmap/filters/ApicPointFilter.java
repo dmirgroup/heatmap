@@ -32,7 +32,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicOverallTile;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
@@ -41,6 +40,7 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.tiles.pixels.PointSizePixel;
 import de.uniwue.dmir.heatmap.util.GeoPolygon;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @AllArgsConstructor
 public class ApicPointFilter

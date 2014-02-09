@@ -20,7 +20,6 @@
  */
 package de.uniwue.dmir.heatmap.util.mapper;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 
 public class IdentityMapper<T> implements IMapper<T, T>{
 

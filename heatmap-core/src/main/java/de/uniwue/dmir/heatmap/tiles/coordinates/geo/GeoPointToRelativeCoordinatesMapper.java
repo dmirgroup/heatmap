@@ -22,7 +22,7 @@ package de.uniwue.dmir.heatmap.tiles.coordinates.geo;
 
 import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
-import de.uniwue.dmir.heatmap.point.types.geo.IGeoPoint;
+import de.uniwue.dmir.heatmap.point.types.IGeoPoint;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;

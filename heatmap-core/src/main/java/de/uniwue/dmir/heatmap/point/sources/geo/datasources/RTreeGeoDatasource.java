@@ -26,30 +26,31 @@ import org.springframework.util.StopWatch;
 
 import com.newbrightidea.util.RTree;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
-public class RTreeGeoDatasource<S> extends AbstractCachedGeoDatasource<S> {
+public class RTreeGeoDatasource<TData>
+extends AbstractCachedGeoDatasource<TData> {
 	
-	private IMapper<S, GeoCoordinates> mapper;
-	private RTree<S> rtree;
+	private IMapper<TData, GeoCoordinates> mapper;
+	private RTree<TData> rtree;
 	
 	public RTreeGeoDatasource(
-			IGeoDatasource<S> dataSource,
-			IMapper<S, GeoCoordinates> mapper) {
+			IGeoDatasource<TData> dataSource,
+			IMapper<TData, GeoCoordinates> mapper) {
 		
 		super(dataSource);
 		this.mapper = mapper;
 		
-		this.rtree = new RTree<S>();
+		this.rtree = new RTree<TData>();
 		
 		this.reload();
 	}
 
 	@Override
-	public List<S> getData(GeoBoundingBox geoBoundingBox) {
+	public List<TData> getData(GeoBoundingBox geoBoundingBox) {
 
 		double minLon;
 		double minLat;
@@ -76,7 +77,7 @@ public class RTreeGeoDatasource<S> extends AbstractCachedGeoDatasource<S> {
 		}
 		
 		
-		List<S> data = this.rtree.search(
+		List<TData> data = this.rtree.search(
 				new float[] {
 						(float) minLon,
 						(float) minLat,
@@ -97,15 +98,15 @@ public class RTreeGeoDatasource<S> extends AbstractCachedGeoDatasource<S> {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start("getting data");
 		
-		List<S> data = super.dataSource.getData(null);
-		
+		List<TData> data = super.dataSource.getData(null);
 
 		stopWatch.stop();
-		super.logger.debug("getting data: {}", stopWatch.toString());
+		super.logger.debug("getting data - count: {}", data.size());
+		super.logger.debug("getting data - time: {}", stopWatch.toString());
 		
 		stopWatch.start("adding data");
 		
-		for (S s : data) {
+		for (TData s : data) {
 			GeoCoordinates geoCoordinates = this.mapper.map(s);
 			this.rtree.insert(
 					new float[] {

@@ -29,11 +29,11 @@ import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.TileSize;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor.IFileWriterProcessorFactory;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 /**
  * 

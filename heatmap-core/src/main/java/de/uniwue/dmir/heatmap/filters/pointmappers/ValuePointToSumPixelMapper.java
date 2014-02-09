@@ -20,9 +20,9 @@
  */
 package de.uniwue.dmir.heatmap.filters.pointmappers;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.types.ValuePoint;
 import de.uniwue.dmir.heatmap.tiles.pixels.SumPixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class ValuePointToSumPixelMapper
 implements IMapper<ValuePoint, SumPixel> {

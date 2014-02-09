@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.util.mapper;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 
 @AllArgsConstructor
 public class MapMapper<T, P> 

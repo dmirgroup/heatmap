@@ -32,15 +32,15 @@ import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.datasources.database.GeoRequest;
 
-public class DatabaseGeoDatasource<TGeoData, TSettings>
-implements IGeoDatasource<TGeoData> {
+public class DatabaseGeoDatasource<TData, TSettings>
+implements IGeoDatasource<TData> {
 
 	private GeoRequest<TSettings> geoRequest;
 	
 	@Autowired
 	@Getter
 	@Setter
-	private GeoMapper<TGeoData, TSettings> mapper;
+	private GeoMapper<TData, TSettings> mapper;
 	
 	public DatabaseGeoDatasource(TSettings settings) {
 		this.geoRequest = new GeoRequest<TSettings>();
@@ -48,9 +48,9 @@ implements IGeoDatasource<TGeoData> {
 	}
 	
 	@Override
-	public List<TGeoData> getData(GeoBoundingBox geoBoundingBox) {
+	public List<TData> getData(GeoBoundingBox geoBoundingBox) {
 		this.geoRequest.setGeoBoundingBox(geoBoundingBox);
-		List<TGeoData> points = this.mapper.getData(this.geoRequest);
+		List<TData> points = this.mapper.getData(this.geoRequest);
 		return points;
 	}
 

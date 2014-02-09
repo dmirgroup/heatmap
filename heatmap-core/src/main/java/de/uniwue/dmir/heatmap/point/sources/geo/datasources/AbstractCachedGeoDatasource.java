@@ -28,12 +28,12 @@ import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
  * 
  * @author Martin Becker
  *
- * @param <S> data type
+ * @param <TData> data type
  */
-public abstract class AbstractCachedGeoDatasource<S> 
-extends AbstractProxyGeoDatasource<S> {
+public abstract class AbstractCachedGeoDatasource<TData> 
+extends AbstractProxyGeoDatasource<TData> {
 
-	public AbstractCachedGeoDatasource(IGeoDatasource<S> dataSource) {
+	public AbstractCachedGeoDatasource(IGeoDatasource<TData> dataSource) {
 		super(dataSource);
 	}
 

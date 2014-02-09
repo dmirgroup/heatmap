@@ -22,7 +22,6 @@ package de.uniwue.dmir.heatmap.util.mapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.mybatis.MappingsMyBatisMapper;
 
 

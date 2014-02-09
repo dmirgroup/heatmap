@@ -33,12 +33,12 @@ import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.IPointsource;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.AbstractConfigurableFilter;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 /**
  * A {@link IPointsource} which works on a {@link IGeoDatasource} and

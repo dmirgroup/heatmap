@@ -25,7 +25,6 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 
 @AllArgsConstructor
 public class MapperPipeline<T> implements IMapper<T, T> {

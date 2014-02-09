@@ -24,6 +24,7 @@ import java.util.Date;
 
 import lombok.Data;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.point.types.IGeoPoint;
 
 @Data
 public class SimpleGeoPoint<TGroupDescription> implements IGeoPoint {

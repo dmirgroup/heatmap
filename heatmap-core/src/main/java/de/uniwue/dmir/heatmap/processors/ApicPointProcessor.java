@@ -42,11 +42,11 @@ import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicCityTile;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicGroupTile;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicOverallTile;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.processors.visualizers.StaticPolygonProxyVisualizer;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.tiles.pixels.PointSizePixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class ApicPointProcessor 
 implements ITileProcessor<ApicOverallTile> {
@@ -153,6 +153,17 @@ implements ITileProcessor<ApicOverallTile> {
 			if (this.cityToPolygonMapper != null) {
 				
 				Polygon cityPolygon = this.cityToPolygonMapper.map(cityEntry.getKey());
+				
+				// calculate covered pixels
+				int pixelsInsidePolygon = 0;
+				for (int x = 0; x < tileSize.getWidth(); x ++) {
+					for (int y = 0; x < tileSize.getHeight(); y ++) {
+						if (cityPolygon.contains(x, y)) {
+							pixelsInsidePolygon ++;
+						}
+					}
+				}
+				
 				
 //				// translate city polygon
 //				cityPolygon.translate(offsetX, offsetY);

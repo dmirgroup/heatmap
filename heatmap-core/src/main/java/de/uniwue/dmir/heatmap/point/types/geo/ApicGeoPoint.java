@@ -23,10 +23,13 @@ package de.uniwue.dmir.heatmap.point.types.geo;
 import java.util.Date;
 
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
+import de.uniwue.dmir.heatmap.point.types.IGeoPoint;
+import de.uniwue.dmir.heatmap.point.types.IValuePoint;
 import lombok.Data;
 
 @Data
-public class ApicGeoPoint implements IGeoPoint {
+public class ApicGeoPoint
+implements IGeoPoint, IValuePoint {
 	
 	private long id;
 	
@@ -39,4 +42,6 @@ public class ApicGeoPoint implements IGeoPoint {
 	private String mac;
 	private String deviceId;
 	private String userId;
+
+	private double value;
 }

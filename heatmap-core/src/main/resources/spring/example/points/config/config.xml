@@ -481,13 +481,48 @@
 			</bean>
 		</property>
 	</bean>
+
+	<bean id="apicAnalysisProcessor"
+			class="de.uniwue.dmir.heatmap.processors.ApicCoverageAnalysisProcessor">
+			
+		<constructor-arg name="folder" value="${out.folder}" />
+		<constructor-arg name="visualizer" ref="simpleVisualizer" />
+		<constructor-arg name="cityToTileSizeMapper">
+			<bean class="de.uniwue.dmir.heatmap.util.mapper.MapMapper">
+				<constructor-arg name="map">
+					<map key-type="java.lang.String" value-type="java.awt.geom.Path2D">
+						<entry key="Antwerp" value-ref="tileSizeAntwerp" />
+						<entry key="Kassel" value-ref="tileSizeKassel" />
+						<entry key="London" value-ref="tileSizeLondon" />
+						<entry key="Turin" value-ref="tileSizeTurin" />
+					</map>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		
+		<property name="cityToPolygonMapper" ref="cityToPolygonMapper" />
+		
+		<property name="polygonStrokeColor">
+			<null />
+		</property>
+		
+		<property name="polygonFillColor">
+			<bean class="java.awt.Color">
+				<constructor-arg name="r" value="0" />
+				<constructor-arg name="g" value="0" />
+				<constructor-arg name="b" value="0" />
+				<constructor-arg name="a" value="0.21" />
+			</bean>
+		</property>
+	</bean>
 	
 	<bean id="writer"
-			class="de.uniwue.dmir.heatmap.processors.ProxyTileProcessor">
+			class="de.uniwue.dmir.heatmap.processors.ProxyListTileProcessor">
 
 		<constructor-arg name="processors">
 			<list>
-				<ref bean="apicVisualizationProcessor" />
+				<!-- <ref bean="apicVisualizationProcessor" /> -->
+				<ref bean="apicAnalysisProcessor" />
 			</list>
 		</constructor-arg>
 	</bean>

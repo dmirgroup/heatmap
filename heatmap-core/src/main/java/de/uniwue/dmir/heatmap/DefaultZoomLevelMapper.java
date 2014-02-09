@@ -20,6 +20,13 @@
  */
 package de.uniwue.dmir.heatmap;
 
+/**
+ * A {@link IZoomLevelMapper} returning a (2^zoom, 2^zoom) tile grid size for a 
+ * given zoom level "zoom".
+ * 
+ * @author Martin Becker
+ *
+ */
 public class DefaultZoomLevelMapper 
 implements IZoomLevelMapper {
 

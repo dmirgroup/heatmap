@@ -22,7 +22,27 @@ package de.uniwue.dmir.heatmap;
 
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
+/**
+ * A {@link ITileCoordinatesProjection} 
+ * 
+ * @author Martin Becker
+ *
+ * @param <TTile>
+ */
 public interface ITileProcessor<TTile> {
+	
+	/**
+	 * Process a given tile.
+	 * 
+	 * @param tile tile to process
+	 * @param tileSize the dimensions of the given tile
+	 * @param tileCoordinates the coordinates of the given tile
+	 */
 	void process(TTile tile, TileSize tileSize, TileCoordinates tileCoordinates);
+	
+	/**
+	 * Closes to processor.
+	 * Releasing file handles, cached data etc.
+	 */
 	void close();
 }

@@ -20,15 +20,14 @@
  */
 package de.uniwue.dmir.heatmap.filters.pointmappers;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
-import de.uniwue.dmir.heatmap.point.types.ValuePoint;
+import de.uniwue.dmir.heatmap.point.types.IValuePoint;
 import de.uniwue.dmir.heatmap.tiles.pixels.WeightedSquaredSumPixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class ValuePointToWeightedSquaredSumPixelMapper
-implements IMapper<ValuePoint, WeightedSquaredSumPixel> {
+implements IMapper<IValuePoint, WeightedSquaredSumPixel> {
 	
-	public WeightedSquaredSumPixel map(ValuePoint object) {
-		WeightedSquaredSumPixel sum = new WeightedSquaredSumPixel(object.getValue());
-		return sum;
+	public WeightedSquaredSumPixel map(IValuePoint object) {
+		return new WeightedSquaredSumPixel(object.getValue());
 	}
 }

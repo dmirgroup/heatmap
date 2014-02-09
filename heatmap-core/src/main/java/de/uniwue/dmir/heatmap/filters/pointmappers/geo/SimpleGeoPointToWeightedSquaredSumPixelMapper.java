@@ -20,9 +20,9 @@
  */
 package de.uniwue.dmir.heatmap.filters.pointmappers.geo;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
 import de.uniwue.dmir.heatmap.tiles.pixels.WeightedSquaredSumPixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class SimpleGeoPointToWeightedSquaredSumPixelMapper<TGroupDescription>
 implements IMapper<SimpleGeoPoint<TGroupDescription>, WeightedSquaredSumPixel> {

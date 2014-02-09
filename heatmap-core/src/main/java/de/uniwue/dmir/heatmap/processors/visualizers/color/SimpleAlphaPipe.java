@@ -20,7 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.processors.visualizers.color;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class SimpleAlphaPipe<T> implements IAlphaPipe<T> {
 	

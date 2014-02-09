@@ -40,6 +40,7 @@ import de.uniwue.dmir.heatmap.util.Arrays2d;
  * <ul>
  * 	<li>the top-left pixel within a tile has the coordinates (0,0)</li>
  * 	<li>the pixel to the right of (0,0) has the coordinates (1, 0)</li>
+ * 	<li>the pixel below (0,0) has the coordinates (0, 1)</li>
  * </ul>
  * 
  * @author Martin Becker

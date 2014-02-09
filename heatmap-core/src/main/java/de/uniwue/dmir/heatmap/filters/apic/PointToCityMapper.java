@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.types.geo.ApicGeoPoint;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @AllArgsConstructor
 public class PointToCityMapper 

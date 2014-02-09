@@ -27,9 +27,9 @@ import java.util.List;
  * 
  * @author Martin Becker
  *
- * @param <S> type of the data to retrieve
+ * @param <TData> type of the data to retrieve
  */
-public interface IGeoDatasource<S> {
+public interface IGeoDatasource<TData> {
 	
 	/**
 	 * @param geoBoundingBox geo bounding box; 
@@ -37,6 +37,6 @@ public interface IGeoDatasource<S> {
 	 * 
 	 * @return data within the given bounding box
 	 */
-	List<S> getData(GeoBoundingBox geoBoundingBox);
+	List<TData> getData(GeoBoundingBox geoBoundingBox);
 	
 }

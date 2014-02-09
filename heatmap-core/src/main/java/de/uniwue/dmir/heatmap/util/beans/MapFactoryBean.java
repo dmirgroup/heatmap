@@ -33,7 +33,7 @@ import de.uniwue.dmir.heatmap.mybatis.MappingsMyBatisMapper.Element;
 public class MapFactoryBean implements FactoryBean<Map<String, String>> {
 
 	@Autowired
-	private MappingsMyBatisMapper bidirectionalMyBatisMapper;
+	private MappingsMyBatisMapper mappingsMyBatisMapper;
 	
 	private String mapIdentifier;
 	
@@ -41,11 +41,16 @@ public class MapFactoryBean implements FactoryBean<Map<String, String>> {
 		this.mapIdentifier = mapIdentifier;
 	}
 	
+	public MapFactoryBean(String mapIdentifier, MappingsMyBatisMapper mappingsMyBatisMapper) {
+		this(mapIdentifier);
+		this.mappingsMyBatisMapper = mappingsMyBatisMapper;
+	}
+	
 	@Override
 	public Map<String, String> getObject() throws Exception {
 		
 		List<Element> elements = 
-				this.bidirectionalMyBatisMapper.getElements(
+				this.mappingsMyBatisMapper.getElements(
 						this.mapIdentifier);
 		
 		Map<String, String> map = new HashMap<String, String>();

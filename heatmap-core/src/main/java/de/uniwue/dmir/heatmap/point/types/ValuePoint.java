@@ -28,7 +28,8 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ValuePoint extends BasicRelativeCoordinatesProvider {
+public class ValuePoint extends BasicRelativeCoordinatesProvider 
+implements IValuePoint {
 
 	private double value;
 	

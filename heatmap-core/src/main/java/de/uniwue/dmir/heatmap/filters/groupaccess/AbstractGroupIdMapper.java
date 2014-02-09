@@ -25,7 +25,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public abstract class AbstractGroupIdMapper<T> 
 implements IMapper<T, List<String>> {

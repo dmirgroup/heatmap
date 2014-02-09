@@ -20,8 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.processors.pixelmappers;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.tiles.pixels.WeightedSumPixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class WeightedSumToSizeMapper implements
 IMapper<WeightedSumPixel, Double> {

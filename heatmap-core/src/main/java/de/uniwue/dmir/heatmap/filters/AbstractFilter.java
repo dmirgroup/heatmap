@@ -55,5 +55,5 @@ implements IFilter<TData, TTile> {
 			this.filter(dataPoint, tile, tileSize, tileCoordinates);
 		}
 	}
-	
+
 }

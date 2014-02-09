@@ -13,7 +13,7 @@
 </head>
 <body>
 	<div style="width: 1800px; height: 900px" id="map"></div>
-	<div>Zoom level: <span id="zoomlevel"></span></div>
+	<div>Zoom level: <span id="zoomlevel"></span>, Coordinates: <span id="coords"></span></div>
 	<script defer='defer' type='text/javascript'>
 
 var map = new OpenLayers.Map({
@@ -63,6 +63,14 @@ var img = new OpenLayers.Layer.Image(
 map.events.register('zoomend', map, function() {
 	var zoomInfo = map.getZoom() + ' / ' + map.numZoomLevels;
 	document.getElementById('zoomlevel').innerHTML = zoomInfo;
+});
+
+map.events.register("mousemove", map, function(e) {
+	var toProjection = new OpenLayers.Projection("EPSG:4326");   // Transform from WGS 1984
+    var fromProjection   = new OpenLayers.Projection("EPSG:900913"); 
+    var position = map.events.getMousePosition(e);
+    OpenLayers.Util.getElement("coords").innerHTML = 
+    	map.getLonLatFromPixel(position).transform(fromProjection, toProjection);
 });
 
 // This is the layer that uses the locally stored tiles

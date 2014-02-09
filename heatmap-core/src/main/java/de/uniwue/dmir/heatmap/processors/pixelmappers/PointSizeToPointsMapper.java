@@ -20,8 +20,8 @@
  */
 package de.uniwue.dmir.heatmap.processors.pixelmappers;
 
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.tiles.pixels.PointSizePixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class PointSizeToPointsMapper 
 implements IMapper<PointSizePixel, Double> {

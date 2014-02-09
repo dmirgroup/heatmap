@@ -25,12 +25,12 @@ import lombok.Setter;
 import lombok.ToString;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.filters.pixelaccess.IPixelAccess;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.Arrays2d;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @Getter
 @Setter
@@ -43,14 +43,14 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 	protected int erodingCenterX;
 	protected int erodingCenterY;;
 	
-	private IMapper<TData, TPixel> dataToTPixelixelMapper;
+	private IMapper<? super TData, TPixel> dataToTPixelixelMapper;
 	private IAdder<TPixel> adder;
 	
 	private boolean skipOutOfBoundsPoints;
 	
 	public ErodingFilter(
 			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> dataToTPixelixelMapper,
+			IMapper<? super TData, TPixel> dataToTPixelixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> pixelAdder,
 			

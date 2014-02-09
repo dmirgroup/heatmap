@@ -26,12 +26,12 @@ import java.awt.image.BufferedImage;
 
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.TileSize;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.IColorScheme;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class GenericAlphaVisualizer<TTile, TPixel>
 extends AbstractGenericVisualizer<TTile, TPixel> {

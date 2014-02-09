@@ -23,7 +23,7 @@ package de.uniwue.dmir.heatmap.processors.visualizers.color;
 import java.awt.Color;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @AllArgsConstructor
 public class SimpleColorPipe<T> implements IColorPipe<T> {

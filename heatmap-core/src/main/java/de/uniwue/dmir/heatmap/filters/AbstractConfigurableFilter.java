@@ -51,7 +51,8 @@ import de.uniwue.dmir.heatmap.IFilter;
 @Setter
 @ToString
 public abstract class AbstractConfigurableFilter<TData, TTile> 
-extends AbstractFilter<TData, TTile> {
+extends AbstractFilter<TData, TTile> 
+implements IConfigurableFilter<TData, TTile>{
 
 	protected int width = 1;
 	protected int height = 1;

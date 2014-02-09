@@ -21,8 +21,8 @@
 package de.uniwue.dmir.heatmap.filters.apic;
 
 import lombok.AllArgsConstructor;
-import de.uniwue.dmir.heatmap.filters.operators.IMapper;
 import de.uniwue.dmir.heatmap.point.types.geo.ApicGeoPoint;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @AllArgsConstructor
 public class PointToGroupMapper
