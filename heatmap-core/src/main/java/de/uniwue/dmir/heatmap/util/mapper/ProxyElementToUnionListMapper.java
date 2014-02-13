@@ -21,6 +21,7 @@
 package de.uniwue.dmir.heatmap.util.mapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
@@ -53,6 +54,22 @@ implements IMapper<TSource, List<TListElement>> {
 		this.mappers = mappers;
 		this.filterNullValues = true;
 		this.addNullIfNullWasFound = true;
+	}
+	
+	@SafeVarargs
+	public ProxyElementToUnionListMapper(
+			IMapper<TSource, TListElement> ... mappers) {
+		
+		this(Arrays.asList(mappers));
+	}
+	
+	@SuppressWarnings("serial")
+	public ProxyElementToUnionListMapper(
+			final IMapper<TSource, TListElement> mapper) {
+		
+		this(new ArrayList<IMapper<TSource, TListElement>>(){{
+			add(mapper);
+		}});
 	}
 	
 	@Override
