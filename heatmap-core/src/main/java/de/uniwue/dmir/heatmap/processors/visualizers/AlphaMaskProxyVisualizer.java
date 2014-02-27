@@ -29,7 +29,7 @@ import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
- * Visualizer which takes the replaces the alpha channel of one visualization 
+ * Visualizer which replaces the alpha channel of one visualization 
  * with an arbitrary channel from another visualization.
  * 
  * @author Martin Becker

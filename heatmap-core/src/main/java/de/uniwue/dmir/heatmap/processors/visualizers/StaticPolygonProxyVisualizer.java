@@ -42,10 +42,18 @@ implements IVisualizer<TTile> {
 	@Getter
 	@Setter
 	private Color fillColor;
+
+	@Getter
+	@Setter
+	private boolean fillAbove;
 	
 	@Getter
 	@Setter
 	private Color strokeColor;
+	
+	@Getter
+	@Setter
+	private boolean strokeAbove;
 	
 	public StaticPolygonProxyVisualizer(
 			IVisualizer<TTile> visualizer,
@@ -53,6 +61,11 @@ implements IVisualizer<TTile> {
 		
 		this.visualizer = visualizer;
 		this.polygon = polygon;
+		
+		this.fillAbove = false;
+		this.fillColor = null;
+		
+		this.strokeAbove = false;
 		this.strokeColor = Color.WHITE;
 	}
 	
@@ -69,7 +82,9 @@ implements IVisualizer<TTile> {
 		
 		Graphics g = image.getGraphics();
 
-		if (this.fillColor != null) {
+		if (
+				(!this.fillAbove && this.fillColor != null) 
+				|| (!this.strokeAbove && this.strokeColor != null)) {
 			
 			BufferedImage newImage = new BufferedImage(
 					tileSize.getWidth(), 
@@ -78,15 +93,28 @@ implements IVisualizer<TTile> {
 			
 			Graphics newG = newImage.getGraphics();
 			
-			newG.setColor(this.fillColor);
-			newG.fillPolygon(this.polygon);
+			if (!this.fillAbove && this.fillColor != null) {
+				newG.setColor(this.fillColor);
+				newG.fillPolygon(this.polygon);
+			}
+			
+			if (!this.strokeAbove && this.strokeColor != null) {
+				newG.setColor(this.strokeColor);
+				newG.drawPolygon(this.polygon);
+			}
 			
 			newG.drawImage(image, 0, 0, null);
 			
 			image = newImage;
+			g = newG;
+		}
+
+		if (this.fillAbove && this.fillColor != null) {
+			g.setColor(this.fillColor);
+			g.fillPolygon(this.polygon);
 		}
 		
-		if (this.strokeColor != null) {
+		if (this.strokeAbove && this.strokeColor != null) {
 			g.setColor(this.strokeColor);
 			g.drawPolygon(this.polygon);
 		}

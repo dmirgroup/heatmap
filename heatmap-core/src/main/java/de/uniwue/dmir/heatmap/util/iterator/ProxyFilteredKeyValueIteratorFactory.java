@@ -23,7 +23,8 @@ package de.uniwue.dmir.heatmap.util.iterator;
 import lombok.AllArgsConstructor;
 
 /**
- * Creates {@link IKeyValueIterator} which are filtered by the given {@link IKeyValueFilter}.
+ * Creates {@link IKeyValueIterator} which returns only instances which 
+ * are not filtered by the given {@link IKeyValueFilter}.
  * 
  * @author Martin Becker
  *
@@ -33,7 +34,7 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public class ProxyFilteredKeyValueIteratorFactory <TSource, TKey, TValue>
-implements IKeyValueIteratorFactory <TSource, TKey, TValue>{
+implements IKeyValueIteratorFactory <TSource, TKey, TValue> {
 
 	private IKeyValueIteratorFactory<TSource, TKey, TValue> factory;
 	private IKeyValueFilter<TKey, TValue> filter;

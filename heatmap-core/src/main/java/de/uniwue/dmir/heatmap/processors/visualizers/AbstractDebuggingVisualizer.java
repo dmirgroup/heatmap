@@ -52,13 +52,16 @@ implements IVisualizer<TTile> {
 	}
 	
 	@Override
-	public BufferedImage visualize(TTile tile, TileSize tileSize,
+	public BufferedImage visualize(
+			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		BufferedImage image = this.visualizeWithDebuggingInformation(
 				tile, 
 				tileSize, 
 				tileCoordinates);
+
 		this.addDebugInformation(tileSize, tileCoordinates, image);
 		
 		return image;

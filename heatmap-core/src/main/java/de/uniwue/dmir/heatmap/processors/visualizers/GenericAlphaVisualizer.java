@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.IColorScheme;
@@ -40,7 +41,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	public static final float DEFAULT_ALPHA_VALUE = 0.7f;
 	public static final Color DEFAULT_BACKGROUND_COLOR = new Color(0, 0, 0, 0);
 
-	private IMapper<TPixel, Double> pixelToSumMapper;
+	private IMapper<TPixel, Double> pixelToValueMapper;
 
 	@Setter
 	private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
@@ -55,26 +56,35 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	
 	private IColorScheme colorScheme;
 	
+	@Getter
+	@Setter
+	private boolean ignoreOutsidePixels;
+	
 	public GenericAlphaVisualizer(
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
+			IMapper<TPixel, Double> pixelToValueMapper,
 			IColorScheme colorScheme) {
 		
 		super(pixelIteratorFactory);
+		this.pixelToValueMapper = pixelToValueMapper;
 		this.colorScheme = colorScheme;
 	}
 	
 	public GenericAlphaVisualizer(
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
+			IMapper<TPixel, Double> pixelToValueMapper,
 			double scaleFactor) {
 
 		super(pixelIteratorFactory);
+		this.pixelToValueMapper = pixelToValueMapper;
 		this.scalingFactor = scaleFactor;
 	}
 	
 	public GenericAlphaVisualizer(
-			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory) {
+			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory, 
+			IMapper<TPixel, Double> pixelToValueMapper) {
 		
-		this(pixelIteratorFactory, DEFAULT_SCALE_FACTOR);
+		this(pixelIteratorFactory, pixelToValueMapper, DEFAULT_SCALE_FACTOR);
 	}
 	
 	
@@ -95,9 +105,9 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		
 		Graphics g = image.getGraphics();
 		g.setColor(this.backgroundColor);
-		image.getGraphics().fillRect(
+		g.fillRect(
 				0, 0, 
-				image.getWidth() - 1, image.getHeight() - 1);
+				image.getWidth(), image.getHeight());
 		
 		// run through pixels
 		
@@ -108,9 +118,26 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 			
 			iterator.next();
 			RelativeCoordinates relativeCoordinates = iterator.getKey();
+			
+			if (	this.ignoreOutsidePixels
+					&& (relativeCoordinates.getX() < 0 
+					|| relativeCoordinates.getX() >= image.getWidth()
+					|| relativeCoordinates.getY() < 0
+					|| relativeCoordinates.getY() >= image.getHeight())) {
+				
+				this.logger.debug(
+						"Size: width={}, height={}; Ignoring pixel: x={}, y={}",
+						image.getWidth(),
+						image.getHeight(),
+						relativeCoordinates.getX(),
+						relativeCoordinates.getY());
+				
+				continue;
+			}
+			
 			TPixel pixel = iterator.getValue();
 			
-			Double sum = this.pixelToSumMapper.map(pixel);
+			Double sum = this.pixelToValueMapper.map(pixel);
 			
 			if (this.colorScheme == null) {
 				

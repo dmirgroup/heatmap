@@ -23,6 +23,7 @@ package de.uniwue.dmir.heatmap.processors.visualizers;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.pixeliterators.RelativeCoordinatesArrayKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.tiles.pixels.SumPixel;
+import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 /**
  * @see GenericAlphaVisualizer
@@ -33,10 +34,17 @@ public class SumArrayAlphaVisualizer
 extends GenericAlphaVisualizer<SumPixel[], SumPixel> {
 
 	public SumArrayAlphaVisualizer(TileSize tileSize) {
-		super(new RelativeCoordinatesArrayKeyValueIteratorFactory<SumPixel>(
-				tileSize.getWidth(), 
-				tileSize.getHeight(), 
-				false));
+		super(
+				new RelativeCoordinatesArrayKeyValueIteratorFactory<SumPixel>(
+					tileSize.getWidth(), 
+					tileSize.getHeight(), 
+					false),
+					new IMapper<SumPixel, Double>() {
+						@Override
+						public Double map(SumPixel object) {
+							return object.getSum();
+						}
+					});
 	}
 
 }
