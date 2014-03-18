@@ -64,8 +64,11 @@ extends AbstractFileWriterProcessor<TTile> {
 		
 		BufferedImage image = this.visualizer.visualize(tile, tileSize, coordinates);
 		try {
+			
 			OutputStream outputStream = this.getOutputStream(coordinates);
 			ImageIO.write(image, super.fileFormat, outputStream);
+			outputStream.close();
+			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
