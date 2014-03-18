@@ -38,8 +38,8 @@ import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 @AllArgsConstructor
-public abstract class AbstractFileWriterProcessor<I> 
-implements ITileProcessor<I> {
+public abstract class AbstractFileWriterProcessor<TTile> 
+implements ITileProcessor<TTile> {
 
 	public static final String GZIP_EXTENSION = ".gz";
 	

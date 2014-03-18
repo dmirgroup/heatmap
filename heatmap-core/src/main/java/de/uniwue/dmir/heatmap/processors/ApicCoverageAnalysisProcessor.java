@@ -22,15 +22,12 @@ package de.uniwue.dmir.heatmap.processors;
 
 import java.awt.Color;
 import java.awt.Polygon;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javax.imageio.ImageIO;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -48,7 +45,6 @@ import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicCityTile;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicGroupTile;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicOverallTile;
-import de.uniwue.dmir.heatmap.processors.visualizers.StaticPolygonProxyVisualizer;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.tiles.pixels.PointSizePixel;

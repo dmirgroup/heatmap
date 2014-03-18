@@ -38,25 +38,25 @@ import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-public class VisualizerFileWriterProcessor<I> 
-extends AbstractFileWriterProcessor<I> {
+public class VisualizerFileWriterProcessor<TTile> 
+extends AbstractFileWriterProcessor<TTile> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	private IVisualizer<I> visualizer;
+	private IVisualizer<TTile> visualizer;
 	
 	public VisualizerFileWriterProcessor(
 			String parentFolder,
 			IFileStrategy fileStrategy, 
 			String fileFormat, 
-			IVisualizer<I> visualizer) {
+			IVisualizer<TTile> visualizer) {
 		
 		super(parentFolder, fileStrategy, fileFormat, false);
 		this.visualizer = visualizer;
 	}
 	
 	@Override
-	public void process(I tile, TileSize tileSize, TileCoordinates coordinates) {
+	public void process(TTile tile, TileSize tileSize, TileCoordinates coordinates) {
 		
 		if (tile == null) {
 			return;

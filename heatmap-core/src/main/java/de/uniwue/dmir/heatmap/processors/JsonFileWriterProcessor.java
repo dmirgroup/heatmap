@@ -35,8 +35,8 @@ import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-public class JsonFileWriterProcessor<I> 
-extends AbstractFileWriterProcessor<I> {
+public class JsonFileWriterProcessor<TTile> 
+extends AbstractFileWriterProcessor<TTile> {
 
 	private ObjectMapper mapper;
 	
@@ -49,7 +49,7 @@ extends AbstractFileWriterProcessor<I> {
 	}
 
 	@Override
-	public void process(I tile, TileSize tileSize, TileCoordinates coordinates) {
+	public void process(TTile tile, TileSize tileSize, TileCoordinates coordinates) {
 		
 		try {
 			

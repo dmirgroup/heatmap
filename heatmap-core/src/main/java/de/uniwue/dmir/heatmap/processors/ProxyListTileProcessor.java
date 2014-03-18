@@ -30,20 +30,20 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 @Data
 @AllArgsConstructor
-public class ProxyListTileProcessor<I> implements ITileProcessor<I> {
+public class ProxyListTileProcessor<TTile> implements ITileProcessor<TTile> {
 
-	private List<ITileProcessor<I>> processors;
+	private List<ITileProcessor<TTile>> processors;
 	
 	@Override
-	public void process(I tile, TileSize tileSize, TileCoordinates coordinates) {
-		for (ITileProcessor<I> p : this.processors) {
+	public void process(TTile tile, TileSize tileSize, TileCoordinates coordinates) {
+		for (ITileProcessor<TTile> p : this.processors) {
 			p.process(tile, tileSize, coordinates);
 		}
 	}
 
 	@Override
 	public void close() {
-		for (ITileProcessor<I> p : this.processors) {
+		for (ITileProcessor<TTile> p : this.processors) {
 			p.close();
 		}
 	}
