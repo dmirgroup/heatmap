@@ -96,6 +96,7 @@
 			<groupId>com.newbrightidea.util</groupId>
 			<artifactId>util-core</artifactId>
 			<version>2013.02.22</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- JSON utilities -->
