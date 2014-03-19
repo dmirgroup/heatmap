@@ -103,7 +103,7 @@
 				<artifactId>license-maven-plugin</artifactId>
 				<version>2.3</version>
 				<configuration>
-					<header>src/etc/license/LICENSE-HEADER.template</header>
+					<header>license/LICENSE-HEADER.template</header>
 					<properties>
 						<year>${project.inceptionYear}</year>
 						<owner>Martin Becker</owner>
