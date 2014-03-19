@@ -4,7 +4,7 @@
 
 	<groupId>de.uniwue.dmir.heatmap</groupId>
 	<artifactId>heatmap-core</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<parent>
@@ -26,9 +26,9 @@
 	</licenses>
 	
 	<scm>
-		<url>git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git/heatmap-core</url>
-		<connection>scm:git:git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git/heatmap-core</connection>
-		<developerConnection>scm:git:git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git/heatmap-core</developerConnection>
+		<url>git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git</url>
+		<connection>scm:git:git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git</connection>
+		<developerConnection>scm:git:git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git</developerConnection>
 	</scm>
 
 	<developers>
