@@ -33,7 +33,7 @@ import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
 
 public class SpringTest {
 
-	@Test
+//	@Test
 	public void testHeatmap() throws IOException {
 		
 		ClassPathXmlApplicationContext appContext = 

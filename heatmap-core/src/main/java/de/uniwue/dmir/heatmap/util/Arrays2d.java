@@ -53,8 +53,9 @@ public class Arrays2d {
 		
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				int outerIndex = index(x + minX, y + minY, width, height);
+				int outerIndex = index(x + minX, y + minY, arrayWidth, arrayHeight);
 				int innerIndex = index(x, y, width, height);
+				
 				clip[innerIndex] = array[outerIndex];
 			}
 		}

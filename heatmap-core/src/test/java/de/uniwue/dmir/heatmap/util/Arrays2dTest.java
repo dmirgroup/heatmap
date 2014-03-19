@@ -23,8 +23,6 @@ package de.uniwue.dmir.heatmap.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.uniwue.dmir.heatmap.util.Arrays2d;
-
 public class Arrays2dTest {
 
 	public static final int DIM_3 = 3;

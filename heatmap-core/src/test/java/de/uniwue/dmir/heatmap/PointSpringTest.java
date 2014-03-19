@@ -33,7 +33,7 @@ public class PointSpringTest {
 	public static final String HEATMAP_BEAN = "heatmap";
 	public static final String WRITER_BEAN = "writer";
 	
-	@Test
+//	@Test
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void testHeatmap() throws IOException {
 

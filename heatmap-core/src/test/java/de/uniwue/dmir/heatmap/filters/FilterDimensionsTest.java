@@ -30,18 +30,18 @@ import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class FilterDimensionsTest {
 	
 	@Test
 	public void simpleTestY1() {
 
-		@SuppressWarnings("rawtypes")
-		List<IFilter<?,?>> filters = null;
-//		Arrays.asList(new IFilter[] {
-//				new TestFilter(1, 1, 0, 0),
-//				new TestFilter(1, 1, 0, 0),
-//				new TestFilter(1, 1, 0, 0),
-//		});
+		List<IFilter> filters =
+			Arrays.asList(new IFilter[] {
+					new TestFilter(1, 1, 0, 0),
+					new TestFilter(1, 1, 0, 0),
+					new TestFilter(1, 1, 0, 0),
+			});
 
 		FilterDimensions filterDimensions = new FilterDimensions(filters);
 
@@ -53,7 +53,6 @@ public class FilterDimensionsTest {
 	@Test
 	public void simpleTestY2() {
 
-		@SuppressWarnings("rawtypes")
 		List<IFilter> filters = Arrays.asList(new IFilter[] {
 				new TestFilter(1, 1, 0, 0),
 				new TestFilter(1, 1, 0, 0),
@@ -70,7 +69,6 @@ public class FilterDimensionsTest {
 	@Test
 	public void simpleTestY3() {
 
-		@SuppressWarnings("rawtypes")
 		List<IFilter> filters = Arrays.asList(new IFilter[] {
 				new TestFilter(1, 1, 0, 0),
 				new TestFilter(1, 1, 0, 0),
@@ -87,7 +85,6 @@ public class FilterDimensionsTest {
 	@Test
 	public void simpleTestY4() {
 
-		@SuppressWarnings("rawtypes")
 		List<IFilter> filters = Arrays.asList(new IFilter[] {
 				new TestFilter(1, 2, 0, 0),
 				new TestFilter(1, 1, 0, 0),
@@ -104,7 +101,6 @@ public class FilterDimensionsTest {
 	@Test
 	public void simpleTestX2() {
 
-		@SuppressWarnings("rawtypes")
 		List<IFilter> filters = Arrays.asList(new IFilter[] {
 				new TestFilter(1, 1, 0, 0),
 				new TestFilter(1, 1, 0, 0),
@@ -121,7 +117,6 @@ public class FilterDimensionsTest {
 	@Test
 	public void simpleTestX3() {
 
-		@SuppressWarnings("rawtypes")
 		List<IFilter> filters = Arrays.asList(new IFilter[] {
 				new TestFilter(1, 1, 0, 0),
 				new TestFilter(1, 1, 0, 0),
@@ -138,7 +133,6 @@ public class FilterDimensionsTest {
 	@Test
 	public void simpleTestX4() {
 
-		@SuppressWarnings("rawtypes")
 		List<IFilter> filters = Arrays.asList(new IFilter[] {
 				new TestFilter(2, 1, 0, 0),
 				new TestFilter(1, 1, 0, 0),
@@ -152,10 +146,8 @@ public class FilterDimensionsTest {
 				filterDimensions);
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public static class TestFilter extends AbstractConfigurableFilter {
 
-		@SuppressWarnings("unchecked")
 		public TestFilter(
 				int width, 
 				int height, 
