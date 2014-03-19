@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>de.uniwue.dmir.heatmap</groupId>
 		<artifactId>heatmap-parent</artifactId>
-		<version>0.1.1-SNAPSHOT</version>
+		<version>0.1.1</version>
 	</parent>
 	
 	<name>Heatmap Framework - Core</name>
