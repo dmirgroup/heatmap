@@ -1,2 +1,4 @@
 /target
 /out
+/pom.xml.releaseBackup
+/release.properties
