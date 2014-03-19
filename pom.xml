@@ -8,6 +8,12 @@
 	<version>0.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
 	<name>Heatmap Framework - Parent</name>
 	<description>The parent component of a general framework for generating heatmaps.</description>
 	<url>https://github.com/uniwue-dmir/de.uniwue.dmir.heatmap</url>
