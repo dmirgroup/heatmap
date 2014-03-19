@@ -13,7 +13,7 @@
 	<version>0.1.0-SNAPSHOT</version>
 	
 	<repositories>
-		<!-- Local repository. -->
+		<!-- GitHub repository. -->
 		<repository>
 			<id>uniwue-dmir-repository</id>
 			<releases>
@@ -96,7 +96,6 @@
 			<groupId>com.newbrightidea.util</groupId>
 			<artifactId>util-core</artifactId>
 			<version>2013.02.22</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- JSON utilities -->

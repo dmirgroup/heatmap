@@ -57,6 +57,8 @@ extends AbstractFileWriterProcessor<TTile> {
 			
 			this.mapper.writeValue(outputStream, tile);
 			
+			outputStream.close();
+			
 		} catch (JsonGenerationException e) {
 			throw new IllegalArgumentException(e);
 		} catch (JsonMappingException e) {
