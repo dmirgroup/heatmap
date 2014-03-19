@@ -57,8 +57,12 @@ implements ITileProcessor<TTile> {
 	/**
 	 * Gets the file and creates the necessary folders if need be.
 	 * 
+	 * <strong>Note:</strong> Don't forget to close the stream which you receive.
+	 * 
 	 * @param tileCoordinates coordinates of the tile to create a file for
-	 * @return the file for the given tile coordinates
+	 * @return 
+	 * 		the {@link OutputStream} associated with the file for the given tile coordinates; 
+	 * 		<strong>Note:</strong> Don't forget to close the stream which you receive.
 	 * @throws IOException 
 	 */
 	protected OutputStream getOutputStream(TileCoordinates tileCoordinates) 

@@ -15,7 +15,7 @@
 	<repositories>
 		<!-- Local repository. -->
 		<repository>
-			<id>local-repository</id>
+			<id>uniwue-dmir-repository</id>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>ignore</checksumPolicy>
@@ -23,7 +23,7 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<url>file://${project.basedir}/repository</url>
+			<url>http://uniwue-dmir.github.io/maven-repository/releases</url>
 		</repository>
 	</repositories>
 
