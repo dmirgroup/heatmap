@@ -81,7 +81,7 @@ public class VisualizerTest {
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
 	
-	@Test
+//	@Test
 	public void test() throws JsonParseException, JsonMappingException, IOException {
 		
 		SimpleModule module = new SimpleModule("EnhancedDatesModule", new Version(0, 1, 0, "alpha"));
@@ -158,7 +158,7 @@ public class VisualizerTest {
 				new TileSize(256, 256),
 				new TileCoordinates(0,0,0));
 		
-		ImageIO.write(image, "png", new File("out/test.png"));
+//		ImageIO.write(image, "png", new File("out/test.png"));
 	}
 
 }
