@@ -73,22 +73,28 @@ public class DefaultSetup {
 	@Data
 	public static class Settings {
 		
-		@Option(name = "-csv", usage = "CSV file to read (format: lon,lat,value)")
+		@Option(
+				name = "-csv", 
+				usage = "CSV file to read (format: lon,lat,value)",
+				required = true)
 		private File csvFile;
 		
 		@Option(
 				name = "-csvsep", 
 				aliases = {"-csvSeparator"}, 
 				usage = "Cseparator to split lines in CSV file")
-		private String csvSeparator;
+		private String csvSeparator = ",";
 		
 		@Option(
 				name = "-csvskip", 
 				aliases = {"-csvSkipFirstLine"}, 
 				usage = "whether to skip the first line of the CSV file")
-		private boolean csvSkipFirstLine;
+		private boolean csvSkipFirstLine = false;
 		
-		@Option(name = "-out", usage = "the output folder")
+		@Option(
+				name = "-out", 
+				usage = "the output folder", 
+				required = true)
 		private File outputFolder;
 		
 		
