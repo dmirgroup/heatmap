@@ -30,6 +30,7 @@ import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
 import de.uniwue.dmir.heatmap.point.sources.geo.datasources.CsvGeoDatasource;
+import de.uniwue.dmir.heatmap.point.sources.geo.datasources.RTreeGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.projections.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.point.types.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
@@ -102,16 +103,18 @@ public class DefaultSetup {
 		
 		// settings up point source
 		
+		IMapper<SimpleGeoPoint<String>, GeoCoordinates> pointToGeoCoordinatesMapper =
+				new GeoPointToGeoCoordinateMapper<SimpleGeoPoint<String>>();
+		
 		// TODO: more flexible geo data source
 		IGeoDatasource<SimpleGeoPoint<String>> datasource = 
-				new CsvGeoDatasource(file, separator, skipFirstLine);
+				new RTreeGeoDatasource<SimpleGeoPoint<String>>(
+						new CsvGeoDatasource(file, separator, skipFirstLine),
+						pointToGeoCoordinatesMapper);
 		
 		IMapProjection mapProjection = new MercatorMapProjection(
 				heatmapSettings.getTileSize(), 
 				heatmapSettings.getZoomLevelMapper());
-		
-		IMapper<SimpleGeoPoint<String>, GeoCoordinates> pointToGeoCoordinatesMapper =
-				new GeoPointToGeoCoordinateMapper<SimpleGeoPoint<String>>();
 		
 		IPointsource<SimpleGeoPoint<String>> pointsource = new GeoPointsource<SimpleGeoPoint<String>>(
 				datasource, mapProjection, pointToGeoCoordinatesMapper);
