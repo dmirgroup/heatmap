@@ -25,8 +25,8 @@ package de.uniwue.dmir.heatmap.filters.operators;
  * 
  * @author Martin Becker
  *
- * @param <S> type to sum
+ * @param <TElement> type to sum
  */
-public interface IAdder<S> {
-	S add(S o1, S o2);
+public interface IAdder<TElement> {
+	<TDerived extends TElement> TElement add(TDerived e1, TDerived e2);
 }

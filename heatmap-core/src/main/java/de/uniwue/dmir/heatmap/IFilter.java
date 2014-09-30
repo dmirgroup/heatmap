@@ -29,10 +29,10 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  *
- * @param <TData> data type (external) to merge into the tile 
+ * @param <TPoint> data type (external) to merge into the tile 
  * @param <TTile> data type (internal) for merged data as stored in the tile
  */
-public interface IFilter<TData, TTile> {
+public interface IFilter<TPoint, TTile> {
 
 	/**
 	 * Merges a given data point into the given tile.
@@ -41,8 +41,8 @@ public interface IFilter<TData, TTile> {
 	 * @param tile tile to merge data into; if this is <code>null</code> nothing will happen
 	 * @param tileSize size of the tile
 	 */
-	void filter(
-			TData dataPoint, 
+	<TDerived extends TPoint> void filter(
+			TDerived dataPoint, 
 			TTile tile, 
 			TileSize tileSize, 
 			TileCoordinates tileCoordinates);
@@ -53,8 +53,8 @@ public interface IFilter<TData, TTile> {
 	 * @param dataPoints data to merge into the tile
 	 * @param tile tile to merge data into; if this is <code>null</code> nothing will happen
 	 */
-	void filter(
-			Collection<TData> dataPoints, 
+	<TDerived extends TPoint> void filter(
+			Collection<TDerived> dataPoints, 
 			TTile tile, 
 			TileSize tileSize, 
 			TileCoordinates tileCoordinates);

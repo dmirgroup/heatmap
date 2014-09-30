@@ -31,5 +31,5 @@ package de.uniwue.dmir.heatmap.util.mapper;
  * @param <P> type to map to
  */
 public interface IMapper<T, P> {
-	P map(T object); 
+	<TDerived extends T> P map(TDerived object); 
 }

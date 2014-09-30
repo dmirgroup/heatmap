@@ -36,7 +36,8 @@ extends AbstractGenericVisualizer<TTile, TPixel>
 implements IVisualizer<TTile> {
 	
 	public SimpleVisualizer(
-			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
+			IKeyValueIteratorFactory<TTile, RelativeCoordinates, 
+			TPixel> pixelIteratorFactory,
 			CombinedColorPipe<TPixel> colorPipe) {
 		
 		super(pixelIteratorFactory);

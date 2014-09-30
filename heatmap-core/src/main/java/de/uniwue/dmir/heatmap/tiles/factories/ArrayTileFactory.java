@@ -22,24 +22,30 @@ package de.uniwue.dmir.heatmap.tiles.factories;
 
 import java.lang.reflect.Array;
 
-import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.ITileFactory;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 
-@AllArgsConstructor
-public class ArrayTileFactory<I>
-implements ITileFactory<I[]> {
+public class ArrayTileFactory<TPixel>
+implements ITileFactory<TPixel[]> {
 
-	private Class<I> clazz;
+	private Class<TPixel> clazz;
+	
+	public ArrayTileFactory(Class<TPixel> clazz) {
+		this.clazz = clazz;
+	}
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public I[] newInstance(TileSize size, TileCoordinates coordinates) {
-		return (I[]) Array.newInstance(
+	public TPixel[] newInstance(TileSize size, TileCoordinates coordinates) {
+		return (TPixel[]) Array.newInstance(
 				this.clazz, 
 				size.getWidth() * size.getHeight());
 	}
+
+
+
+
 
 }

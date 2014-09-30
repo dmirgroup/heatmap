@@ -29,6 +29,17 @@ import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
+/**
+ * A simple (not optimized) geo datasource implementation holds a list of data points and
+ * scans this list for each {@link #getData(GeoBoundingBox)} request.
+ * During each scan it extracts {@link GeoCoordinates} from each 
+ * data point using the given {@link IMapper} and check if that point falls into
+ * the requested {@link GeoBoundingBox}.
+ * 
+ * @author Martin Becker
+ *
+ * @param <TData>
+ */
 public class GenericListGeoDatasource<TData> 
 implements IGeoDatasource<TData> {
 
@@ -49,7 +60,7 @@ implements IGeoDatasource<TData> {
 		this.toGeoCoordinatesMapper = toGeoCoordinatesMapper;
 	}
 	
-	public List<TData> getData(	GeoBoundingBox geoBoundingBox) {
+	public List<TData> getData(GeoBoundingBox geoBoundingBox) {
 		
 		// return everything if no bounding box is given
 		if (geoBoundingBox == null) {

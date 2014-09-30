@@ -27,7 +27,7 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 public class GeoPointToGeoCoordinateMapper<TPoint extends IGeoPoint>
 implements IMapper<TPoint, GeoCoordinates> {
 
-	public GeoCoordinates map(TPoint object) {
+	public <TDerived extends TPoint> GeoCoordinates map(TDerived object) {
 		return object.getGeoCoordinates();
 	}
 	

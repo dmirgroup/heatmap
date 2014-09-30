@@ -74,7 +74,7 @@ implements IMapper<TSource, TDestination> {
 
 	}
 
-	public TDestination map(TSource value) {
+	public <TDerived extends TSource> TDestination map(TDerived value) {
 		for (int i = 0; i < this.cutpoints.length; i++) {
 			TSource cutpoint = this.cutpoints[i];
 			int compare = value.compareTo(cutpoint);

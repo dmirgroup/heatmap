@@ -41,8 +41,8 @@ public interface IPixelAccess<TPixel, TTile> {
 			TTile tile,
 			TileSize tileSize);
 	
-	public void set(
-			TPixel pixelValue,
+	public <TDerived extends TPixel> void set(
+			TDerived pixelValue,
 			RelativeCoordinates relativeCoordinates,
 			TTile tile,
 			TileSize tileSize);

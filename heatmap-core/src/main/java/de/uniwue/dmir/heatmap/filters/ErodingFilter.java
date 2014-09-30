@@ -35,22 +35,22 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ErodingFilter<TData, TPixel, TTile>
-extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
+public class ErodingFilter<TPoint, TPixel, TTile>
+extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 
 	protected int erodingWidth;
 	protected int erodingHeight;
 	protected int erodingCenterX;
 	protected int erodingCenterY;;
 	
-	private IMapper<? super TData, TPixel> dataToTPixelixelMapper;
+	private IMapper<? super TPoint, TPixel> dataToTPixelixelMapper;
 	private IAdder<TPixel> adder;
 	
 	private boolean skipOutOfBoundsPoints;
 	
 	public ErodingFilter(
-			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
-			IMapper<? super TData, TPixel> dataToTPixelixelMapper,
+			IToRelativeCoordinatesMapper<? super TPoint> dataToRelativeCoordinatesMapper,
+			IMapper<? super TPoint, TPixel> dataToTPixelixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> pixelAdder,
 			
@@ -72,8 +72,8 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 		this.skipOutOfBoundsPoints = false;
 	}
 
-	public void filter(
-			TData dataTPixeloint, 
+	public <TDerived extends TPoint> void filter(
+			TDerived dataTPixeloint, 
 			RelativeCoordinates relativeCoordinates,
 			TTile tile, 
 			TileSize tileSize,

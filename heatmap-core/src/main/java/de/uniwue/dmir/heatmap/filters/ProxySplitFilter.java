@@ -34,12 +34,12 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  * 
  * @author Martin Becker
  *
- * @param <TData> type of data point
+ * @param <TPoint> type of data point
  * @param <TTile> type of tile
  */
-public class ProxySplitFilter<TData, TTile> 
-extends AbstractFilter<TData, TTile> 
-implements IConfigurableFilter<TData, TTile> {
+public class ProxySplitFilter<TPoint, TTile> 
+extends AbstractFilter<TPoint, TTile> 
+implements IConfigurableFilter<TPoint, TTile> {
 
 	@Setter
 	@Getter
@@ -57,25 +57,25 @@ implements IConfigurableFilter<TData, TTile> {
 	@Getter
 	private int centerY;
 	
-	private IMapper<? super TData, String> filterIdMapper;
-	private Map<String, IFilter<TData, TTile>> filters;
+	private IMapper<? super TPoint, String> filterIdMapper;
+	private Map<String, IFilter<TPoint, TTile>> filters;
 	
 	public ProxySplitFilter(			
-			IMapper<? super TData, String> filterIdMapper,
-			Map<String, IFilter<TData, TTile>> filters) {
+			IMapper<? super TPoint, String> filterIdMapper,
+			Map<String, IFilter<TPoint, TTile>> filters) {
 
 		this.filterIdMapper = filterIdMapper;
 		this.filters = filters;
 		
 		// calculate width, height, center x and center y
-		FilterDimensions<TData, TTile> filterDimensions = 
-				new FilterDimensions<TData, TTile>(filters.values());
+		FilterDimensions<TPoint, TTile> filterDimensions = 
+				new FilterDimensions<TPoint, TTile>(filters.values());
 		filterDimensions.setDimensions(this);
 	}
 
 	@Override
-	public void filter(
-			TData dataPoint, 
+	public <TDerived extends TPoint> void filter(
+			TDerived dataPoint, 
 			TTile tile,
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
@@ -84,7 +84,7 @@ implements IConfigurableFilter<TData, TTile> {
 		String filterId = this.filterIdMapper.map(dataPoint);
 		
 		// get filter
-		IFilter<TData, TTile> filter = this.filters.get(filterId);
+		IFilter<TPoint, TTile> filter = this.filters.get(filterId);
 		if (filter == null && filterId != null) {
 			// try to get default filter
 			filter = this.filters.get(null);

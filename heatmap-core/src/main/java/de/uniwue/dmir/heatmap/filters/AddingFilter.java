@@ -31,16 +31,16 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  *
  * @author Martin Becker
  *
- * @param <TData>
+ * @param <TPoint>
  * @param <TPixel>
  * @param <TTile>
  */
-public class AddingFilter<TData, TPixel, TTile> 
-extends ErodingFilter<TData, TPixel, TTile> {
+public class AddingFilter<TPoint, TPixel, TTile> 
+extends ErodingFilter<TPoint, TPixel, TTile> {
 	
 	public AddingFilter(
-			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper, 
-			IMapper<? super TData, TPixel> dataToPixelMapper,
+			IToRelativeCoordinatesMapper<? super TPoint> dataToRelativeCoordinatesMapper, 
+			IMapper<? super TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> pixelAdder) {
 		

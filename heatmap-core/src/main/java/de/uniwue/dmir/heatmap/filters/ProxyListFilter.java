@@ -39,16 +39,16 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  *
- * @param <TData>
+ * @param <TPoint>
  * @param <TTile>
  */
-public class ProxyListFilter<TData, TTile>
-extends AbstractConfigurableFilter<TData, TTile>
-implements IFilter<TData, TTile>{
+public class ProxyListFilter<TPoint, TTile>
+extends AbstractConfigurableFilter<TPoint, TTile>
+implements IFilter<TPoint, TTile>{
 	
-	private List<IFilter<TData, TTile>> filters;
+	private List<IFilter<TPoint, TTile>> filters;
 
-	public void addFilter(IFilter<TData, TTile> filter) {
+	public void addFilter(IFilter<TPoint, TTile> filter) {
 		
 		this.filters.add(filter);
 		
@@ -56,13 +56,13 @@ implements IFilter<TData, TTile>{
 	}
 	
 	@Override
-	public void filter(
-			TData dataPoint, 
+	public <TDerived extends TPoint>void filter(
+			TDerived dataPoint, 
 			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 
-		for (IFilter<TData, TTile> filter : this.filters) {
+		for (IFilter<TPoint, TTile> filter : this.filters) {
 			filter.filter(dataPoint, tile, tileSize, tileCoordinates);
 		}
 	}

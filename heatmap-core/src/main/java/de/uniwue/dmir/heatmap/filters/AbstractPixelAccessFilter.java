@@ -30,17 +30,17 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
  * 
  * @author Martin Becker
  *
- * @param <TData> type of the data to be incorporated into the tile
+ * @param <TPoint> type of the data to be incorporated into the tile
  * @param <TTile> type of the tile to incorporate data into
  */
 @ToString(callSuper = true)
-public abstract class AbstractPixelAccessFilter<TData, TPixel, TTile> 
-extends AbstractRelativeCoordinatesMapperFilter<TData, TTile> {
+public abstract class AbstractPixelAccessFilter<TPoint, TPixel, TTile> 
+extends AbstractRelativeCoordinatesMapperFilter<TPoint, TTile> {
 
 	protected IPixelAccess<TPixel, TTile> pixelAccess;
 	
 	public AbstractPixelAccessFilter(
-			IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper,
+			IToRelativeCoordinatesMapper<? super TPoint> toRelativeCoordinatesMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess) {
 		
 		super(toRelativeCoordinatesMapper);

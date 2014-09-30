@@ -27,7 +27,9 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 public class SimpleGeoPointToWeightedSquaredSumPixelMapper<TGroupDescription>
 implements IMapper<SimpleGeoPoint<TGroupDescription>, WeightedSquaredSumPixel> {
 	
-	public WeightedSquaredSumPixel map(SimpleGeoPoint<TGroupDescription> object) {
+	public <TDerived extends SimpleGeoPoint<TGroupDescription>> WeightedSquaredSumPixel map(
+			TDerived object) {
+		
 		WeightedSquaredSumPixel sum = new WeightedSquaredSumPixel(object.getValue());
 		return sum;
 	}

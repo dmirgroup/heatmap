@@ -34,20 +34,20 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  * 
  * @author Martin Becker
  *
- * @param <TData>
+ * @param <TPoint>
  * @param <TGroupTile>>
  * @param <TGroupContainerTile>>
  */
-public class ProxyGroupFilter<TData, TGroupTile, TGroupContainerTile> 
-extends AbstractProxyFilter<TData, TGroupTile, TGroupContainerTile> {
+public class ProxyGroupFilter<TPoint, TGroupTile, TGroupContainerTile> 
+extends AbstractProxyFilter<TPoint, TGroupTile, TGroupContainerTile> {
 
-	private IMapper<? super TData, List<String>> groupIdMapper;
+	private IMapper<? super TPoint, List<String>> groupIdMapper;
 	private IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess;
 
 	public ProxyGroupFilter(
-			IMapper<? super TData, List<String>> groupIdMapper,
+			IMapper<? super TPoint, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
-			IFilter<TData, TGroupTile> filter) {
+			IFilter<TPoint, TGroupTile> filter) {
 
 		super(filter);
 		this.groupIdMapper = groupIdMapper;
@@ -55,8 +55,8 @@ extends AbstractProxyFilter<TData, TGroupTile, TGroupContainerTile> {
 	}
 	
 	@Override
-	public void filter(
-			TData dataPoint, 
+	public <TDerived extends TPoint> void filter(
+			TDerived dataPoint, 
 			TGroupContainerTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {

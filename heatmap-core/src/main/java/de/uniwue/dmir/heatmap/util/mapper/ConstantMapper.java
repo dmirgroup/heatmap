@@ -29,7 +29,7 @@ implements IMapper<TSource, TDestination> {
 	private TDestination destination;
 	
 	@Override
-	public TDestination map(TSource object) {
+	public <TDerived extends TSource> TDestination map(TDerived object) {
 		return this.destination;
 	}
 

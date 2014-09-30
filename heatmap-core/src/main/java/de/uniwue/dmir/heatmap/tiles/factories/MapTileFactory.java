@@ -28,12 +28,12 @@ import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 
-public class MapTileFactory<K, I>
-implements ITileFactory<Map<K, I>> {
+public class MapTileFactory<TKey, TPixel>
+implements ITileFactory<Map<TKey, TPixel>> {
 	
 	@Override
-	public Map<K, I> newInstance(TileSize size, TileCoordinates coordinates) {
-		return new HashMap<K, I>();
+	public Map<TKey, TPixel> newInstance(TileSize size, TileCoordinates coordinates) {
+		return new HashMap<TKey, TPixel>();
 	}
 
 }

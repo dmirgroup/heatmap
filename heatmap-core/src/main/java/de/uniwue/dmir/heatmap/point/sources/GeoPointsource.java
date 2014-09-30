@@ -41,24 +41,26 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 /**
- * A {@link IPointsource} which works on a {@link IGeoDatasource} and
- * allows to specify the used map projection.
+ * A {@link IPointsource} which works on a {@link IGeoDatasource} which
+ * provides geo data points based on {@link GeoBoundingBox} requests.
+ * It handles the projection from tile to {@link GeoBoundingBox}es based on the
+ * given {@link IMapProjection}.
  * 
  * @author Martin Becker
  *
  */
 @AllArgsConstructor
-public class GeoPointsource<TData> 
-implements IPointsource<TData> {
+public class GeoPointsource<TPoint> 
+implements IPointsource<TPoint> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	private IGeoDatasource<TData> geoDatasource;
+	private IGeoDatasource<TPoint> geoDatasource;
 	private IMapProjection projection;
 
-	private IMapper<TData, GeoCoordinates> toGeoCoordinatesMapper;
+	private IMapper<TPoint, GeoCoordinates> toGeoCoordinatesMapper;
 	
-	public Iterator<TData> getPoints(
+	public Iterator<TPoint> getPoints(
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter) {
 		
@@ -88,7 +90,7 @@ implements IPointsource<TData> {
 		
 		this.logger.debug("Extended bounding box: {}", geoBoundingBox);
 		
-		List<TData> sourceData = this.geoDatasource.getData(geoBoundingBox);
+		List<TPoint> sourceData = this.geoDatasource.getData(geoBoundingBox);
 		
 		return sourceData.iterator();
 	}
@@ -98,11 +100,11 @@ implements IPointsource<TData> {
 			int zoom,
 			IFilter<?, ?> filter) {
 		
-		List<TData> sourceDataSet = this.geoDatasource.getData(null);
+		List<TPoint> sourceDataSet = this.geoDatasource.getData(null);
 		
 		Set<TileCoordinates> coordinates = new HashSet<TileCoordinates>();
 		
-		for (TData data : sourceDataSet) {
+		for (TPoint data : sourceDataSet) {
 
 			GeoCoordinates geoCoordinates = 
 					this.toGeoCoordinatesMapper.map(data);

@@ -37,7 +37,7 @@ public class MapperPipeline<T> implements IMapper<T, T> {
 	}
 	
 	@Override
-	public T map(T object) {
+	public <TDerived extends T> T map(TDerived object) {
 
 		T result = object;
 		for (IMapper<T, T> m : this.mappers) {

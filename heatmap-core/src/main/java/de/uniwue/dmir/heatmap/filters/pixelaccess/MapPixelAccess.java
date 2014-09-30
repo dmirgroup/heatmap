@@ -38,8 +38,8 @@ implements IPixelAccess<I, Map<RelativeCoordinates, I>>{
 	}
 
 	@Override
-	public void set(
-			I pixelValue, 
+	public <TDerived extends I> void set(
+			TDerived pixelValue, 
 			RelativeCoordinates relativeCoordinates,
 			Map<RelativeCoordinates, I> tile, 
 			TileSize tileSize) {

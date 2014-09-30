@@ -41,13 +41,13 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  * 
  * @author Martin Becker
  *
- * @param <TData>
+ * @param <TPoint>
  * @param <TGroupTile>>
  * @param <TGroupContainerTile>>
  */
-public class ProxyGroupSplitFilter<TData, TGroupTile, TGroupContainerTile> 
-extends AbstractFilter<TData, TGroupContainerTile> 
-implements IConfigurableFilter<TData, TGroupContainerTile>{
+public class ProxyGroupSplitFilter<TPoint, TGroupTile, TGroupContainerTile> 
+extends AbstractFilter<TPoint, TGroupContainerTile> 
+implements IConfigurableFilter<TPoint, TGroupContainerTile>{
 
 	@Setter
 	@Getter
@@ -65,43 +65,43 @@ implements IConfigurableFilter<TData, TGroupContainerTile>{
 	@Getter
 	private int centerY;
 	
-	private IMapper<? super TData, List<String>> groupIdMapper;
+	private IMapper<? super TPoint, List<String>> groupIdMapper;
 	private IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess;
-	private Map<String, IFilter<TData, TGroupTile>> filters;
+	private Map<String, IFilter<TPoint, TGroupTile>> filters;
 	
 	public ProxyGroupSplitFilter(
-			IMapper<? super TData, List<String>> groupIdMapper,
+			IMapper<? super TPoint, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
-			Map<String, IFilter<TData, TGroupTile>> filters) {
+			Map<String, IFilter<TPoint, TGroupTile>> filters) {
 
 		this.groupIdMapper = groupIdMapper;
 		this.groupAccess = groupAccess;
 		this.filters = filters;
 		
 		// calculate width, height, center x and center y
-		FilterDimensions<TData, TGroupTile> filterDimensions = 
-				new FilterDimensions<TData, TGroupTile>(filters.values());
+		FilterDimensions<TPoint, TGroupTile> filterDimensions = 
+				new FilterDimensions<TPoint, TGroupTile>(filters.values());
 		filterDimensions.setDimensions(this);
 	}
 	
 	@SuppressWarnings("serial")
 	public ProxyGroupSplitFilter(
-			IMapper<? super TData, List<String>> groupIdMapper,
+			IMapper<? super TPoint, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
-			final IFilter<TData, TGroupTile> filter) {
+			final IFilter<TPoint, TGroupTile> filter) {
 
 		this(
 				groupIdMapper, 
 				groupAccess, 
-				new HashMap<String, IFilter<TData, TGroupTile>>() {{
+				new HashMap<String, IFilter<TPoint, TGroupTile>>() {{
 					put(null, filter);
 				}});
 	
 	}
 	
 	@Override
-	public void filter(
-			TData dataPoint, 
+	public <TDerived extends TPoint> void filter(
+			TDerived dataPoint, 
 			TGroupContainerTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
@@ -116,7 +116,7 @@ implements IConfigurableFilter<TData, TGroupContainerTile>{
 					tileCoordinates);
 			
 			// get filter
-			IFilter<TData, TGroupTile> filter = this.filters.get(groupId);
+			IFilter<TPoint, TGroupTile> filter = this.filters.get(groupId);
 			if (filter == null && groupId != null) {
 				// try to get default filter
 				filter = this.filters.get(null);

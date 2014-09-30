@@ -26,6 +26,9 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
  * Data source to retrieve data relevant for a tile.
+ * Such data is always a set of "points". 
+ * Points are an abstract concept and may also be any kind of spatial object,
+ * like lines, polygons etc..
  * 
  * @author Martin Becker
  *

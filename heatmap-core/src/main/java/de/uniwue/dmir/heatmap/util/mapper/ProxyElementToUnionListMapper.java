@@ -73,7 +73,7 @@ implements IMapper<TSource, List<TListElement>> {
 	}
 	
 	@Override
-	public List<TListElement> map(TSource object) {
+	public <TDerived extends TSource> List<TListElement> map(TDerived object) {
 		
 		List<TListElement> union = new ArrayList<TListElement>();
 

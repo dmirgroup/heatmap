@@ -34,11 +34,11 @@ import de.uniwue.dmir.heatmap.util.Arrays2d;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 @Getter
-public class ImageFilter<TData, TPixel, TTile> 
-extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
+public class ImageFilter<TPoint, TPixel, TTile> 
+extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 
 	/** Maps external data, e.g., from the data base to internal data, i.e., tile data. */
-	private IMapper<TData, TPixel> dataToPixelMapper;
+	private IMapper<TPoint, TPixel> dataToPixelMapper;
 	
 	/** Defines how to add up internal data. */
 	private IAdder<TPixel> adder;
@@ -63,8 +63,8 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 	private Double[] array;
 
 	public ImageFilter(
-			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> dataToPixelMapper,
+			IToRelativeCoordinatesMapper<TPoint> dataToRelativeCoordinatesMapper,
+			IMapper<TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> adder,
 			IScalarMultiplier<TPixel> multiplier,
@@ -74,8 +74,8 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 	}
 	
 	public ImageFilter(
-			IToRelativeCoordinatesMapper<TData> tdataTRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> dataToPixelMapper,
+			IToRelativeCoordinatesMapper<TPoint> tdataTRelativeCoordinatesMapper,
+			IMapper<TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> adder,
 			IScalarMultiplier<TPixel> multiplier,
@@ -87,8 +87,8 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 	}
 	
 	private ImageFilter(
-			IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper,
-			IMapper<TData, TPixel> dataToPixelMapper,
+			IToRelativeCoordinatesMapper<TPoint> dataToRelativeCoordinatesMapper,
+			IMapper<TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> adder,
 			IScalarMultiplier<TPixel> multiplier,
@@ -147,8 +147,8 @@ extends AbstractPixelAccessFilter<TData, TPixel, TTile> {
 		}
 	}
 	
-	public void filter(
-			TData dataTPixeloint, 
+	public <TDerived extends TPoint> void filter(
+			TDerived dataTPixeloint, 
 			RelativeCoordinates relativeCoordinates,
 			TTile tile, 
 			TileSize tileSize,

@@ -31,7 +31,7 @@ implements IMapper<T, P> {
 	private Map<T, P> map;
 	
 	@Override
-	public P map(T object) {
+	public <TDerived extends T> P map(TDerived object) {
 		return this.map.get(object);
 	}
 

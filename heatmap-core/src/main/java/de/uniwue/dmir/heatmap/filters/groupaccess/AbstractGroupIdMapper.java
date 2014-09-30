@@ -39,7 +39,7 @@ implements IMapper<T, List<String>> {
 	protected abstract void add(T object, List<String> ids);
 	
 	@Override
-	public List<String> map(T object) {
+	public <TDerived extends T> List<String> map(TDerived object) {
 		
 		List<String> ids = new ArrayList<String>();
 		if (this.overallGroupId != null) {

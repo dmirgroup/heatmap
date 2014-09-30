@@ -38,18 +38,18 @@ import de.uniwue.dmir.heatmap.IFilter;
  * 
  * @author Martin Becker
  *
- * @param <TData> data to incorporate into the outer tile
+ * @param <TPoint> data to incorporate into the outer tile
  * @param <TInnerTile> type of the outer tile to incorporate data into
  * @param <TOuterTile> type of the inner tile to incorporate data into
  */
 @Getter
 @Setter
 @AllArgsConstructor
-public abstract class AbstractProxyFilter<TData, TInnerTile, TOuterTile> 
-extends AbstractFilter<TData, TOuterTile> {
+public abstract class AbstractProxyFilter<TPoint, TInnerTile, TOuterTile> 
+extends AbstractFilter<TPoint, TOuterTile> {
 
 	/** Proxied filter. */
-	protected IFilter<TData, TInnerTile> filter;
+	protected IFilter<TPoint, TInnerTile> filter;
 
 	@Override
 	public int getWidth() {

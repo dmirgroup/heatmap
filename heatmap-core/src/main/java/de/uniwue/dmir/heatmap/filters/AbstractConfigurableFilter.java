@@ -44,15 +44,15 @@ import de.uniwue.dmir.heatmap.IFilter;
  * 
  * @author Martin Becker
  *
- * @param <TData> type of the data to be incorporated into the tile
+ * @param <TPoint> type of the data to be incorporated into the tile
  * @param <TTile> type of the tile to incorporate data into
  */
 @Getter
 @Setter
 @ToString
-public abstract class AbstractConfigurableFilter<TData, TTile> 
-extends AbstractFilter<TData, TTile> 
-implements IConfigurableFilter<TData, TTile>{
+public abstract class AbstractConfigurableFilter<TPoint, TTile> 
+extends AbstractFilter<TPoint, TTile> 
+implements IConfigurableFilter<TPoint, TTile>{
 
 	protected int width = 1;
 	protected int height = 1;

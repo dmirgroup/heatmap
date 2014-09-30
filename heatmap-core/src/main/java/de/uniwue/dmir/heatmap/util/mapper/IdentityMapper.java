@@ -24,7 +24,7 @@ package de.uniwue.dmir.heatmap.util.mapper;
 public class IdentityMapper<T> implements IMapper<T, T>{
 
 	@Override
-	public T map(T object) {
+	public <TDerived extends T> T map(TDerived object) {
 		return object;
 	}
 

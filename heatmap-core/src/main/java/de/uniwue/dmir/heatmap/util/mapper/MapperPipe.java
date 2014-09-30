@@ -47,7 +47,7 @@ implements IMapper<TKey, TValue> {
 	}
 	
 	@Override
-	public TValue map(TKey object) {
+	public <TDerived extends TKey> TValue map(TDerived object) {
 		
 		TValue result = null;
 		

@@ -30,7 +30,7 @@ implements IMapper<TSource, TResult>{
 	private IMapper<TIntermediate, TResult> intermediateMapper;
 	
 	@Override
-	public TResult map(TSource object) {
+	public <TDerived extends TSource> TResult map(TDerived object) {
 		TIntermediate intermediate = this.sourceMapper.map(object);
 		return this.intermediateMapper.map(intermediate);
 	}

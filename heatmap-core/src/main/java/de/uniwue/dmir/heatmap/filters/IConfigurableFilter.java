@@ -22,8 +22,8 @@ package de.uniwue.dmir.heatmap.filters;
 
 import de.uniwue.dmir.heatmap.IFilter;
 
-public interface IConfigurableFilter<TData, TTile> 
-extends IFilter<TData, TTile> {
+public interface IConfigurableFilter<TPoint, TTile> 
+extends IFilter<TPoint, TTile> {
 	
 	public void setWidth(int width);
 	public void setHeight(int height);

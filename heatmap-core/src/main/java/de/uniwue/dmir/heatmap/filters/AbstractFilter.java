@@ -36,22 +36,22 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  *
- * @param <TData> type of the data to be incorporated into the tile
+ * @param <TPoint> type of the data to be incorporated into the tile
  * @param <TTile> type of the tile to incorporate data into
  */
-public abstract class AbstractFilter<TData, TTile> 
-implements IFilter<TData, TTile> {
+public abstract class AbstractFilter<TPoint, TTile> 
+implements IFilter<TPoint, TTile> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Override
-	public void filter(
-			Collection<TData> dataPoints, 
+	public <TDerived extends TPoint> void filter(
+			Collection<TDerived> dataPoints, 
 			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
-		for (TData dataPoint : dataPoints) {
+		for (TPoint dataPoint : dataPoints) {
 			this.filter(dataPoint, tile, tileSize, tileCoordinates);
 		}
 	}

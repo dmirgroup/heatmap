@@ -32,29 +32,31 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  *
- * @param <TData> type of the data to be incorporated into the tile
+ * @param <TPoint> type of the data to be incorporated into the tile
  * @param <TTile> type of the tile to incorporate data into
  */
 @ToString(callSuper = true)
-public abstract class AbstractRelativeCoordinatesMapperFilter<TData, TTile> 
-extends AbstractConfigurableFilter<TData, TTile> {
+public abstract class AbstractRelativeCoordinatesMapperFilter<TPoint, TTile> 
+extends AbstractConfigurableFilter<TPoint, TTile> {
 
-	protected IToRelativeCoordinatesMapper<TData> dataToRelativeCoordinatesMapper;
+	protected IToRelativeCoordinatesMapper<? super TPoint> dataToRelativeCoordinatesMapper;
 	
-	public AbstractRelativeCoordinatesMapperFilter(IToRelativeCoordinatesMapper<TData> toRelativeCoordinatesMapper) {
+	public AbstractRelativeCoordinatesMapperFilter(
+			IToRelativeCoordinatesMapper<? super TPoint> toRelativeCoordinatesMapper) {
+		
 		this.dataToRelativeCoordinatesMapper = toRelativeCoordinatesMapper;
 	}
 	
-	public abstract void filter(
-			TData dataPoint, 
+	public abstract <TDerived extends TPoint> void filter(
+			TDerived dataPoint, 
 			RelativeCoordinates relativeCoordinates,
 			TTile tile,
 			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 	
 	@Override
-	public void filter(
-			TData dataPoint, 
+	public <TDerived extends TPoint> void filter(
+			TDerived dataPoint, 
 			TTile tile, 
 			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
