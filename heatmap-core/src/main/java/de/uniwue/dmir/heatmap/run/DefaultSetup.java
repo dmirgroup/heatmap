@@ -23,6 +23,8 @@ package de.uniwue.dmir.heatmap.run;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import lombok.Data;
@@ -46,6 +48,7 @@ import de.uniwue.dmir.heatmap.filters.pixelaccess.MapPixelAccess;
 import de.uniwue.dmir.heatmap.filters.pointmappers.geo.SimpleGeoPointToSumPixelMapper;
 import de.uniwue.dmir.heatmap.heatmaps.DefaultHeatmap;
 import de.uniwue.dmir.heatmap.point.sources.GeoPointsource;
+import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
@@ -54,8 +57,9 @@ import de.uniwue.dmir.heatmap.point.sources.geo.datasources.RTreeGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.projections.MercatorMapProjection;
 import de.uniwue.dmir.heatmap.point.types.geo.GeoPointToGeoCoordinateMapper;
 import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
-import de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor;
-import de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.processors.SingleImageProcessor;
+import de.uniwue.dmir.heatmap.processors.visualizers.MapTileVisualizer;
+import de.uniwue.dmir.heatmap.processors.visualizers.PipeProxyVisualizer;
 import de.uniwue.dmir.heatmap.processors.visualizers.SimpleVisualizer;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.CombinedColorPipe;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.CutpointColorScheme;
@@ -97,6 +101,18 @@ public class DefaultSetup {
 				required = true)
 		private File outputFolder;
 		
+		@Option(
+				name = "-minZ", 
+				aliases = {"-minZoomLevel"}, 
+				usage = "")
+		private int minZoomLevel = -1;
+		
+		@Option(
+				name = "-maxZ", 
+				aliases = {"-maxZoomLevel"}, 
+				usage = "")
+		private int maxZoomLevel = -1;
+		
 		
 	}
 	
@@ -118,14 +134,29 @@ public class DefaultSetup {
 				settings.getCsvFile(),
 				settings.getCsvSeparator(),
 				settings.isCsvSkipFirstLine(),
-				settings.getOutputFolder().getAbsolutePath());
+				settings.getOutputFolder().getAbsolutePath(),
+				settings);
+		
+		
 	}
 	
 
-	public static void test(File file, String separator, boolean skipFirstLine, String outputParentFolder) throws IOException {
+	public static void test(
+			File file, 
+			String separator, 
+			boolean skipFirstLine, 
+			String outputParentFolder,
+			Settings settings) throws IOException {
 		
 		// heatmap settings
 		HeatmapSettings heatmapSettings = new HeatmapSettings();
+		if (settings.getMinZoomLevel() > -1) {
+			heatmapSettings.getZoomLevelRange().setMin(settings.getMinZoomLevel());
+		}
+		if (settings.getMaxZoomLevel() > -1) {
+			heatmapSettings.getZoomLevelRange().setMax(settings.getMaxZoomLevel());
+		}
+		
 		
 		// settings up point source
 		
@@ -177,7 +208,7 @@ public class DefaultSetup {
 		
 		// the processor processing each tile
 		
-		IVisualizer<Map<RelativeCoordinates, SumPixel>> visualizer = 
+		IVisualizer<Map<RelativeCoordinates, SumPixel>> simpleVisualizer = 
 				new SimpleVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel>(
 						new MapKeyValueIteratorFactory<RelativeCoordinates, SumPixel>(),
 						new CombinedColorPipe<SumPixel>(
@@ -206,15 +237,36 @@ public class DefaultSetup {
 												true)), 
 						null));
 		
-		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor =
-				new VisualizerFileWriterProcessor<Map<RelativeCoordinates,SumPixel>>(
-						outputParentFolder, 
-						new DefaultFileStrategy(), 
-						"png", 
+		// pipe visualizer
+		
+		List<IVisualizer<Map<RelativeCoordinates, SumPixel>>> visualizers =
+				new ArrayList<IVisualizer<Map<RelativeCoordinates,SumPixel>>>();
+		visualizers.add(simpleVisualizer);
+		
+		IVisualizer<Map<RelativeCoordinates, SumPixel>> pipeVisualizer =
+				new PipeProxyVisualizer<Map<RelativeCoordinates,SumPixel>>(
+						visualizers);
+
+		IVisualizer<Map<RelativeCoordinates, SumPixel>> visualizer = pipeVisualizer;
+		
+//		ITileProcessor<Map<RelativeCoordinates, SumPixel>> visualizerProcessor =
+//				new VisualizerFileWriterProcessor<Map<RelativeCoordinates,SumPixel>>(
+//						outputParentFolder,
+//						new DefaultFileStrategy(), 
+//						"png",
+//						visualizer);
+		
+		ITileProcessor<Map<RelativeCoordinates, SumPixel>> singleProcessor =
+				new SingleImageProcessor<Map<RelativeCoordinates, SumPixel>>(
+						new GeoBoundingBox(-130, 20, -60, 50), 
+						mapProjection, 
+						new MapTileVisualizer<Map<RelativeCoordinates, SumPixel>>(
+								"http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg"), 
 						visualizer);
+		
+		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor = singleProcessor;
 		heatmap.processTiles(processor);
-		
-		
+
 	}
 	
 }

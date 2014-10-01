@@ -20,6 +20,7 @@
  */
 package de.uniwue.dmir.heatmap.point.sources.geo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
@@ -34,4 +35,25 @@ public class GeoBoundingBox {
 		this.max = max;
 	}
 	
+	public GeoBoundingBox(double minLon, double minLat, double maxLon, double maxLat) {
+		this.min = new GeoCoordinates(minLon, minLat);
+		this.max = new GeoCoordinates(maxLon, maxLat);
+	}
+
+	public GeoBoundingBoxCorners getCorners() {
+		return new GeoBoundingBoxCorners(
+				this.min.copy(), 
+				new GeoCoordinates(this.max.getLongitude(), this.min.getLatitude()),
+				this.max.copy(), 
+				new GeoCoordinates(this.min.getLongitude(), this.max.getLatitude()));
+	}
+	
+	@Data
+	@AllArgsConstructor
+	public static class GeoBoundingBoxCorners {
+		private GeoCoordinates bottomLeft;
+		private GeoCoordinates bottomRight;
+		private GeoCoordinates topRight;
+		private GeoCoordinates topLeft;
+	}
 }

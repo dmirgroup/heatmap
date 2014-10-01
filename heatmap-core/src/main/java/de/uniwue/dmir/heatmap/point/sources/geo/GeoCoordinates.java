@@ -35,4 +35,8 @@ import lombok.NoArgsConstructor;
 public class GeoCoordinates {
 	private double longitude;
 	private double latitude;
+	
+	public GeoCoordinates copy() {
+		return new GeoCoordinates(this.longitude, this.latitude);
+	}
 }

@@ -20,7 +20,6 @@
  */
 package de.uniwue.dmir.heatmap.processors.visualizers;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -52,7 +51,6 @@ import de.uniwue.dmir.heatmap.util.IAggregatorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory.IKeyValueIterator;
 import de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory;
-import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 /**
  * TODO: test r-tree

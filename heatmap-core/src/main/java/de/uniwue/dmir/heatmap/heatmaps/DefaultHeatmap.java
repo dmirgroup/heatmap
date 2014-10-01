@@ -234,6 +234,7 @@ implements IHeatmap<TTile> {
 					zoomLevel);
 		}
 
+		processor.close();
 		this.logger.debug("Done processing tiles.");
 		
 	}
