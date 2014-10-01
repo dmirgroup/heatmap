@@ -29,7 +29,7 @@ import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
 
 public class ListGeoDatasource<TGroupDescription> 
-implements IGeoDatasource<SimpleGeoPoint<TGroupDescription>> {
+implements IGeoDatasource<SimpleGeoPoint<TGroupDescription>, Object> {
 
 	@Getter
 	private List<SimpleGeoPoint<TGroupDescription>> list;
@@ -43,7 +43,8 @@ implements IGeoDatasource<SimpleGeoPoint<TGroupDescription>> {
 	}
 	
 	public List<SimpleGeoPoint<TGroupDescription>> getData(
-			GeoBoundingBox geoBoundingBox) {
+			GeoBoundingBox geoBoundingBox,
+			Object parameters) {
 		
 		// return everything if no bounding box is given
 		if (geoBoundingBox == null) {

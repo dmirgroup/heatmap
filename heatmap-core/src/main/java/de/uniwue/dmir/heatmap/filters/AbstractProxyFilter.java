@@ -20,10 +20,10 @@
  */
 package de.uniwue.dmir.heatmap.filters;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.IFilter;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 
 /**
  * A proxy filter helps to relay a given tile type to a filter which was built
@@ -44,9 +44,21 @@ import de.uniwue.dmir.heatmap.IFilter;
  */
 @Getter
 @Setter
-@AllArgsConstructor
 public abstract class AbstractProxyFilter<TPoint, TInnerTile, TOuterTile> 
 extends AbstractFilter<TPoint, TOuterTile> {
+
+	public AbstractProxyFilter(
+			ITileSizeProvider tileSizeProvider,
+			IFilter<TPoint, TInnerTile> filter) {
+		super(tileSizeProvider);
+		
+		if (!filter.getTileSizeProvider().equals(tileSizeProvider)) {
+			throw new IllegalArgumentException(
+					"The given filter's tile size provider does not match "
+					+ "the tile size provider.");
+		}
+		this.filter = filter;
+	}
 
 	/** Proxied filter. */
 	protected IFilter<TPoint, TInnerTile> filter;

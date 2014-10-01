@@ -21,6 +21,7 @@
 package de.uniwue.dmir.heatmap.filters;
 
 import lombok.ToString;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.filters.pixelaccess.IPixelAccess;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
 
@@ -40,10 +41,11 @@ extends AbstractRelativeCoordinatesMapperFilter<TPoint, TTile> {
 	protected IPixelAccess<TPixel, TTile> pixelAccess;
 	
 	public AbstractPixelAccessFilter(
+			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<? super TPoint> toRelativeCoordinatesMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess) {
 		
-		super(toRelativeCoordinatesMapper);
+		super(tileSizeProvider, toRelativeCoordinatesMapper);
 		this.pixelAccess = pixelAccess;
 	}
 	

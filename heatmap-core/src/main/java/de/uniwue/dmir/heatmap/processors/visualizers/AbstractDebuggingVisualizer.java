@@ -30,12 +30,12 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniwue.dmir.heatmap.IVisualizer;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 public abstract class AbstractDebuggingVisualizer<TTile> 
-implements IVisualizer<TTile> {
+extends AbstractVisualizer<TTile> {
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -47,35 +47,35 @@ implements IVisualizer<TTile> {
 	@Setter
 	private Color debugColor = Color.BLACK;
 
-	public AbstractDebuggingVisualizer() {
+	public AbstractDebuggingVisualizer(ITileSizeProvider tileSizeProvider) {
+		super(tileSizeProvider);
 		this.debug = false;
 	}
 	
 	@Override
 	public BufferedImage visualize(
 			TTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		BufferedImage image = this.visualizeWithDebuggingInformation(
 				tile, 
-				tileSize, 
 				tileCoordinates);
 
-		this.addDebugInformation(tileSize, tileCoordinates, image);
+		this.addDebugInformation(tileCoordinates, image);
 		
 		return image;
 	}
 	
 	public abstract BufferedImage visualizeWithDebuggingInformation(
 			TTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 	
 	public void addDebugInformation(
-			TileSize tileSize,
 			TileCoordinates tileCoordinates,
 			BufferedImage image) {
+		
+		TileSize tileSize = 
+				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		if (this.debug) {
 

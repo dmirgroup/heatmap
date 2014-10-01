@@ -21,6 +21,7 @@
 package de.uniwue.dmir.heatmap;
 
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.tiles.coordinates.projection.ITileCoordinatesProjection;
 
 /**
  * A {@link ITileCoordinatesProjection} 
@@ -35,10 +36,13 @@ public interface ITileProcessor<TTile> {
 	 * Process a given tile.
 	 * 
 	 * @param tile tile to process
-	 * @param tileSize the dimensions of the given tile
+	 * @param tileSize the size of the tile to process
 	 * @param tileCoordinates the coordinates of the given tile
 	 */
-	void process(TTile tile, TileSize tileSize, TileCoordinates tileCoordinates);
+	void process(
+			TTile tile, 
+			TileSize tileSize,
+			TileCoordinates tileCoordinates);
 	
 	/**
 	 * Closes to processor.

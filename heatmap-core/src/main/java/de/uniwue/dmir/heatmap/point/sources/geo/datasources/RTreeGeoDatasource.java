@@ -31,14 +31,14 @@ import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
-public class RTreeGeoDatasource<TData>
-extends AbstractCachedGeoDatasource<TData> {
+public class RTreeGeoDatasource<TData, TParameters>
+extends AbstractCachedGeoDatasource<TData, TParameters> {
 	
 	private IMapper<TData, GeoCoordinates> mapper;
 	private RTree<TData> rtree;
 	
 	public RTreeGeoDatasource(
-			IGeoDatasource<TData> dataSource,
+			IGeoDatasource<TData, TParameters> dataSource,
 			IMapper<TData, GeoCoordinates> mapper) {
 		
 		super(dataSource);
@@ -50,7 +50,7 @@ extends AbstractCachedGeoDatasource<TData> {
 	}
 
 	@Override
-	public List<TData> getData(GeoBoundingBox geoBoundingBox) {
+	public List<TData> getData(GeoBoundingBox geoBoundingBox, TParameters parameters) {
 
 		double minLon;
 		double minLat;
@@ -98,7 +98,7 @@ extends AbstractCachedGeoDatasource<TData> {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start("getting data");
 		
-		List<TData> data = super.dataSource.getData(null);
+		List<TData> data = super.dataSource.getData(null, null);
 
 		stopWatch.stop();
 		super.logger.debug("getting data - count: {}", data.size());

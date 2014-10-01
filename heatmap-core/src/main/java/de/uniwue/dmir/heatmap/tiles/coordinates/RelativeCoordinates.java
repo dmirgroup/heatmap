@@ -27,7 +27,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.IZoomLevelMapper;
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.ZoomLevelSize;
 import de.uniwue.dmir.heatmap.util.Arrays2d;
@@ -61,7 +61,7 @@ public class RelativeCoordinates {
 			TileCoordinates tileCoordinates,
 			IFilter<?, ?> filter,
 			TileSize tileSize,
-			IZoomLevelMapper zoomLevelMapper) {
+			IZoomLevelSizeProvider zoomLevelMapper) {
 		
 		List<TileCoordinates> coordinates = new ArrayList<TileCoordinates>();
 		
@@ -81,7 +81,7 @@ public class RelativeCoordinates {
 				 0 + 1,  1 + 1,  test, 3, 3);
 		
 		ZoomLevelSize gridDimensions = 
-				zoomLevelMapper.getSize(tileCoordinates.getZoom());
+				zoomLevelMapper.getZoomLevelSize(tileCoordinates.getZoom());
 		
 		for (int x = -1; x <= 1; x ++) {
 

@@ -18,8 +18,9 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap;
+package de.uniwue.dmir.heatmap.tiles.coordinates.projection;
 
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
@@ -34,9 +35,9 @@ public interface ITileCoordinatesProjection {
 	
 	TileCoordinates fromCustomToTopLeft(
 			TileCoordinates tileCoordinates,
-			IZoomLevelMapper zoomLevelMapper);
+			IZoomLevelSizeProvider zoomLevelMapper);
 	
 	TileCoordinates fromTopLeftToCustom(
 			TileCoordinates tileCoordinates,
-			IZoomLevelMapper zoomLevelMapper);
+			IZoomLevelSizeProvider zoomLevelMapper);
 }

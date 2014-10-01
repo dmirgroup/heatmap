@@ -23,6 +23,7 @@ package de.uniwue.dmir.heatmap.filters;
 import java.util.List;
 
 import de.uniwue.dmir.heatmap.IFilter;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.groupaccess.IGroupAccess;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -45,11 +46,12 @@ extends AbstractProxyFilter<TPoint, TGroupTile, TGroupContainerTile> {
 	private IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess;
 
 	public ProxyGroupFilter(
+			ITileSizeProvider tileSizeProvider,
 			IMapper<? super TPoint, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
 			IFilter<TPoint, TGroupTile> filter) {
 
-		super(filter);
+		super(tileSizeProvider, filter);
 		this.groupIdMapper = groupIdMapper;
 		this.groupAccess = groupAccess;
 	}
@@ -58,8 +60,10 @@ extends AbstractProxyFilter<TPoint, TGroupTile, TGroupContainerTile> {
 	public <TDerived extends TPoint> void filter(
 			TDerived dataPoint, 
 			TGroupContainerTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
+		
+		TileSize tileSize = 
+				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		List<String> groupIds = this.groupIdMapper.map(dataPoint);
 		for (String groupId : groupIds) {
@@ -72,7 +76,6 @@ extends AbstractProxyFilter<TPoint, TGroupTile, TGroupContainerTile> {
 			super.filter.filter(
 					dataPoint, 
 					groupData, 
-					tileSize, 
 					tileCoordinates);
 		}
 		

@@ -21,27 +21,39 @@
 package de.uniwue.dmir.heatmap.heatmaps;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileRangeProvider;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
+import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 @AllArgsConstructor
-public class EmptyHeatmap<I> 
-implements IHeatmap<I>{
-
-	@Getter
-	private HeatmapSettings settings;
-
+public class EmptyHeatmap<TTile, TParameters> 
+implements IHeatmap<TTile, TParameters>{
+	
 	@Override
-	public I getTile(TileCoordinates coordinates) {
+	public ITileSizeProvider getTileSizeProvider() {
 		return null;
 	}
 
 	@Override
-	public void processTiles(ITileProcessor<I> processor) {
-		// nothing to do
+	public IZoomLevelSizeProvider getZoomLevelSizeProvider() {
+		return null;
+	}
+
+	@Override
+	public TTile getTile(TileCoordinates coordinates, TParameters parameters) {
+		return null;
+	}
+
+	@Override
+	public void processTiles(
+			ITileProcessor<TTile> processor, 
+			ZoomLevelRange range,
+			ITileRangeProvider tileRangeProvider, 
+			TParameters parameters) {
 	}
 
 }

@@ -40,8 +40,8 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  *
  * @param <TData>
  */
-public class GenericListGeoDatasource<TData> 
-implements IGeoDatasource<TData> {
+public class GenericListGeoDatasource<TData, TParameters> 
+implements IGeoDatasource<TData, TParameters> {
 
 	private IMapper<TData, GeoCoordinates> toGeoCoordinatesMapper;
 	
@@ -60,7 +60,7 @@ implements IGeoDatasource<TData> {
 		this.toGeoCoordinatesMapper = toGeoCoordinatesMapper;
 	}
 	
-	public List<TData> getData(GeoBoundingBox geoBoundingBox) {
+	public List<TData> getData(GeoBoundingBox geoBoundingBox, TParameters parameters) {
 		
 		// return everything if no bounding box is given
 		if (geoBoundingBox == null) {

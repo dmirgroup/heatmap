@@ -31,7 +31,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.TileSize;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -41,15 +41,16 @@ extends AbstractFileWriterProcessor<TTile> {
 	private ObjectMapper mapper;
 	
 	public JsonFileWriterProcessor(
+			ITileSizeProvider tileSizeProvider,
 			String parentFolder,
 			IFileStrategy fileStrategy, 
 			boolean gzip) {
-		super(parentFolder, fileStrategy, "json", gzip);
+		super(tileSizeProvider, parentFolder, fileStrategy, "json", gzip);
 		this.mapper = new ObjectMapper();
 	}
 
 	@Override
-	public void process(TTile tile, TileSize tileSize, TileCoordinates coordinates) {
+	public void process(TTile tile, TileCoordinates coordinates) {
 		
 		try {
 			
@@ -71,19 +72,25 @@ extends AbstractFileWriterProcessor<TTile> {
 	public static class Factory<TTile>
 	implements IFileWriterProcessorFactory<TTile> {
 
+		protected ITileSizeProvider tileSizeProvider;
 		protected IFileStrategy fileStrategy;
 
-		public Factory(IFileStrategy fileStrategy) {
-			this.fileStrategy = fileStrategy;
-		}
-		
 		@Setter
 		@Getter
 		private boolean gzip;
 		
+		public Factory(
+				ITileSizeProvider tileSizeProvider, 
+				IFileStrategy fileStrategy) {
+			this.tileSizeProvider = tileSizeProvider;
+			this.fileStrategy = fileStrategy;
+		}
+		
+		
 		@Override
 		public ITileProcessor<TTile> getInstance(String parentFolder) {
 			return new JsonFileWriterProcessor<TTile>(
+					this.tileSizeProvider,
 					parentFolder, 
 					this.fileStrategy, 
 					this.gzip);

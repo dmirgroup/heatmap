@@ -25,7 +25,7 @@ import java.awt.image.BufferedImage;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
- * TODO: maybe let the {@link #visualize(Object, TileSize, TileCoordinates)} 
+ * TODO: maybe let the {@link #visualize(Object, TileCoordinates)} 
  * method take a {@link BufferedImage} as parameter as well in order to
  * support {@link IVisualizer} pipes more efficiently (instead of drawing image
  * over image)
@@ -38,6 +38,6 @@ public interface IVisualizer<TTile> {
 	
 	BufferedImage visualize(
 			TTile tile, 
-			TileSize tileSize, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 }

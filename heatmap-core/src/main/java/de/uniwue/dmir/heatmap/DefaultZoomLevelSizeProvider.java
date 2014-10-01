@@ -20,6 +20,20 @@
  */
 package de.uniwue.dmir.heatmap;
 
-public interface IZoomLevelMapper {
-	public ZoomLevelSize getSize(int zoom);
+/**
+ * A {@link IZoomLevelSizeProvider} returning a (2^zoom, 2^zoom) tile grid size for a 
+ * given zoom level "zoom".
+ * 
+ * @author Martin Becker
+ *
+ */
+public class DefaultZoomLevelSizeProvider 
+implements IZoomLevelSizeProvider {
+
+	@Override
+	public ZoomLevelSize getZoomLevelSize(int zoom) {
+		int xy = (1 << zoom); // log scale using base 2
+		return new ZoomLevelSize(xy, xy);
+	}
+	
 }

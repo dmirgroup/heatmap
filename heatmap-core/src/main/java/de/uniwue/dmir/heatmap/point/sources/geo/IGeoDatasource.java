@@ -29,14 +29,16 @@ import java.util.List;
  *
  * @param <TData> type of the data to retrieve
  */
-public interface IGeoDatasource<TData> {
+public interface IGeoDatasource<TData, TParameters> {
 	
 	/**
 	 * @param geoBoundingBox geo bounding box; 
 	 * 		may be <code>null</code> which corresponds to all data
+	 * @param parameters other parameters influencing the returned points;
+	 * 		can be <code>null</code> (in this case use default parameters)
 	 * 
 	 * @return data within the given bounding box
 	 */
-	List<TData> getData(GeoBoundingBox geoBoundingBox);
+	List<TData> getData(GeoBoundingBox geoBoundingBox, TParameters parameters);
 	
 }

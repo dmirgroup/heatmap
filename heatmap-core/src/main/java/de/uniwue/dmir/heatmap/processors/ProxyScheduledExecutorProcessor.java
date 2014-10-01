@@ -31,11 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.TileSize;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 public class ProxyScheduledExecutorProcessor<TTile>
-implements ITileProcessor<TTile> {
+extends AbstractProcessor<TTile> {
 
 	public static final long SETTINGS_SHUTDOWN_TIMEOUT = 1;
 	public static final TimeUnit SETTINGS_SHUTDOWN_TIME_UNIT = TimeUnit.SECONDS;
@@ -47,8 +47,11 @@ implements ITileProcessor<TTile> {
 	private ITileProcessor<TTile> tileProcessor;
 	
 	public ProxyScheduledExecutorProcessor(
+			ITileSizeProvider tileSizeProvider,
 			ITileProcessor<TTile> tileProcessor, 
 			int numberOfSimultaneousThreads) {
+		
+		super(tileSizeProvider);
 		
 		this.tileProcessor = tileProcessor;
 		
@@ -71,7 +74,6 @@ implements ITileProcessor<TTile> {
 	@Override
 	public void process(
 			final TTile tile, 
-			final TileSize tileSize,
 			final TileCoordinates tileCoordinates) {
 		
 		this.logger.debug(
@@ -85,7 +87,6 @@ implements ITileProcessor<TTile> {
 					public void runWithoutExceptionHandling() {
 						ProxyScheduledExecutorProcessor.this.tileProcessor.process(
 								tile, 
-								tileSize, 
 								tileCoordinates);
 					}
 				},

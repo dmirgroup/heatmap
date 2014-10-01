@@ -23,6 +23,7 @@ package de.uniwue.dmir.heatmap.processors.visualizers;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.CombinedColorPipe;
@@ -36,11 +37,12 @@ extends AbstractGenericVisualizer<TTile, TPixel>
 implements IVisualizer<TTile> {
 	
 	public SimpleVisualizer(
+			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, 
 			TPixel> pixelIteratorFactory,
 			CombinedColorPipe<TPixel> colorPipe) {
 		
-		super(pixelIteratorFactory);
+		super(tileSizeProvider, pixelIteratorFactory);
 		this.colorPipe = colorPipe;
 	}
 
@@ -49,9 +51,11 @@ implements IVisualizer<TTile> {
 	@Override
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile, 
-			TileSize tileSize,
 			TileCoordinates coordinates) {
 
+		TileSize tileSize = 
+				super.tileSizeProvider.getTileSize(coordinates.getZoom());
+		
 		BufferedImage bufferedImage = 
 				new BufferedImage(
 						tileSize.getWidth(), 

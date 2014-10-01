@@ -26,25 +26,36 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import lombok.Getter;
+
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileRangeProvider;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
+import de.uniwue.dmir.heatmap.TileRange;
+import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor;
 import de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-public class FilesystemHeatmap<I> 
-implements IHeatmap<I> {
+public class FilesystemHeatmap<TTile, TParameters> 
+implements IHeatmap<TTile, TParameters> {
 
 	public static final String FILE_EXTENSION = "json";
 	
-	private HeatmapSettings settings;
-	private Class<I> clazz;
+	@Getter
+	private IZoomLevelSizeProvider zoomLevelSizeProvider;
+	
+	@Getter
+	private ITileSizeProvider tileSizeProvider;
+	
+	private Class<TTile> clazz;
 	
 	private String parentFolder;
 	private IFileStrategy fileStrategy;
@@ -53,12 +64,15 @@ implements IHeatmap<I> {
 	private ObjectMapper mapper;
 
 	public FilesystemHeatmap(
-			HeatmapSettings settings,
-			Class<I> clazz,
+			IZoomLevelSizeProvider zoomLevelSizeProvider,
+			ITileSizeProvider tileSizeProvider,
+			Class<TTile> clazz,
 			String parentFolder,
 			boolean gzip) {
 
-		this.settings = settings;
+		this.zoomLevelSizeProvider = zoomLevelSizeProvider;
+		this.tileSizeProvider = tileSizeProvider;
+		
 		this.clazz = clazz;
 		this.parentFolder = parentFolder;
 		this.fileStrategy = new DefaultFileStrategy();
@@ -68,12 +82,7 @@ implements IHeatmap<I> {
 	}
 
 	@Override
-	public HeatmapSettings getSettings() {
-		return this.settings;
-	}
-
-	@Override
-	public I getTile(TileCoordinates coordinates) {
+	public TTile getTile(TileCoordinates coordinates, TParameters parameters) {
 		
 		String extension = 
 				FILE_EXTENSION 
@@ -105,7 +114,16 @@ implements IHeatmap<I> {
 	}
 
 	@Override
-	public void processTiles(ITileProcessor<I> processor) {
+	public void processTiles(
+			ITileProcessor<TTile> processor,
+			ZoomLevelRange zoomLevelRange,
+			ITileRangeProvider tileRangeProvider,
+			TParameters parameters) {
+		
+		if (processor.getTileSizeProvider().equals(this.tileSizeProvider)) {
+			throw new IllegalArgumentException(
+					"Processor's tile size provider does not match.");
+		}
 		
 		TileCoordinates coordinates = new TileCoordinates(0, 0, 0);
 		File folder = new File(this.parentFolder);
@@ -115,7 +133,15 @@ implements IHeatmap<I> {
 			if (zoomFolder.isDirectory()) {
 				
 				int zoom = Integer.parseInt(zoomFolder.getName());
+				if (!zoomLevelRange.isInRange(zoom)) {
+					continue;
+				}
 				coordinates.setZoom(zoom);
+
+				TileRange tileRange = null;
+				if (tileRangeProvider != null) {
+					tileRange = tileRangeProvider.getTileRange(zoom);
+				}
 				
 				for (File xFolder : zoomFolder.listFiles()) {
 					
@@ -130,11 +156,14 @@ implements IHeatmap<I> {
 								long y = Long.parseLong(yString);
 								coordinates.setY(y);
 								
-								I tile = this.getTile(coordinates);
+								if (tileRange != null && !tileRange.isInRange(coordinates)) {
+									continue;
+								}
+								
+								TTile tile = this.getTile(coordinates, parameters);
 								
 								processor.process(
 										tile, 
-										this.settings.getTileSize(), 
 										coordinates);
 						}
 					}

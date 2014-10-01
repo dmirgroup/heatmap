@@ -20,12 +20,29 @@
  */
 package de.uniwue.dmir.heatmap;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class ZoomLevelRange {
+	
+	public static final int DEFAULT_MIN = 0;
+	public static final int DEFAULT_MAX = 18;
+	
 	private int min;
 	private int max;
+	
+	public ZoomLevelRange() {
+		this(DEFAULT_MIN, DEFAULT_MAX);
+	}
+	
+	public ZoomLevelRange(int min, int max) {
+		super();
+		this.min = min;
+		this.max = max;
+	}
+	
+	public boolean isInRange(int zoom) {
+		return this.min <= zoom && this.max >= zoom;
+	}
+
 }

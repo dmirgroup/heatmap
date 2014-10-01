@@ -25,12 +25,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import de.uniwue.dmir.heatmap.TileSize;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicOverallTile;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
@@ -42,7 +43,6 @@ import de.uniwue.dmir.heatmap.tiles.pixels.PointSizePixel;
 import de.uniwue.dmir.heatmap.util.GeoPolygon;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
-@AllArgsConstructor
 public class ApicPointFilter
 extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 
@@ -79,11 +79,32 @@ extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 	private IMapper<String, IMapProjection> cityToMapProjectionMapper;
 	private IMapper<String, GeoPolygon> cityToGeoPolygonMapper;
 
+	public ApicPointFilter(
+			ITileSizeProvider tileSizeProvider,
+			boolean limitToCityBounds, Date minimumTimestampRecorded,
+			Date maximumTimestampRecorded,
+			IMapper<ApicGeoPoint, String> pointToGroupMapper,
+			IMapper<String, String> groupToCityMapper,
+			IMapper<ApicGeoPoint, String> pointToCityMapper,
+			IMapper<String, IMapProjection> cityToMapProjectionMapper,
+			IMapper<String, GeoPolygon> cityToGeoPolygonMapper) {
+		
+		super(tileSizeProvider);
+		
+		this.limitToCityBounds = limitToCityBounds;
+		this.minimumTimestampRecorded = minimumTimestampRecorded;
+		this.maximumTimestampRecorded = maximumTimestampRecorded;
+		this.pointToGroupMapper = pointToGroupMapper;
+		this.groupToCityMapper = groupToCityMapper;
+		this.pointToCityMapper = pointToCityMapper;
+		this.cityToMapProjectionMapper = cityToMapProjectionMapper;
+		this.cityToGeoPolygonMapper = cityToGeoPolygonMapper;
+	}
+	
 	@Override
 	public void filter(
 			ApicGeoPoint dataPoint, 
 			ApicOverallTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		FilterResult r = new FilterResult();

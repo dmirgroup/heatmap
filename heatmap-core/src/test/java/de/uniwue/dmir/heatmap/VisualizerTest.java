@@ -20,7 +20,6 @@
  */
 package de.uniwue.dmir.heatmap;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -81,7 +80,7 @@ public class VisualizerTest {
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
 	
-//	@Test
+	@Test
 	public void test() throws JsonParseException, JsonMappingException, IOException {
 		
 		SimpleModule module = new SimpleModule("EnhancedDatesModule", new Version(0, 1, 0, "alpha"));
@@ -123,8 +122,11 @@ public class VisualizerTest {
 				0.5, 
 				10);
 		
+		ITileSizeProvider tileSizeProvider = new SameTileSizeProvider();
+		
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> averageVisualizer =
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates,WeightedSumPixel>, WeightedSumPixel>(
+						tileSizeProvider,
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(), 
 						new QuadraticRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToAverageMapper(), 
@@ -138,6 +140,7 @@ public class VisualizerTest {
 		
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> alphaVisualizer =
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates,WeightedSumPixel>, WeightedSumPixel>(
+						tileSizeProvider,
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(), 
 						new MaxRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToOnOffSizeMapper(), 
@@ -151,12 +154,16 @@ public class VisualizerTest {
 		
 		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSumPixel>> maskVisualizer =
 				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSumPixel>>(
-						averageVisualizer, alphaVisualizer);
+						tileSizeProvider,
+						averageVisualizer, 
+						alphaVisualizer);
 		
-		BufferedImage image = maskVisualizer.visualize(
-				tile, 
-				new TileSize(256, 256),
-				new TileCoordinates(0,0,0));
+//		BufferedImage image = 
+				maskVisualizer.visualize(
+					tile, 
+					new TileCoordinates(0,0,0));
+		
+//		ImageUtil.displayImage(image);
 		
 //		ImageIO.write(image, "png", new File("out/test.png"));
 	}

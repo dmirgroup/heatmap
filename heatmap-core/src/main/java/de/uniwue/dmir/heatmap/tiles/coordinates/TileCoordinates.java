@@ -20,9 +20,9 @@
  */
 package de.uniwue.dmir.heatmap.tiles.coordinates;
 
+import de.uniwue.dmir.heatmap.tiles.coordinates.projection.ITileCoordinatesProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import de.uniwue.dmir.heatmap.ITileCoordinatesProjection;
 
 /**
  * <p>Coordinates of a tile consisting of zoom level, and (x,y) coordinates.</p>

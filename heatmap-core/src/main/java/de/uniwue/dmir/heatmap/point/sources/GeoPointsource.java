@@ -25,18 +25,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import lombok.AllArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.IPointsource;
-import de.uniwue.dmir.heatmap.TileSize;
-import de.uniwue.dmir.heatmap.filters.AbstractConfigurableFilter;
+import de.uniwue.dmir.heatmap.TileRange;
+import de.uniwue.dmir.heatmap.filters.NoFilter;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
+import de.uniwue.dmir.heatmap.point.sources.geo.MapProjectionUtils;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
@@ -50,18 +52,19 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  *
  */
 @AllArgsConstructor
-public class GeoPointsource<TPoint> 
-implements IPointsource<TPoint> {
+public class GeoPointsource<TPoint, TParameters> 
+implements IPointsource<TPoint, TParameters> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	private IGeoDatasource<TPoint> geoDatasource;
+	private IGeoDatasource<TPoint, TParameters> geoDatasource;
 	private IMapProjection projection;
 
 	private IMapper<TPoint, GeoCoordinates> toGeoCoordinatesMapper;
 	
 	public Iterator<TPoint> getPoints(
 			TileCoordinates tileCoordinates,
+			TParameters parameters,
 			IFilter<?, ?> filter) {
 		
 		this.logger.debug(
@@ -75,13 +78,7 @@ implements IPointsource<TPoint> {
 				"Tile bounding box: {}", 
 				this.projection.fromTileCoordinatesToGeoBoundingBox(
 						tileCoordinates, 
-						new AbstractConfigurableFilter<Object, Object>() {
-							@Override
-							public void filter(Object dataPoint, Object tile,
-									TileSize tileSize,
-									TileCoordinates tileCoordinates) {
-							}
-						}));
+						new NoFilter<Object, Object>(null)));
 		
 		GeoBoundingBox geoBoundingBox = 
 				this.projection.fromTileCoordinatesToGeoBoundingBox(
@@ -90,17 +87,30 @@ implements IPointsource<TPoint> {
 		
 		this.logger.debug("Extended bounding box: {}", geoBoundingBox);
 		
-		List<TPoint> sourceData = this.geoDatasource.getData(geoBoundingBox);
+		List<TPoint> sourceData = this.geoDatasource.getData(geoBoundingBox, parameters);
 		
 		return sourceData.iterator();
 	}
 	
+	// TODO: update to only return within given tiles range
 	@Override
 	public Iterator<TileCoordinates> getTileCoordinatesWithContent(
 			int zoom,
+			TileRange tileRange,
+			TParameters parameters,
 			IFilter<?, ?> filter) {
 		
-		List<TPoint> sourceDataSet = this.geoDatasource.getData(null);
+		GeoBoundingBox geoBoundingBox = null;
+		if (tileRange != null) {
+				geoBoundingBox = MapProjectionUtils.fromTileCoordinatesToGeoBoundingBox(
+						this.projection,
+						zoom,
+						tileRange,
+						filter);
+		}
+		
+		List<TPoint> sourceDataSet = 
+				this.geoDatasource.getData(geoBoundingBox, parameters);
 		
 		Set<TileCoordinates> coordinates = new HashSet<TileCoordinates>();
 		

@@ -26,7 +26,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.IZoomLevelMapper;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.ZoomLevelSize;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
@@ -52,8 +53,8 @@ public class MercatorMapProjection implements IMapProjection {
 	public static final double MIN_LON = -180;
 	public static final double MAX_LON = +180;
 	
-	private TileSize tileSize;
-	private IZoomLevelMapper zoomLevelMapper;
+	private ITileSizeProvider tileSizeProvider;
+	private IZoomLevelSizeProvider zoomLevelMapper;
 	
 	@Override
 	public RelativeCoordinates fromGeoToRelativeCoordinates(
@@ -77,15 +78,17 @@ public class MercatorMapProjection implements IMapProjection {
 			TileCoordinates tileCoordinates, 
 			IFilter<?, ?> filter) {
 		
-		// top-left and bottom-right corners
+		TileSize tileSize =
+				this.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
+		// top-left and bottom-right corners
 		
 		PixelCoordinates leftTop = fromTileToPixelCoordinates(tileCoordinates);
 		
 		long left = leftTop.getX();
 		long top = leftTop.getY();
-		long right = left + this.tileSize.getWidth();
-		long bottom = top + this.tileSize.getHeight();
+		long right = left + tileSize.getWidth();
+		long bottom = top + tileSize.getHeight();
 		
 		// padding
 		
@@ -115,6 +118,9 @@ public class MercatorMapProjection implements IMapProjection {
 			GeoCoordinates geoCoordinates,
 			int zoom,
 			IFilter<?, ?> filter) {
+
+		TileSize tileSize =
+				this.tileSizeProvider.getTileSize(zoom);
 		
 		List<TileCoordinates> coordinates = new ArrayList<TileCoordinates>();
 		
@@ -130,7 +136,7 @@ public class MercatorMapProjection implements IMapProjection {
 				relativeCoordinates.overlappingTiles(
 						tileCoordinates, 
 						filter, 
-						this.tileSize,
+						tileSize,
 						this.zoomLevelMapper);
 		
 		coordinates.addAll(overlappingCoordinates);
@@ -154,16 +160,23 @@ public class MercatorMapProjection implements IMapProjection {
 			PixelCoordinates pixelCoordinates, 
 			int zoom) {
 		
+		TileSize tileSize =
+				this.tileSizeProvider.getTileSize(zoom);
+		
 		return new TileCoordinates(
-				(int) (pixelCoordinates.getX() / this.tileSize.getWidth()), 
-				(int) (pixelCoordinates.getY() / this.tileSize.getHeight()),
+				(int) (pixelCoordinates.getX() / tileSize.getWidth()), 
+				(int) (pixelCoordinates.getY() / tileSize.getHeight()),
 				zoom);
 	}
 	
 	private PixelCoordinates fromTileToPixelCoordinates(TileCoordinates tileCoordinates) {
+		
+		TileSize tileSize =
+				this.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
+		
 		return new PixelCoordinates(
-				tileCoordinates.getX() * this.tileSize.getWidth(),
-				tileCoordinates.getY() * this.tileSize.getHeight());
+				tileCoordinates.getX() * tileSize.getWidth(),
+				tileCoordinates.getY() * tileSize.getHeight());
 	}
 	
 	private GeoCoordinates fromPixelToGeoCoordinates(
@@ -208,11 +221,14 @@ public class MercatorMapProjection implements IMapProjection {
 	 */
 	private PixelDimensions getPixelDimensions(int zoom) {
 		
-		ZoomLevelSize zoomLevelSize = this.zoomLevelMapper.getSize(zoom);
+		TileSize tileSize =
+				this.tileSizeProvider.getTileSize(zoom);
+		
+		ZoomLevelSize zoomLevelSize = this.zoomLevelMapper.getZoomLevelSize(zoom);
 		
 		return new PixelDimensions(
-				zoomLevelSize.getWidth() * this.tileSize.getWidth(),
-				zoomLevelSize.getHeight() * this.tileSize.getHeight());
+				zoomLevelSize.getWidth() * tileSize.getWidth(),
+				zoomLevelSize.getHeight() * tileSize.getHeight());
 	}
 
 	/**
@@ -257,8 +273,11 @@ public class MercatorMapProjection implements IMapProjection {
 			PixelCoordinates pixelCoordinates,
 			TileCoordinates tileCoordinates) {
 		
-		int x = (int) (pixelCoordinates.getX() - (tileCoordinates.getX() * this.tileSize.getWidth()));
-		int y = (int) (pixelCoordinates.getY() - (tileCoordinates.getY() * this.tileSize.getHeight()));
+		TileSize tileSize =
+				this.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
+		
+		int x = (int) (pixelCoordinates.getX() - (tileCoordinates.getX() * tileSize.getWidth()));
+		int y = (int) (pixelCoordinates.getY() - (tileCoordinates.getY() * tileSize.getHeight()));
 		
 		return new RelativeCoordinates(x, y);
 	}

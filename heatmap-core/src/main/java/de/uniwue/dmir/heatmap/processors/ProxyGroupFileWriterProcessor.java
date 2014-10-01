@@ -22,13 +22,14 @@ package de.uniwue.dmir.heatmap.processors;
 
 import java.io.File;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.Getter;
-import lombok.Setter;
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.TileSize;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor.IFileWriterProcessorFactory;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
@@ -43,7 +44,7 @@ import de.uniwue.dmir.heatmap.util.mapper.IMapper;
  * @param <TGroupContainer>
  */
 public class ProxyGroupFileWriterProcessor<TGroupData, TGroupContainer> 
-implements ITileProcessor<TGroupContainer> {
+extends AbstractProcessor<TGroupContainer> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass()); 
 	
@@ -60,10 +61,13 @@ implements ITileProcessor<TGroupContainer> {
 	private IMapper<String, String> groupIdMapper;
 	
 	public ProxyGroupFileWriterProcessor(
+			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TGroupContainer, String, TGroupData> groupIteratorFactory,
 			IFileWriterProcessorFactory<TGroupData> fileWriter,
 			String parentFolder) {
-
+		
+		super(tileSizeProvider);
+		
 		this.groupIteratorFactory = groupIteratorFactory;
 		this.parentFolder = parentFolder;
 		this.fileWriter = fileWriter;
@@ -73,7 +77,6 @@ implements ITileProcessor<TGroupContainer> {
 	@Override
 	public void process(
 			TGroupContainer tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		if (tile == null) {
@@ -107,7 +110,7 @@ implements ITileProcessor<TGroupContainer> {
 			ITileProcessor<TGroupData> fileWriter = 
 					this.fileWriter.getInstance(parentFolder.toString());
 			
-			fileWriter.process(groupData, tileSize, tileCoordinates);
+			fileWriter.process(groupData, tileCoordinates);
 			fileWriter.close();
 		}
 	}

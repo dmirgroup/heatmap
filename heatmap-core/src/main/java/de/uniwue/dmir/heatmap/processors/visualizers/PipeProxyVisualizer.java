@@ -25,8 +25,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
-import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
@@ -41,24 +41,38 @@ public class PipeProxyVisualizer<TTile> extends AbstractDebuggingVisualizer<TTil
 	private List<IVisualizer<TTile>> visualizers;
 	
 	public PipeProxyVisualizer(
+			ITileSizeProvider tileSizeProvider,
 			IVisualizer<TTile> bottom,
 			IVisualizer<TTile> top) {
+		
+		super(tileSizeProvider);
 		
 		this.visualizers = 
 				new ArrayList<IVisualizer<TTile>>();
 
-		visualizers.add(bottom);
-		visualizers.add(top);
+		this.visualizers.add(bottom);
+		this.visualizers.add(top);
 	}
 	
-	public PipeProxyVisualizer(List<IVisualizer<TTile>> visualizers) {
+	public PipeProxyVisualizer(
+			ITileSizeProvider tileSizeProvider,
+			List<IVisualizer<TTile>> visualizers) {
+		
+		super(tileSizeProvider);
+		
+		for (IVisualizer<TTile> v : visualizers) {
+			if (!v.getTileSizeProvider().equals(super.tileSizeProvider)) {
+				throw new IllegalArgumentException(
+						"A visualizer's tile size provider does not match.");
+			}
+		}
+		
 		this.visualizers = visualizers;
 	}
 
 	@Override
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile,
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 
 		if (this.visualizers == null) {
@@ -68,7 +82,7 @@ public class PipeProxyVisualizer<TTile> extends AbstractDebuggingVisualizer<TTil
 		BufferedImage stack = null;
 		Graphics g = null;
 		for (IVisualizer<TTile> v : this.visualizers) {
-			BufferedImage layer = v.visualize(tile, tileSize, tileCoordinates);
+			BufferedImage layer = v.visualize(tile, tileCoordinates);
 			if (stack == null && layer != null) {
 				stack = layer;
 				g = layer.getGraphics();

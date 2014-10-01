@@ -30,7 +30,7 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniwue.dmir.heatmap.TileSize;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 public class MapTileVisualizer<TTile> 
@@ -41,14 +41,14 @@ implements IBackgroundVisualizer<TTile> {
 	
 	private String url;
 	
-	public MapTileVisualizer(String url) {
+	public MapTileVisualizer(ITileSizeProvider tileSizeProvider, String url) {
+		super(tileSizeProvider);
 		this.url = url;
 	}
 	
 	@Override
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile,
-			TileSize tileSize, 
 			TileCoordinates tileCoordinates) {
 		
 		try {

@@ -29,7 +29,7 @@ public class EntryPoint {
 	public static final Logger LOGGER = LoggerFactory.getLogger(EntryPoint.class);
 	
 	public static final String SETTINGS_FILE = "settings.xml";
-	
+
 	public static final String HEATMAP_BEAN = "heatmap";
 	public static final String WRITER_BEAN = "writer";
 	
@@ -55,7 +55,8 @@ public class EntryPoint {
 		ITileProcessor tileProcessor = 
 				appContext.getBean(WRITER_BEAN, ITileProcessor.class);
 		
-		heatmap.processTiles(tileProcessor);
+		// TODO: adjust
+		heatmap.processTiles(tileProcessor, null, null, null);
 
 		tileProcessor.close();
 		appContext.close();

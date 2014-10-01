@@ -26,14 +26,14 @@ import org.slf4j.LoggerFactory;
 import de.uniwue.dmir.heatmap.point.sources.geo.IGeoDatasource;
 
 
-public abstract class AbstractProxyGeoDatasource<TData> 
-implements IGeoDatasource<TData> {
+public abstract class AbstractProxyGeoDatasource<TData, TParamters> 
+implements IGeoDatasource<TData, TParamters> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	protected IGeoDatasource<TData> dataSource;
+	protected IGeoDatasource<TData, TParamters> dataSource;
 	
-	public AbstractProxyGeoDatasource(IGeoDatasource<TData> dataSource) {
+	public AbstractProxyGeoDatasource(IGeoDatasource<TData, TParamters> dataSource) {
 		this.dataSource = dataSource;
 	}
 	

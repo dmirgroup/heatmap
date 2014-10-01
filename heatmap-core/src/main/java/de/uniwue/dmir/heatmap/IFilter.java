@@ -44,7 +44,7 @@ public interface IFilter<TPoint, TTile> {
 	<TDerived extends TPoint> void filter(
 			TDerived dataPoint, 
 			TTile tile, 
-			TileSize tileSize, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 	
 	/**
@@ -55,8 +55,8 @@ public interface IFilter<TPoint, TTile> {
 	 */
 	<TDerived extends TPoint> void filter(
 			Collection<TDerived> dataPoints, 
-			TTile tile, 
-			TileSize tileSize, 
+			TTile tile,
+			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 	
 	/**

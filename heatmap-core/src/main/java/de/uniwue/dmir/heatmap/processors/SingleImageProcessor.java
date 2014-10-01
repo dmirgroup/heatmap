@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.NoFilter;
@@ -40,7 +40,8 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.ImageUtil;
 
-public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
+public class SingleImageProcessor<TTile> 
+extends AbstractProcessor<TTile> {
 
 	private GeoBoundingBox boundingBox;
 	private IMapProjection mapProjection;
@@ -51,10 +52,13 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 	private Map<Integer, Map<TileCoordinates, BufferedImage>> tiles;
 	
 	public SingleImageProcessor(
+			ITileSizeProvider tileSizeProvider,
 			GeoBoundingBox geoBoundingBox,
 			IMapProjection mapProjection,
 			IBackgroundVisualizer<TTile> backgroundVisualizer,
 			IVisualizer<TTile> visualizer) {
+		
+		super(tileSizeProvider);
 		
 		this.boundingBox = geoBoundingBox;
 		this.mapProjection = mapProjection;
@@ -67,7 +71,6 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 	@Override
 	public void process(
 			TTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		Map<TileCoordinates, BufferedImage> tiles = this.tiles.get(tileCoordinates.getZoom());
@@ -76,7 +79,7 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 			this.tiles.put(tileCoordinates.getZoom(), tiles);
 		}
 		
-		BufferedImage image = this.visualizer.visualize(tile, tileSize, tileCoordinates);
+		BufferedImage image = this.visualizer.visualize(tile, tileCoordinates);
 		
 		tiles.put(tileCoordinates, image);
 		
@@ -85,9 +88,12 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 	@Override
 	public void close() {
 		
-		IFilter<?, ?> filter = new NoFilter<Object, Object>();
+		IFilter<?, ?> filter = new NoFilter<Object, Object>(this.tileSizeProvider);
 		
 		for (int zoom : this.tiles.keySet()) {
+			
+			TileSize tileSize =
+					super.tileSizeProvider.getTileSize(zoom);
 			
 			Map<TileCoordinates, BufferedImage> tiles = this.tiles.get(zoom);
 			
@@ -100,13 +106,13 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 			TileCoordinates bottomLeft = bottomLeftList.get(0);
 			TileCoordinates topRight = topRightList.get(0);
 			
-			// tile coordinates start from the top left TODO: is this always the case? see ITileCoordinatesProjection
+			// tile coordinates start from the top left 
 			long diffX = topRight.getX() - bottomLeft.getX();
 			long diffY = bottomLeft.getY() - topRight.getY();
 			
 			BufferedImage image = new BufferedImage(
-						(int) (diffX + 1) * 256, 
-						(int) (diffY + 1) * 256, 
+						(int) (diffX + 1) * tileSize.getWidth(), 
+						(int) (diffY + 1) * tileSize.getHeight(), 
 						BufferedImage.TYPE_INT_ARGB);
 			Graphics g = image.getGraphics();
 			
@@ -119,23 +125,27 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 					BufferedImage tileBackground = 
 							this.backgroundVisualizer.visualize(
 									null, 
-									null, 
 									tileCoordinates);
 					
 					g.drawImage(
 							tileBackground, 
-							(int) (x - bottomLeft.getX()) * 256, 
-							(int) (y - topRight.getY()) * 256, 
+							(int) (x - bottomLeft.getX()) * tileSize.getWidth(), 
+							(int) (y - topRight.getY()) * tileSize.getHeight(), 
 							null);
 					
 					BufferedImage overlay = null;
 					if (tiles != null) {
+						
 						overlay = tiles.get(tileCoordinates);
+						
+						int pixelX = (int) (x - bottomLeft.getX()) * tileSize.getWidth();
+						int pixelY = (int) (y - topRight.getY()) * tileSize.getHeight();
+						
 						if (overlay != null) {
 							g.drawImage(
 									overlay, 
-									(int) (x - bottomLeft.getX()) * 256, 
-									(int) (y - topRight.getY()) * 256, 
+									pixelX, 
+									pixelY, 
 									null);
 						}
 					}
@@ -146,30 +156,40 @@ public class SingleImageProcessor<TTile> implements ITileProcessor<TTile> {
 			
 			RelativeCoordinates topLeftRelative = 
 					this.mapProjection.fromGeoToRelativeCoordinates(
-							new GeoCoordinates(this.boundingBox.getMin().getLongitude(), this.boundingBox.getMax().getLatitude()), 
+							new GeoCoordinates(
+									this.boundingBox.getMin().getLongitude(), 
+									this.boundingBox.getMax().getLatitude()), 
 							new TileCoordinates(bottomLeft.getX(), topRight.getY(), zoom));
 //							bottomLeft);
 			
 			RelativeCoordinates bottomRightRelative = 
 					this.mapProjection.fromGeoToRelativeCoordinates(
-							new GeoCoordinates(this.boundingBox.getMax().getLongitude(), this.boundingBox.getMin().getLatitude()),
+							new GeoCoordinates(
+									this.boundingBox.getMax().getLongitude(), 
+									this.boundingBox.getMin().getLatitude()),
 							new TileCoordinates(topRight.getX(), bottomLeft.getY(), zoom));
 //							topRight);
 			
-			System.out.println(topLeftRelative);
-			System.out.println(bottomRightRelative);
+//			System.out.println(topLeftRelative);
+//			System.out.println(bottomRightRelative);
 			
 			int topLeftX = topLeftRelative.getX();
 			int topLeftY = topLeftRelative.getY();
-			int width = image.getWidth() - topLeftRelative.getX() - (256 - bottomRightRelative.getX());
-			int height = image.getHeight() - topLeftRelative.getY() - (256 - bottomRightRelative.getY());
+			int width = 
+					image.getWidth() 
+					- topLeftRelative.getX() 
+					- (tileSize.getWidth() - bottomRightRelative.getX());
+			int height = 
+					image.getHeight() 
+					- topLeftRelative.getY() 
+					- (tileSize.getHeight() - bottomRightRelative.getY());
 			
-			System.out.println(topLeftX);
-			System.out.println(topLeftY);
-			System.out.println(width);
-			System.out.println(height);
-			System.out.println(image.getWidth());
-			System.out.println(image.getHeight());
+//			System.out.println(topLeftX);
+//			System.out.println(topLeftY);
+//			System.out.println(width);
+//			System.out.println(height);
+//			System.out.println(image.getWidth());
+//			System.out.println(image.getHeight());
 			
 			BufferedImage subImage = image.getSubimage(
 					topLeftX, 

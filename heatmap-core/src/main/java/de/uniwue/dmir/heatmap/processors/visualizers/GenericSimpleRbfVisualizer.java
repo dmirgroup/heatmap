@@ -34,6 +34,8 @@ import lombok.Setter;
 
 import com.newbrightidea.util.RTree;
 
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.SameTileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToAverageMapper;
 import de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToOnOffSizeMapper;
@@ -75,11 +77,12 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	private int centerY;
 	
 	public GenericSimpleRbfVisualizer(
+			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
 			IAggregatorFactory<ReferencedData<TPixel>, Double> aggregator,
 			IColorScheme colorScheme) {
 		
-		super(pixelIteratorFactory);
+		super(tileSizeProvider, pixelIteratorFactory);
 		
 		this.aggegator = aggregator;
 		this.colorScheme = colorScheme;
@@ -87,9 +90,11 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile data,
-			TileSize tileSize,
 			TileCoordinates coordinates) {
 
+		TileSize tileSize =
+				super.tileSizeProvider.getTileSize(coordinates.getZoom());
+		
 		super.logger.debug(
 				"Visualizing tile {} of size {} x {}.", 
 				coordinates,
@@ -232,6 +237,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> visualizerColor = 
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel>(
+						new SameTileSizeProvider(),
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(),
 						new QuadraticRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToAverageMapper(), 
@@ -245,6 +251,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> visualizerAlpha = 
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel>(
+						new SameTileSizeProvider(),
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(),
 						new MaxRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToOnOffSizeMapper(),
@@ -258,12 +265,12 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 		
 		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSumPixel>> proxyVisualizer =
 				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates,WeightedSumPixel>>(
+						new SameTileSizeProvider(),
 						visualizerColor, 
 						visualizerAlpha);
 		
 		BufferedImage result = visualizerAlpha.visualize(
 				map, 
-				new TileSize(120, 80),
 				new TileCoordinates(0, 0, 0));
 		
 		ImageIO.write(result, "png", new File("out/test.png"));

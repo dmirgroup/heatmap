@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,12 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-@AllArgsConstructor
 public abstract class AbstractFileWriterProcessor<TTile> 
-implements ITileProcessor<TTile> {
+extends AbstractProcessor<TTile> {
 
 	public static final String GZIP_EXTENSION = ".gz";
 	
@@ -54,6 +53,23 @@ implements ITileProcessor<TTile> {
 	@Getter
 	private boolean gzip;
 	
+	
+	
+	public AbstractFileWriterProcessor(
+			ITileSizeProvider tileSizeProvider,
+			String parentFolder, 
+			IFileStrategy fileStrategy, 
+			String fileFormat,
+			boolean gzip) {
+		
+		super(tileSizeProvider);
+		
+		this.parentFolder = parentFolder;
+		this.fileStrategy = fileStrategy;
+		this.fileFormat = fileFormat;
+		this.gzip = gzip;
+	}
+
 	/**
 	 * Gets the file and creates the necessary folders if need be.
 	 * 

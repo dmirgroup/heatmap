@@ -21,6 +21,7 @@
 package de.uniwue.dmir.heatmap;
 
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
+import de.uniwue.dmir.heatmap.tiles.coordinates.projection.ITileCoordinatesProjection;
 
 /**
  * <h1>Tiles</h1>
@@ -57,7 +58,7 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * 
  * @author Martin Becker
  */
-public interface IHeatmap<TTile> {
+public interface IHeatmap<TTile, TParameters> {
 	
 	public static final int DEFAULT_TILE_WIDTH = 256;
 	public static final int DEFAULT_TILE_HEIGHT = 256;
@@ -66,17 +67,25 @@ public interface IHeatmap<TTile> {
 	public static final int DEFAULT_MAX_ZOOM_LEVEL = 18;
 	
 	/**
-	 * @return current heatmap settings
+	 * @return the tile size provider responsible for giving a tile size
+	 * 		for each zoom level
 	 */
-	HeatmapSettings getSettings();
+	ITileSizeProvider getTileSizeProvider();
+	
+	/**
+	 * @return the zoom level provider responsible for giving the zoom level size
+	 * 		for each zoom level, i.e. the amount of tiles in each dimension
+	 */
+	IZoomLevelSizeProvider getZoomLevelSizeProvider();
 	
 	/**
 	 * @param coordinates tile coordinates
+	 * @param parameters a set of parameters influencing the tile creation
 	 * 
 	 * @return <code>null</code> if the tile does not contain data; 
 	 * 		the tile corresponding to the coordinates otherwise
 	 */
-	TTile getTile(TileCoordinates coordinates);
+	TTile getTile(TileCoordinates coordinates, TParameters parameters);
 	
 	/**
 	 * Processes all tiles. 
@@ -86,6 +95,15 @@ public interface IHeatmap<TTile> {
 	 * access.
 	 * 
 	 * @param processor the processor to process the tiles
+	 * @param range the range of zoom levels to process
+	 * @param tileRangeProvider the tile range provider responsible for 
+	 * 		selecting the range of tiles to process on each zoom level;
+	 * 		may be <code>null</code> (in this case take the full range)
+	 * @param parameters a set of parameters which influence tile creation
 	 */
-	void processTiles(ITileProcessor<TTile> processor);
+	void processTiles(
+			ITileProcessor<TTile> processor,
+			ZoomLevelRange range,
+			ITileRangeProvider tileRangeProvider,
+			TParameters parameters);
 }

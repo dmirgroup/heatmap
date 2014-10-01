@@ -20,10 +20,7 @@
  */
 package de.uniwue.dmir.heatmap;
 
-import de.uniwue.dmir.heatmap.DefaultZoomLevelMapper;
-import de.uniwue.dmir.heatmap.IZoomLevelMapper;
-import de.uniwue.dmir.heatmap.TileSize;
-import de.uniwue.dmir.heatmap.filters.AbstractConfigurableFilter;
+import de.uniwue.dmir.heatmap.filters.NoFilter;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.projections.MercatorMapProjection;
@@ -41,21 +38,19 @@ public class TestMeters {
 		int zoomLevel = 3;
 		TileSize tileSize = new TileSize(1, 1);
 		
-		IZoomLevelMapper zoomLevelMapper = new DefaultZoomLevelMapper();
+		IZoomLevelSizeProvider zoomLevelMapper = new DefaultZoomLevelSizeProvider();
+		ITileSizeProvider tileSizeProvider = new SameTileSizeProvider();
 		
 		MercatorMapProjection projection = new MercatorMapProjection(
-				tileSize, zoomLevelMapper);
+				tileSizeProvider, 
+				zoomLevelMapper);
 		
 		GeoBoundingBox bb = projection.fromTileCoordinatesToGeoBoundingBox(
 				new TileCoordinates(
-						(int) zoomLevelMapper.getSize(zoomLevel).getWidth() / 2, 
-						(int) zoomLevelMapper.getSize(zoomLevel).getHeight() / 2 + 1, 
+						(int) zoomLevelMapper.getZoomLevelSize(zoomLevel).getWidth() / 2, 
+						(int) zoomLevelMapper.getZoomLevelSize(zoomLevel).getHeight() / 2 + 1, 
 						zoomLevel), 
-				new AbstractConfigurableFilter<Object, Object>() {
-					@Override
-					public void filter(Object dataPoint, Object tile, TileSize tileSize, TileCoordinates tileCoordinates) {
-					}
-				});
+				new NoFilter<Object, Object>(tileSizeProvider));
 		System.out.println(bb);
 		
 		GeoCoordinates northWest = new GeoCoordinates(
@@ -93,7 +88,7 @@ public class TestMeters {
 		System.out.println(cosine.distance(frankfurt, munich));
 		System.out.println(haversine.distance(frankfurt, munich));
 		
-		System.out.println(2 * Math.PI * GreatCircleDistance.EARTH_RADIUS / zoomLevelMapper.getSize(18).getWidth());
+		System.out.println(2 * Math.PI * GreatCircleDistance.EARTH_RADIUS / zoomLevelMapper.getZoomLevelSize(18).getWidth());
 	}
 	
 

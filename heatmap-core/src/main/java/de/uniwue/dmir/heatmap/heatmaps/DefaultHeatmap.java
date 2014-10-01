@@ -29,16 +29,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
-import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.IPointsource;
 import de.uniwue.dmir.heatmap.ITileFactory;
 import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileRangeProvider;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
+import de.uniwue.dmir.heatmap.ZoomLevelRange;
+import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-public class DefaultHeatmap<TPoint, TTile> 
-implements IHeatmap<TTile> {
+public class DefaultHeatmap<TPoint, TTile, TParameters> 
+implements IHeatmap<TTile, TParameters> {
 
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
@@ -50,7 +54,7 @@ implements IHeatmap<TTile> {
 	/**
 	 * Data source providing the data points for the tiles.
 	 */
-	private IPointsource<TPoint> pointsource;
+	private IPointsource<TPoint, TParameters> pointsource;
 	
 	/**
 	 * Filter used to add points to tiles.
@@ -62,13 +66,16 @@ implements IHeatmap<TTile> {
 	 */
 	@Getter
 	@Setter
-	private IHeatmap<TTile> seed;
+	private IHeatmap<TTile, TParameters> seed;
 	
-	/**
-	 * Heatmap settings.
-	 */
 	@Getter
-	private HeatmapSettings settings;
+	private IZoomLevelSizeProvider zoomLevelSizeProvider;
+	
+	@Getter
+	private ITileSizeProvider tileSizeProvider;
+	
+	@Getter
+	private IMapProjection mapProjection;
 	
 	@Getter
 	@Setter
@@ -76,44 +83,60 @@ implements IHeatmap<TTile> {
 	
 	public DefaultHeatmap(
 			ITileFactory<TTile> tileFactory,
-			IPointsource<TPoint> pointsource,
+			IPointsource<TPoint, TParameters> pointsource,
 			IFilter<TPoint, TTile> filter,
-			HeatmapSettings settings) {
+			IZoomLevelSizeProvider zoomLevelSizeProvider,
+			ITileSizeProvider tileSizeProvider,
+			IMapProjection mapProjection) {
 		
-		this(tileFactory, pointsource, filter, settings, null);
+		this(
+				tileFactory, 
+				pointsource,
+				filter, 
+				zoomLevelSizeProvider, 
+				tileSizeProvider, 
+				mapProjection,
+				null);
 	}
 	
 	public DefaultHeatmap(
 			ITileFactory<TTile> tileFactory,
-			IPointsource<TPoint> pointsource,
+			IPointsource<TPoint, TParameters> pointsource,
 			IFilter<TPoint, TTile> filter,
-			HeatmapSettings settings,
-			IHeatmap<TTile> seed) {
+			IZoomLevelSizeProvider zoomLevelSizeProvider,
+			ITileSizeProvider tileSizeProvider,
+			IMapProjection mapProjection,
+			IHeatmap<TTile, TParameters> seed) {
+		
+		if (!filter.getTileSizeProvider().equals(tileSizeProvider)) {
+			throw new IllegalArgumentException(
+					"Tile size provider of the given filter does not match.");
+		}
 		
 		if (seed == null) {
-			this.seed = new EmptyHeatmap<TTile>(settings);
+			this.seed = new EmptyHeatmap<TTile, TParameters>();
 		} else {
+			if (!seed.getTileSizeProvider().equals(tileSizeProvider)) {
+				throw new IllegalArgumentException(
+						"Tile size provider of the given seed does not match.");
+			}
 			this.seed = seed;
 		}
 		
 		this.tileFactory = tileFactory;
 		this.pointsource = pointsource;
 		this.filter = filter;
-		this.settings = settings;
+		this.zoomLevelSizeProvider = zoomLevelSizeProvider;
+		this.tileSizeProvider = tileSizeProvider;
+		this.mapProjection = mapProjection;
 		this.returnSeedTilesWithNoExternalData = false;
 	}
 	
 	@Override
-	public TTile getTile(TileCoordinates tileCoordinates) {
+	public TTile getTile(TileCoordinates tileCoordinates, TParameters parameters) {
 		
 		// initializing stop watch
 		StopWatch stopWatch = new StopWatch();
-		
-		// tile coordinates to top-left reference system
-		TileCoordinates projectedTileCoordinates =
-				this.settings.getTileProjection().fromCustomToTopLeft(
-						tileCoordinates,
-						this.settings.getZoomLevelMapper());
 		
 		// loading data seed 
 		
@@ -121,7 +144,7 @@ implements IHeatmap<TTile> {
 		
 		stopWatch.start("loading data seed");
 		
-		TTile tile = this.seed.getTile(projectedTileCoordinates);
+		TTile tile = this.seed.getTile(tileCoordinates, parameters);
 		
 		stopWatch.stop();
 		if (tile == null) {
@@ -137,7 +160,8 @@ implements IHeatmap<TTile> {
 		stopWatch.start("loading data points");
 		
 		Iterator<TPoint> externalData = this.pointsource.getPoints(
-				projectedTileCoordinates, 
+				tileCoordinates,
+				parameters,
 				this.filter);
 		
 		stopWatch.stop();
@@ -167,8 +191,8 @@ implements IHeatmap<TTile> {
 		if (tile == null) {
 			this.logger.debug("No data seed available; initializing empty tile.");
 			tile = this.tileFactory.newInstance(
-					this.settings.getTileSize(), 
-					projectedTileCoordinates);
+					this.tileSizeProvider.getTileSize(tileCoordinates.getZoom()), 
+					tileCoordinates);
 		}
 
 		// add external data to tile
@@ -183,7 +207,6 @@ implements IHeatmap<TTile> {
 			this.filter.filter(
 					externalDataPoint, 
 					tile, 
-					this.settings.getTileSize(),
 					tileCoordinates);
 			externalDataPointCount ++;
 		}
@@ -198,12 +221,16 @@ implements IHeatmap<TTile> {
 	}
 
 	@Override
-	public void processTiles(ITileProcessor<TTile> processor) {
+	public void processTiles(
+			ITileProcessor<TTile> processor,
+			ZoomLevelRange zoomLevelRange,
+			ITileRangeProvider tileRangeProvider,
+			TParameters parameters) {
 		
 		this.logger.debug("Processing tiles.");
 		
-		int min = this.settings.getZoomLevelRange().getMin();
-		int max = this.settings.getZoomLevelRange().getMax();
+		int min = zoomLevelRange.getMin();
+		int max = zoomLevelRange.getMax();
 		
 		for (int zoomLevel = min; zoomLevel <= max; zoomLevel ++) {
 
@@ -214,17 +241,21 @@ implements IHeatmap<TTile> {
 			Iterator<TileCoordinates> iterator =
 					this.pointsource.getTileCoordinatesWithContent(
 							zoomLevel, 
+							tileRangeProvider == null ? null : tileRangeProvider.getTileRange(zoomLevel),
+							parameters,
 							this.filter);
 			
 			this.logger.debug("Done getting tile coordinates with content.");
 			
 			this.logger.debug("Processing tiles on zoom level {}.", zoomLevel);
 			
+			
+			
 			int tileCount = 0;
 			while (iterator.hasNext()) {
 				TileCoordinates coordinates = iterator.next();
-				TTile tile = this.getTile(coordinates);
-				processor.process(tile, this.settings.getTileSize(), coordinates);
+				TTile tile = this.getTile(coordinates, parameters);
+				processor.process(tile, coordinates);
 				tileCount ++;
 			}
 

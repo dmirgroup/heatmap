@@ -33,13 +33,17 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import de.uniwue.dmir.heatmap.HeatmapSettings;
+import de.uniwue.dmir.heatmap.DefaultZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.IPointsource;
 import de.uniwue.dmir.heatmap.ITileFactory;
 import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
+import de.uniwue.dmir.heatmap.SameTileSizeProvider;
+import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.filters.AddingFilter;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
 import de.uniwue.dmir.heatmap.filters.operators.SumAdder;
@@ -149,13 +153,20 @@ public class DefaultSetup {
 			Settings settings) throws IOException {
 		
 		// heatmap settings
-		HeatmapSettings heatmapSettings = new HeatmapSettings();
+		
+		ZoomLevelRange zoomLevelRange = new ZoomLevelRange();
 		if (settings.getMinZoomLevel() > -1) {
-			heatmapSettings.getZoomLevelRange().setMin(settings.getMinZoomLevel());
+			zoomLevelRange.setMin(settings.getMinZoomLevel());
 		}
 		if (settings.getMaxZoomLevel() > -1) {
-			heatmapSettings.getZoomLevelRange().setMax(settings.getMaxZoomLevel());
+			zoomLevelRange.setMax(settings.getMaxZoomLevel());
 		}
+		
+		IZoomLevelSizeProvider zoomLevelSizeProvider =
+				new DefaultZoomLevelSizeProvider();
+		
+		ITileSizeProvider tileSizeProvider =
+				new SameTileSizeProvider();
 		
 		
 		// settings up point source
@@ -164,17 +175,19 @@ public class DefaultSetup {
 				new GeoPointToGeoCoordinateMapper<SimpleGeoPoint<String>>();
 		
 		// TODO: more flexible geo data source
-		IGeoDatasource<SimpleGeoPoint<String>> datasource = 
-				new RTreeGeoDatasource<SimpleGeoPoint<String>>(
+		IGeoDatasource<SimpleGeoPoint<String>, Object> datasource = 
+				new RTreeGeoDatasource<SimpleGeoPoint<String>, Object>(
 						new CsvGeoDatasource(file, separator, skipFirstLine),
 						pointToGeoCoordinatesMapper);
 		
 		IMapProjection mapProjection = new MercatorMapProjection(
-				heatmapSettings.getTileSize(), 
-				heatmapSettings.getZoomLevelMapper());
+				tileSizeProvider, 
+				zoomLevelSizeProvider);
 		
-		IPointsource<SimpleGeoPoint<String>> pointsource = new GeoPointsource<SimpleGeoPoint<String>>(
-				datasource, mapProjection, pointToGeoCoordinatesMapper);
+		IPointsource<SimpleGeoPoint<String>, Object> pointsource = new GeoPointsource<SimpleGeoPoint<String>, Object>(
+				datasource, 
+				mapProjection, 
+				pointToGeoCoordinatesMapper);
 		
 		// the tile factory
 		
@@ -193,6 +206,7 @@ public class DefaultSetup {
 				
 		IFilter<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>> filter = 
 				new AddingFilter<SimpleGeoPoint<String>, SumPixel, Map<RelativeCoordinates, SumPixel>>(
+						tileSizeProvider,
 						dataToRelativeCoordinatesMapper, 
 						dataToPixelMapper, 
 						pixelAccess, 
@@ -200,16 +214,20 @@ public class DefaultSetup {
 		
 		// the heatmap putting things together
 		
-		IHeatmap<Map<RelativeCoordinates, SumPixel>> heatmap = new DefaultHeatmap<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>>(
+		IHeatmap<Map<RelativeCoordinates, SumPixel>, Object> heatmap = 
+					new DefaultHeatmap<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>, Object>(
 				tileFactory,
 				pointsource,
 				filter,
-				heatmapSettings);
+				zoomLevelSizeProvider,
+				tileSizeProvider,
+				mapProjection);
 		
 		// the processor processing each tile
 		
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> simpleVisualizer = 
 				new SimpleVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel>(
+						tileSizeProvider,
 						new MapKeyValueIteratorFactory<RelativeCoordinates, SumPixel>(),
 						new CombinedColorPipe<SumPixel>(
 								new SimpleColorPipe<SumPixel>(
@@ -245,6 +263,7 @@ public class DefaultSetup {
 		
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> pipeVisualizer =
 				new PipeProxyVisualizer<Map<RelativeCoordinates,SumPixel>>(
+						tileSizeProvider,
 						visualizers);
 
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> visualizer = pipeVisualizer;
@@ -258,14 +277,20 @@ public class DefaultSetup {
 		
 		ITileProcessor<Map<RelativeCoordinates, SumPixel>> singleProcessor =
 				new SingleImageProcessor<Map<RelativeCoordinates, SumPixel>>(
+						tileSizeProvider,
 						new GeoBoundingBox(-130, 20, -60, 50), 
 						mapProjection, 
 						new MapTileVisualizer<Map<RelativeCoordinates, SumPixel>>(
+								tileSizeProvider,
 								"http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg"), 
 						visualizer);
 		
 		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor = singleProcessor;
-		heatmap.processTiles(processor);
+		heatmap.processTiles(
+				processor,
+				zoomLevelRange,
+				null,
+				null);
 
 	}
 	

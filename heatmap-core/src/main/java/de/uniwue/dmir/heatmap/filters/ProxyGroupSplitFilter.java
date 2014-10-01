@@ -27,6 +27,8 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.IFilter;
+import de.uniwue.dmir.heatmap.ITileSizeProvided;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.groupaccess.IGroupAccess;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -70,12 +72,25 @@ implements IConfigurableFilter<TPoint, TGroupContainerTile>{
 	private Map<String, IFilter<TPoint, TGroupTile>> filters;
 	
 	public ProxyGroupSplitFilter(
+			ITileSizeProvider tileSizeProvider,
 			IMapper<? super TPoint, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
 			Map<String, IFilter<TPoint, TGroupTile>> filters) {
 
+		super(tileSizeProvider);
+		
 		this.groupIdMapper = groupIdMapper;
 		this.groupAccess = groupAccess;
+		
+		for(ITileSizeProvided t : filters.values()) {
+			if (!t.getTileSizeProvider().equals(tileSizeProvider)) {
+				throw new IllegalArgumentException(
+						"Tile size provider of one of the given filters "
+						+ "does not match the tile size provider: "
+						+ t);
+			}
+		}
+		
 		this.filters = filters;
 		
 		// calculate width, height, center x and center y
@@ -86,11 +101,13 @@ implements IConfigurableFilter<TPoint, TGroupContainerTile>{
 	
 	@SuppressWarnings("serial")
 	public ProxyGroupSplitFilter(
+			ITileSizeProvider tileSizeProvider,
 			IMapper<? super TPoint, List<String>> groupIdMapper,
 			IGroupAccess<TGroupTile, TGroupContainerTile> groupAccess, 
 			final IFilter<TPoint, TGroupTile> filter) {
 
 		this(
+				tileSizeProvider,
 				groupIdMapper, 
 				groupAccess, 
 				new HashMap<String, IFilter<TPoint, TGroupTile>>() {{
@@ -103,8 +120,10 @@ implements IConfigurableFilter<TPoint, TGroupContainerTile>{
 	public <TDerived extends TPoint> void filter(
 			TDerived dataPoint, 
 			TGroupContainerTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
+		
+		TileSize tileSize = 
+				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		List<String> groupIds = this.groupIdMapper.map(dataPoint);
 		for (String groupId : groupIds) {
@@ -126,7 +145,6 @@ implements IConfigurableFilter<TPoint, TGroupContainerTile>{
 				filter.filter(
 						dataPoint, 
 						groupData, 
-						tileSize, 
 						tileCoordinates);
 			}
 		}

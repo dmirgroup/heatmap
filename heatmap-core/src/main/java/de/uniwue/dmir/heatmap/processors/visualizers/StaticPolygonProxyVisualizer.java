@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 
 import lombok.Getter;
 import lombok.Setter;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -35,6 +36,9 @@ public class StaticPolygonProxyVisualizer<TTile>
 implements IVisualizer<TTile> {
 
 	public static final Color DEFAULT_COLOR = Color.WHITE;
+	
+	@Getter
+	private ITileSizeProvider tileSizeProvider;
 	
 	private IVisualizer<TTile> visualizer;
 	private Polygon polygon;
@@ -56,8 +60,11 @@ implements IVisualizer<TTile> {
 	private boolean strokeAbove;
 	
 	public StaticPolygonProxyVisualizer(
+			ITileSizeProvider tileSizeProvider,
 			IVisualizer<TTile> visualizer,
 			Polygon polygon) {
+		
+		this.tileSizeProvider = tileSizeProvider;
 		
 		this.visualizer = visualizer;
 		this.polygon = polygon;
@@ -72,12 +79,13 @@ implements IVisualizer<TTile> {
 	@Override
 	public BufferedImage visualize(
 			TTile tile, 
-			TileSize tileSize,
 			TileCoordinates coordinates) {
+		
+		TileSize tileSize = 
+				this.tileSizeProvider.getTileSize(coordinates.getZoom());
 		
 		BufferedImage image = this.visualizer.visualize(
 				tile, 
-				tileSize, 
 				coordinates);
 		
 		Graphics g = image.getGraphics();

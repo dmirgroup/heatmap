@@ -51,6 +51,5 @@ public interface IMapProjection {
 			GeoCoordinates geoCoordinates,
 			int zoom,
 			IFilter<?, ?> filter);
-	
 
 }

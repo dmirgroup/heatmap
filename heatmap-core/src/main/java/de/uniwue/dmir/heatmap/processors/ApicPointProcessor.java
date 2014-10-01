@@ -36,7 +36,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import de.uniwue.dmir.heatmap.ITileProcessor;
+import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicCityTile;
@@ -49,7 +49,7 @@ import de.uniwue.dmir.heatmap.tiles.pixels.PointSizePixel;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
 public class ApicPointProcessor 
-implements ITileProcessor<ApicOverallTile> {
+extends AbstractProcessor<ApicOverallTile> {
 
 	public static final String IMAGE_TYPE = "png";
 	public static final String CITY_PREFIX = "city-";
@@ -77,11 +77,12 @@ implements ITileProcessor<ApicOverallTile> {
 	
 	
 	public ApicPointProcessor(
+			ITileSizeProvider tileSizeProvider,
 			String folder,
 			IVisualizer<Map<RelativeCoordinates, PointSizePixel>> visualizer,
 			IMapper<String, TileSize> cityToTileSizeMapper) {
 		
-		super();
+		super(tileSizeProvider);
 		this.folder = folder;
 		this.visualizer = visualizer;
 		this.cityToTileSizeMapper = cityToTileSizeMapper;
@@ -92,8 +93,10 @@ implements ITileProcessor<ApicOverallTile> {
 	@Override
 	public void process(
 			ApicOverallTile tile, 
-			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
+		
+		TileSize tileSize = 
+				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		File folder = new File(this.folder);
 		folder.mkdirs();
@@ -170,6 +173,7 @@ implements ITileProcessor<ApicOverallTile> {
 				
 				StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSizePixel>> polygonVisualizer = 
 						new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSizePixel>>(
+								tileSizeProvider,
 								this.visualizer, 
 								cityPolygon);
 				polygonVisualizer.setFillColor(this.polygonFillColor);
@@ -184,7 +188,6 @@ implements ITileProcessor<ApicOverallTile> {
 			ApicCityTile cityTile = cityEntry.getValue();
 			BufferedImage cityImage = visualizer.visualize(
 					cityTile.getPixels(), 
-					cityTileSize, 
 					tileCoordinates);
 			
 			String cityName = cityEntry.getKey().replaceAll("[^\\w]*", "");
@@ -201,7 +204,6 @@ implements ITileProcessor<ApicOverallTile> {
 				ApicGroupTile groupTile = groupEntry.getValue();
 				BufferedImage groupImage = visualizer.visualize(
 						groupTile.getPixels(), 
-						cityTileSize, 
 						tileCoordinates);
 				
 				String groupName = groupEntry.getKey().replaceAll("[^\\w]*", "");

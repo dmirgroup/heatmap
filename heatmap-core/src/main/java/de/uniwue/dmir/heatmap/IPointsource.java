@@ -33,28 +33,36 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
  * @author Martin Becker
  *
  * @param <TPoint> data type to retrieve
+ * @param <TParameters> parameters when accessing data
  */
-public interface IPointsource<TPoint> {
+public interface IPointsource<TPoint, TParameters> {
 
 	/**
 	 * @param tileCoordinates coordinates of tile to retrieve data points for
-	 * @param filter the filter used for the tiles (dependent on the size of 
-	 * 		the filter, the data relevant for the tile might change)
+	 * @param parameters parameters influencing the point retrieval process
+	 * @param filter the filter used for the tiles; dependent on the size of 
+	 * 		the filter, the data relevant for the tile might change
 	 * 
 	 * @return all data points relevant for the tile with the given coordinates
 	 */
 	Iterator<TPoint> getPoints(
 			TileCoordinates tileCoordinates,
+			TParameters parameters,
 			IFilter<?, ?> filter);
 	
 	/**
-	 * @param zoomStart
-	 * @param filter
+	 * @param zoom the zoom level to get the tiles with contents for
+	 * @param tileRange limit the returned tiles to a certain range;
+	 * 		may be <code>null</code> (in this case take the full range)
+	 * @param filter the filter used for the tiles; dependent on the size of 
+	 * 		the filter, the data relevant for the tile might change
 	 * 
-	 * @return tile which have data for the given zoom level
+	 * @return tile which have data for the given zoom level and tile range
 	 */
 	Iterator<TileCoordinates> getTileCoordinatesWithContent(
 			int zoom,
+			TileRange tileRange,
+			TParameters parameters,
 			IFilter<?, ?> filter);
 
 }

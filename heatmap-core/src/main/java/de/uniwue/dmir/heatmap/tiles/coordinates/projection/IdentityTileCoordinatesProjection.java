@@ -18,22 +18,27 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package de.uniwue.dmir.heatmap;
+package de.uniwue.dmir.heatmap.tiles.coordinates.projection;
 
-/**
- * A {@link IZoomLevelMapper} returning a (2^zoom, 2^zoom) tile grid size for a 
- * given zoom level "zoom".
- * 
- * @author Martin Becker
- *
- */
-public class DefaultZoomLevelMapper 
-implements IZoomLevelMapper {
+import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
+import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
+
+public class IdentityTileCoordinatesProjection 
+implements ITileCoordinatesProjection {
 
 	@Override
-	public ZoomLevelSize getSize(int zoom) {
-		int xy = (1 << zoom); // log scale using base 2
-		return new ZoomLevelSize(xy, xy);
+	public TileCoordinates fromCustomToTopLeft(
+			TileCoordinates tileCoordinates, 
+			IZoomLevelSizeProvider zoomLevelMapper) {
+		return tileCoordinates;
 	}
+
+	@Override
+	public TileCoordinates fromTopLeftToCustom(
+			TileCoordinates tileCoordinates, 
+			IZoomLevelSizeProvider zoomLevelMapper) {
+		return tileCoordinates;
+	}
+
 	
 }
