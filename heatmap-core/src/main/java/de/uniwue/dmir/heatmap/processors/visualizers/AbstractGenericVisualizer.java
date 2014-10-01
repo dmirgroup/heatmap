@@ -20,7 +20,6 @@
  */
 package de.uniwue.dmir.heatmap.processors.visualizers;
 
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
 
@@ -30,9 +29,7 @@ extends AbstractDebuggingVisualizer<TTile> {
 	protected IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory;
 	
 	public AbstractGenericVisualizer(
-			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory) {
-		super(tileSizeProvider);
 		this.pixelIteratorFactory = pixelIteratorFactory;
 	}
 	

@@ -67,18 +67,6 @@ public interface IHeatmap<TTile, TParameters> {
 	public static final int DEFAULT_MAX_ZOOM_LEVEL = 18;
 	
 	/**
-	 * @return the tile size provider responsible for giving a tile size
-	 * 		for each zoom level
-	 */
-	ITileSizeProvider getTileSizeProvider();
-	
-	/**
-	 * @return the zoom level provider responsible for giving the zoom level size
-	 * 		for each zoom level, i.e. the amount of tiles in each dimension
-	 */
-	IZoomLevelSizeProvider getZoomLevelSizeProvider();
-	
-	/**
 	 * @param coordinates tile coordinates
 	 * @param parameters a set of parameters influencing the tile creation
 	 * 

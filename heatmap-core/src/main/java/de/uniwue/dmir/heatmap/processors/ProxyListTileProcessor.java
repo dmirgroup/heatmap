@@ -24,7 +24,7 @@ import java.util.List;
 
 import lombok.Getter;
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 public class ProxyListTileProcessor<TTile> 
@@ -33,14 +33,10 @@ extends AbstractProcessor<TTile> {
 	@Getter
 	private List<ITileProcessor<TTile>> processors;
 	
-	public ProxyListTileProcessor(ITileSizeProvider tileSizeProvider) {
-		super(tileSizeProvider);
-	}
-	
 	@Override
-	public void process(TTile tile, TileCoordinates coordinates) {
+	public void process(TTile tile, TileSize tileSize, TileCoordinates coordinates) {
 		for (ITileProcessor<TTile> p : this.processors) {
-			p.process(tile, coordinates);
+			p.process(tile, tileSize, coordinates);
 		}
 	}
 

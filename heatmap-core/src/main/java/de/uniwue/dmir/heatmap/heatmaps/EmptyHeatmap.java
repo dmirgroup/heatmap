@@ -24,8 +24,6 @@ import lombok.AllArgsConstructor;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.ITileRangeProvider;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
-import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -33,16 +31,6 @@ import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 public class EmptyHeatmap<TTile, TParameters> 
 implements IHeatmap<TTile, TParameters>{
 	
-	@Override
-	public ITileSizeProvider getTileSizeProvider() {
-		return null;
-	}
-
-	@Override
-	public IZoomLevelSizeProvider getZoomLevelSizeProvider() {
-		return null;
-	}
-
 	@Override
 	public TTile getTile(TileCoordinates coordinates, TParameters parameters) {
 		return null;

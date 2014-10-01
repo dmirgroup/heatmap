@@ -36,8 +36,8 @@ import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.ITileRangeProvider;
 import de.uniwue.dmir.heatmap.ITileSizeProvider;
-import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.TileRange;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor;
 import de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy;
@@ -48,9 +48,6 @@ public class GroupFilesystemHeatmap<TTile, TParameters>
 implements IHeatmap<TTile, TParameters> {
 
 	public static final String FILE_EXTENSION = "json";
-	
-	@Getter
-	private IZoomLevelSizeProvider zoomLevelSizeProvider;
 	
 	@Getter
 	private ITileSizeProvider tileSizeProvider;
@@ -64,13 +61,11 @@ implements IHeatmap<TTile, TParameters> {
 	private ObjectMapper mapper;
 
 	public GroupFilesystemHeatmap(
-			IZoomLevelSizeProvider zoomLevelSizeProvider,
 			ITileSizeProvider tileSizeProvider,
 			Class<TTile> clazz,
 			String parentFolder,
 			boolean gzip) {
 
-		this.zoomLevelSizeProvider = zoomLevelSizeProvider;
 		this.tileSizeProvider = tileSizeProvider;
 		
 		this.clazz = clazz;
@@ -138,6 +133,8 @@ implements IHeatmap<TTile, TParameters> {
 					tileRange = tileRangeProvider.getTileRange(zoom);
 				}
 				
+				TileSize tileSize = this.tileSizeProvider.getTileSize(zoom);
+				
 				for (File xFolder : zoomFolder.listFiles()) {
 					
 					if (xFolder.isDirectory()) {
@@ -158,7 +155,8 @@ implements IHeatmap<TTile, TParameters> {
 								TTile tile = this.getTile(coordinates, parameters);
 								
 								processor.process(
-										tile, 
+										tile,
+										tileSize,
 										coordinates);
 						}
 					}

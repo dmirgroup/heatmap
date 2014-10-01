@@ -22,7 +22,6 @@ package de.uniwue.dmir.heatmap;
 
 import java.io.IOException;
 
-import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.uniwue.dmir.heatmap.IHeatmap;
@@ -55,7 +54,7 @@ public class PointSpringTest {
 		ITileProcessor tileProcessor = 
 				appContext.getBean(WRITER_BEAN, ITileProcessor.class);
 
-		heatmap.processTiles(tileProcessor);
+		heatmap.processTiles(tileProcessor, new ZoomLevelRange(), null, null);
 		
 		appContext.close();
 	}

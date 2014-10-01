@@ -1,21 +1,12 @@
 package de.uniwue.dmir.heatmap.processors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 
 public abstract class AbstractProcessor<TTile> implements ITileProcessor<TTile> {
-
-	protected ITileSizeProvider tileSizeProvider;
 	
-	public AbstractProcessor(ITileSizeProvider tileSizeProvider) {
-		this.tileSizeProvider = tileSizeProvider;
-	}
+	protected Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	@Override
-	public ITileSizeProvider getTileSizeProvider() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 }

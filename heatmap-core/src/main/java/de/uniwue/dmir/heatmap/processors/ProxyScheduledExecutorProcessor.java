@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 public class ProxyScheduledExecutorProcessor<TTile>
@@ -47,11 +47,8 @@ extends AbstractProcessor<TTile> {
 	private ITileProcessor<TTile> tileProcessor;
 	
 	public ProxyScheduledExecutorProcessor(
-			ITileSizeProvider tileSizeProvider,
 			ITileProcessor<TTile> tileProcessor, 
 			int numberOfSimultaneousThreads) {
-		
-		super(tileSizeProvider);
 		
 		this.tileProcessor = tileProcessor;
 		
@@ -74,6 +71,7 @@ extends AbstractProcessor<TTile> {
 	@Override
 	public void process(
 			final TTile tile, 
+			final TileSize tileSize,
 			final TileCoordinates tileCoordinates) {
 		
 		this.logger.debug(
@@ -87,6 +85,7 @@ extends AbstractProcessor<TTile> {
 					public void runWithoutExceptionHandling() {
 						ProxyScheduledExecutorProcessor.this.tileProcessor.process(
 								tile, 
+								tileSize,
 								tileCoordinates);
 					}
 				},

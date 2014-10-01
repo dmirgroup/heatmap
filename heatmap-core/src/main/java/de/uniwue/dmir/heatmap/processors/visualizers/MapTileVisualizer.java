@@ -27,28 +27,23 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-public class MapTileVisualizer<TTile> 
-extends AbstractDebuggingVisualizer<TTile> 
+public class MapTileVisualizer<TTile>
+extends AbstractDebuggingVisualizer<TTile>
 implements IBackgroundVisualizer<TTile> {
 
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 	private String url;
 	
-	public MapTileVisualizer(ITileSizeProvider tileSizeProvider, String url) {
-		super(tileSizeProvider);
+	public MapTileVisualizer(String url) {
 		this.url = url;
 	}
 	
 	@Override
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile,
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		try {

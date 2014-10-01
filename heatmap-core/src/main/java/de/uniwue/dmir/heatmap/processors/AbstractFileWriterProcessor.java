@@ -33,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -56,13 +55,10 @@ extends AbstractProcessor<TTile> {
 	
 	
 	public AbstractFileWriterProcessor(
-			ITileSizeProvider tileSizeProvider,
 			String parentFolder, 
 			IFileStrategy fileStrategy, 
 			String fileFormat,
 			boolean gzip) {
-		
-		super(tileSizeProvider);
 		
 		this.parentFolder = parentFolder;
 		this.fileStrategy = fileStrategy;

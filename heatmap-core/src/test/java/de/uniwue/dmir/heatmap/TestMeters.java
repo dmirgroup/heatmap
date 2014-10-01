@@ -20,7 +20,7 @@
  */
 package de.uniwue.dmir.heatmap;
 
-import de.uniwue.dmir.heatmap.filters.NoFilter;
+import de.uniwue.dmir.heatmap.filters.NullFilter;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.projections.MercatorMapProjection;
@@ -38,19 +38,19 @@ public class TestMeters {
 		int zoomLevel = 3;
 		TileSize tileSize = new TileSize(1, 1);
 		
-		IZoomLevelSizeProvider zoomLevelMapper = new DefaultZoomLevelSizeProvider();
-		ITileSizeProvider tileSizeProvider = new SameTileSizeProvider();
+		IZoomLevelSizeProvider zoomLevelSizeProvider = new DefaultZoomLevelSizeProvider();
+		ITileSizeProvider tileSizeProvider = new DefaultTileSizeProvider();
 		
 		MercatorMapProjection projection = new MercatorMapProjection(
 				tileSizeProvider, 
-				zoomLevelMapper);
+				zoomLevelSizeProvider);
 		
 		GeoBoundingBox bb = projection.fromTileCoordinatesToGeoBoundingBox(
 				new TileCoordinates(
-						(int) zoomLevelMapper.getZoomLevelSize(zoomLevel).getWidth() / 2, 
-						(int) zoomLevelMapper.getZoomLevelSize(zoomLevel).getHeight() / 2 + 1, 
+						(int) zoomLevelSizeProvider.getZoomLevelSize(zoomLevel).getWidth() / 2, 
+						(int) zoomLevelSizeProvider.getZoomLevelSize(zoomLevel).getHeight() / 2 + 1, 
 						zoomLevel), 
-				new NoFilter<Object, Object>(tileSizeProvider));
+				new NullFilter<Object, Object>());
 		System.out.println(bb);
 		
 		GeoCoordinates northWest = new GeoCoordinates(
@@ -88,7 +88,7 @@ public class TestMeters {
 		System.out.println(cosine.distance(frankfurt, munich));
 		System.out.println(haversine.distance(frankfurt, munich));
 		
-		System.out.println(2 * Math.PI * GreatCircleDistance.EARTH_RADIUS / zoomLevelMapper.getZoomLevelSize(18).getWidth());
+		System.out.println(2 * Math.PI * GreatCircleDistance.EARTH_RADIUS / zoomLevelSizeProvider.getZoomLevelSize(18).getWidth());
 	}
 	
 

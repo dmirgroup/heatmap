@@ -21,7 +21,7 @@
 package de.uniwue.dmir.heatmap.filters;
 
 import lombok.ToString;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -42,9 +42,7 @@ extends AbstractConfigurableFilter<TPoint, TTile> {
 	protected IToRelativeCoordinatesMapper<? super TPoint> dataToRelativeCoordinatesMapper;
 	
 	public AbstractRelativeCoordinatesMapperFilter(
-			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<? super TPoint> toRelativeCoordinatesMapper) {
-		super(tileSizeProvider);
 		this.dataToRelativeCoordinatesMapper = toRelativeCoordinatesMapper;
 	}
 	
@@ -52,12 +50,14 @@ extends AbstractConfigurableFilter<TPoint, TTile> {
 			TDerived dataPoint, 
 			RelativeCoordinates relativeCoordinates,
 			TTile tile,
+			TileSize tileSize,
 			TileCoordinates tileCoordinates);
 	
 	@Override
 	public <TDerived extends TPoint> void filter(
 			TDerived dataPoint, 
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		RelativeCoordinates relativeCoordinates = 
@@ -67,6 +67,7 @@ extends AbstractConfigurableFilter<TPoint, TTile> {
 				dataPoint, 
 				relativeCoordinates, 
 				tile, 
+				tileSize,
 				tileCoordinates);
 	}
 	

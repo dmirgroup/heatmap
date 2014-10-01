@@ -41,13 +41,14 @@ public class SpringTest {
 						"spring/applicationContext.xml");
 		
 		@SuppressWarnings("unchecked")
-		IGeoDatasource<SimpleGeoPoint<String>> geoDataSource = 
+		IGeoDatasource<SimpleGeoPoint<String>, Object> geoDataSource = 
 				appContext.getBean(IGeoDatasource.class);
 		
 		List<SimpleGeoPoint<String>> points = geoDataSource.getData(
 				new GeoBoundingBox(
 						new GeoCoordinates(10, 10),
-						new GeoCoordinates(100, 100)));
+						new GeoCoordinates(100, 100)),
+				null);
 
 		for (int i = 0; i < 10; i++) {
 			System.out.println(points.get(i));

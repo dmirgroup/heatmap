@@ -25,14 +25,11 @@ import lombok.Data;
 @Data
 public class ZoomLevelRange {
 	
-	public static final int DEFAULT_MIN = 0;
-	public static final int DEFAULT_MAX = 18;
-	
 	private int min;
 	private int max;
 	
 	public ZoomLevelRange() {
-		this(DEFAULT_MIN, DEFAULT_MAX);
+		this(IHeatmap.DEFAULT_MIN_ZOOM_LEVEL, IHeatmap.DEFAULT_MAX_ZOOM_LEVEL);
 	}
 	
 	public ZoomLevelRange(int min, int max) {

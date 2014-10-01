@@ -23,7 +23,7 @@ package de.uniwue.dmir.heatmap.filters;
 import java.util.List;
 
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
@@ -49,17 +49,7 @@ implements IFilter<TPoint, TTile>{
 	private List<IFilter<TPoint, TTile>> filters;
 
 	
-	public ProxyListFilter(ITileSizeProvider tileSizeProvider) {
-		super(tileSizeProvider);
-	}
-
-	
 	public void addFilter(IFilter<TPoint, TTile> filter) {
-		
-		if (!filter.getTileSizeProvider().equals(super.tileSizeProvider)) {
-			throw new IllegalArgumentException(
-					"The filter's tile size provider does not match.");
-		}
 		
 		this.filters.add(filter);
 		
@@ -70,10 +60,11 @@ implements IFilter<TPoint, TTile>{
 	public <TDerived extends TPoint>void filter(
 			TDerived dataPoint, 
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 
 		for (IFilter<TPoint, TTile> filter : this.filters) {
-			filter.filter(dataPoint, tile, tileCoordinates);
+			filter.filter(dataPoint, tile, tileSize, tileCoordinates);
 		}
 	}
 

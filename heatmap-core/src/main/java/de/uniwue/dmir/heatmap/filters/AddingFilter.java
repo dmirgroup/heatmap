@@ -20,7 +20,6 @@
  */
 package de.uniwue.dmir.heatmap.filters;
 
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
 import de.uniwue.dmir.heatmap.filters.pixelaccess.IPixelAccess;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
@@ -40,14 +39,12 @@ public class AddingFilter<TPoint, TPixel, TTile>
 extends ErodingFilter<TPoint, TPixel, TTile> {
 	
 	public AddingFilter(
-			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<? super TPoint> dataToRelativeCoordinatesMapper, 
 			IMapper<? super TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
 			IAdder<TPixel> pixelAdder) {
 		
 		super(
-				tileSizeProvider,
 				dataToRelativeCoordinatesMapper, 
 				dataToPixelMapper, 
 				pixelAccess,

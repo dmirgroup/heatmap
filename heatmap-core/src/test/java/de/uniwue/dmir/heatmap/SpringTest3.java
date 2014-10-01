@@ -55,7 +55,7 @@ public class SpringTest3 {
 		ITileProcessor tileProcessor = 
 				appContext.getBean(WRITER_BEAN, ITileProcessor.class);
 		
-		heatmap.processTiles(tileProcessor);
+		heatmap.processTiles(tileProcessor, new ZoomLevelRange(), null, null);
 		
 		tileProcessor.close();
 		appContext.close();

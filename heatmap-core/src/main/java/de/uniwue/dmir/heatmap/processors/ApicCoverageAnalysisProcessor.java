@@ -39,8 +39,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicCityTile;
@@ -82,12 +80,10 @@ extends AbstractProcessor<ApicOverallTile> {
 	
 	
 	public ApicCoverageAnalysisProcessor(
-			ITileSizeProvider tileSizeProvider,
 			String folder,
 			IVisualizer<Map<RelativeCoordinates, PointSizePixel>> visualizer,
 			IMapper<String, TileSize> cityToTileSizeMapper) {
 		
-		super(tileSizeProvider);
 		this.folder = folder;
 		this.visualizer = visualizer;
 		this.cityToTileSizeMapper = cityToTileSizeMapper;
@@ -98,6 +94,7 @@ extends AbstractProcessor<ApicOverallTile> {
 	@Override
 	public void process(
 			ApicOverallTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		// create folder for output data

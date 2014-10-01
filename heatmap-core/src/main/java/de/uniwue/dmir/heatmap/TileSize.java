@@ -26,6 +26,11 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TileSize {
+	
 	private int width;
 	private int height;
+	
+	public TileSize() {
+		this(IHeatmap.DEFAULT_TILE_WIDTH, IHeatmap.DEFAULT_TILE_HEIGHT);
+	}
 }

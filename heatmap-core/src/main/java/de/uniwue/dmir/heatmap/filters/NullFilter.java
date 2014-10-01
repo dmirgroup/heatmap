@@ -22,28 +22,22 @@ package de.uniwue.dmir.heatmap.filters;
 
 import java.util.Collection;
 
-import lombok.Getter;
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
-public class NoFilter<TPoint, TTile> implements IFilter<TPoint, TTile> {
+public class NullFilter<TPoint, TTile> implements IFilter<TPoint, TTile> {
 
-	@Getter
-	private ITileSizeProvider tileSizeProvider;
-	
 	private int width;
 	private int height;
 	private int centerX;
 	private int centerY;
 	
-	public NoFilter(ITileSizeProvider tileSizeProvider) {
-		this(tileSizeProvider, 1, 1, 0, 0);
+	public NullFilter() {
+		this(1, 1, 0, 0);
 	}
 	
-	public NoFilter(ITileSizeProvider tileSizeProvider, int width, int height, int centerX, int centerY) {
-		
-		this.tileSizeProvider = tileSizeProvider;
+	public NullFilter(int width, int height, int centerX, int centerY) {
 
 		this.width = width;
 		this.height = height;
@@ -55,6 +49,7 @@ public class NoFilter<TPoint, TTile> implements IFilter<TPoint, TTile> {
 	public <TDerived extends TPoint> void filter(
 			TDerived dataPoint,
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 	}
 
@@ -62,6 +57,7 @@ public class NoFilter<TPoint, TTile> implements IFilter<TPoint, TTile> {
 	public <TDerived extends TPoint> void filter(
 			Collection<TDerived> dataPoints, 
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 	}
 

@@ -36,7 +36,6 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicCityTile;
@@ -77,12 +76,10 @@ extends AbstractProcessor<ApicOverallTile> {
 	
 	
 	public ApicPointProcessor(
-			ITileSizeProvider tileSizeProvider,
 			String folder,
 			IVisualizer<Map<RelativeCoordinates, PointSizePixel>> visualizer,
 			IMapper<String, TileSize> cityToTileSizeMapper) {
 		
-		super(tileSizeProvider);
 		this.folder = folder;
 		this.visualizer = visualizer;
 		this.cityToTileSizeMapper = cityToTileSizeMapper;
@@ -93,10 +90,8 @@ extends AbstractProcessor<ApicOverallTile> {
 	@Override
 	public void process(
 			ApicOverallTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
-		
-		TileSize tileSize = 
-				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		File folder = new File(this.folder);
 		folder.mkdirs();
@@ -173,7 +168,6 @@ extends AbstractProcessor<ApicOverallTile> {
 				
 				StaticPolygonProxyVisualizer<Map<RelativeCoordinates, PointSizePixel>> polygonVisualizer = 
 						new StaticPolygonProxyVisualizer<Map<RelativeCoordinates,PointSizePixel>>(
-								tileSizeProvider,
 								this.visualizer, 
 								cityPolygon);
 				polygonVisualizer.setFillColor(this.polygonFillColor);
@@ -188,6 +182,7 @@ extends AbstractProcessor<ApicOverallTile> {
 			ApicCityTile cityTile = cityEntry.getValue();
 			BufferedImage cityImage = visualizer.visualize(
 					cityTile.getPixels(), 
+					tileSize,
 					tileCoordinates);
 			
 			String cityName = cityEntry.getKey().replaceAll("[^\\w]*", "");
@@ -204,6 +199,7 @@ extends AbstractProcessor<ApicOverallTile> {
 				ApicGroupTile groupTile = groupEntry.getValue();
 				BufferedImage groupImage = visualizer.visualize(
 						groupTile.getPixels(), 
+						tileSize,
 						tileCoordinates);
 				
 				String groupName = groupEntry.getKey().replaceAll("[^\\w]*", "");

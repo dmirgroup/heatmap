@@ -27,7 +27,6 @@ import java.util.Arrays;
 
 import lombok.Getter;
 import lombok.Setter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.tiles.pixels.SumPixel;
@@ -46,16 +45,10 @@ extends AbstractDebuggingVisualizer<SumPixel[]> {
 	@Setter
 	private double alpha;
 	
-	public SumAndSizeBinaryVisualizer(ITileSizeProvider tileSizeProvider) {
-		super(tileSizeProvider);
-	}
-	
 	public BufferedImage visualizeWithDebuggingInformation(
 			SumPixel[] data,
+			TileSize tileSize,
 			TileCoordinates coordinates) {
-		
-		TileSize tileSize = 
-				super.tileSizeProvider.getTileSize(coordinates.getZoom());
 		
 		int width = tileSize.getWidth();
 		int height = tileSize.getHeight();

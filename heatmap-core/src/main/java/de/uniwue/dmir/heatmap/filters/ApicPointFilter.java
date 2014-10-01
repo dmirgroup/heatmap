@@ -31,7 +31,7 @@ import lombok.EqualsAndHashCode;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.ApicPointFilter.ApicOverallTile;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
@@ -80,7 +80,6 @@ extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 	private IMapper<String, GeoPolygon> cityToGeoPolygonMapper;
 
 	public ApicPointFilter(
-			ITileSizeProvider tileSizeProvider,
 			boolean limitToCityBounds, Date minimumTimestampRecorded,
 			Date maximumTimestampRecorded,
 			IMapper<ApicGeoPoint, String> pointToGroupMapper,
@@ -88,8 +87,6 @@ extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 			IMapper<ApicGeoPoint, String> pointToCityMapper,
 			IMapper<String, IMapProjection> cityToMapProjectionMapper,
 			IMapper<String, GeoPolygon> cityToGeoPolygonMapper) {
-		
-		super(tileSizeProvider);
 		
 		this.limitToCityBounds = limitToCityBounds;
 		this.minimumTimestampRecorded = minimumTimestampRecorded;
@@ -105,6 +102,7 @@ extends AbstractConfigurableFilter<ApicGeoPoint, ApicOverallTile> {
 	public void filter(
 			ApicGeoPoint dataPoint, 
 			ApicOverallTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		FilterResult r = new FilterResult();

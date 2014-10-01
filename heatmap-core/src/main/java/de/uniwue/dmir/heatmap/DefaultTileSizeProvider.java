@@ -3,7 +3,7 @@ package de.uniwue.dmir.heatmap;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
-public class SameTileSizeProvider implements ITileSizeProvider {
+public class DefaultTileSizeProvider implements ITileSizeProvider {
 
 	public static final int DEFAULT_WIDTH = 256;
 	public static final int DEFAULT_HEIGHT = 256;
@@ -11,11 +11,11 @@ public class SameTileSizeProvider implements ITileSizeProvider {
 	private int width;
 	private int height;
 	
-	public SameTileSizeProvider() {
+	public DefaultTileSizeProvider() {
 		this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 	
-	public SameTileSizeProvider(int width, int height) {
+	public DefaultTileSizeProvider(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}

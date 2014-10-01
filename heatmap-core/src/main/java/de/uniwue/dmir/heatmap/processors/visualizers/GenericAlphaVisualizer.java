@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 
 import lombok.Getter;
 import lombok.Setter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.IColorScheme;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
@@ -62,43 +61,38 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 	private boolean ignoreOutsidePixels;
 	
 	public GenericAlphaVisualizer(
-			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
 			IMapper<TPixel, Double> pixelToValueMapper,
 			IColorScheme colorScheme) {
 		
-		super(tileSizeProvider, pixelIteratorFactory);
+		super(pixelIteratorFactory);
 		this.pixelToValueMapper = pixelToValueMapper;
 		this.colorScheme = colorScheme;
 	}
 	
 	public GenericAlphaVisualizer(
-			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory,
 			IMapper<TPixel, Double> pixelToValueMapper,
 			double scaleFactor) {
 
-		super(tileSizeProvider, pixelIteratorFactory);
+		super(pixelIteratorFactory);
 		this.pixelToValueMapper = pixelToValueMapper;
 		this.scalingFactor = scaleFactor;
 	}
 	
 	public GenericAlphaVisualizer(
-			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TTile, RelativeCoordinates, TPixel> pixelIteratorFactory, 
 			IMapper<TPixel, Double> pixelToValueMapper) {
 		
-		this(tileSizeProvider, pixelIteratorFactory, pixelToValueMapper, DEFAULT_SCALE_FACTOR);
+		this(pixelIteratorFactory, pixelToValueMapper, DEFAULT_SCALE_FACTOR);
 	}
 	
 	
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile data,
+			TileSize tileSize,
 			TileCoordinates coordinates) {
 
-		TileSize tileSize = 
-				this.tileSizeProvider.getTileSize(coordinates.getZoom());
-		
 		int width = tileSize.getWidth();
 		int height = tileSize.getHeight();
 		

@@ -42,7 +42,7 @@ import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
-import de.uniwue.dmir.heatmap.SameTileSizeProvider;
+import de.uniwue.dmir.heatmap.DefaultTileSizeProvider;
 import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.filters.AddingFilter;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
@@ -166,7 +166,7 @@ public class DefaultSetup {
 				new DefaultZoomLevelSizeProvider();
 		
 		ITileSizeProvider tileSizeProvider =
-				new SameTileSizeProvider();
+				new DefaultTileSizeProvider();
 		
 		
 		// settings up point source
@@ -206,7 +206,6 @@ public class DefaultSetup {
 				
 		IFilter<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>> filter = 
 				new AddingFilter<SimpleGeoPoint<String>, SumPixel, Map<RelativeCoordinates, SumPixel>>(
-						tileSizeProvider,
 						dataToRelativeCoordinatesMapper, 
 						dataToPixelMapper, 
 						pixelAccess, 
@@ -219,7 +218,6 @@ public class DefaultSetup {
 				tileFactory,
 				pointsource,
 				filter,
-				zoomLevelSizeProvider,
 				tileSizeProvider,
 				mapProjection);
 		
@@ -263,7 +261,6 @@ public class DefaultSetup {
 		
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> pipeVisualizer =
 				new PipeProxyVisualizer<Map<RelativeCoordinates,SumPixel>>(
-						tileSizeProvider,
 						visualizers);
 
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> visualizer = pipeVisualizer;
@@ -277,11 +274,9 @@ public class DefaultSetup {
 		
 		ITileProcessor<Map<RelativeCoordinates, SumPixel>> singleProcessor =
 				new SingleImageProcessor<Map<RelativeCoordinates, SumPixel>>(
-						tileSizeProvider,
 						new GeoBoundingBox(-130, 20, -60, 50), 
 						mapProjection, 
 						new MapTileVisualizer<Map<RelativeCoordinates, SumPixel>>(
-								tileSizeProvider,
 								"http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg"), 
 						visualizer);
 		

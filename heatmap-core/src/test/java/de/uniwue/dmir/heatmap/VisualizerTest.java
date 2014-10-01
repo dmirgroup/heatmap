@@ -122,11 +122,8 @@ public class VisualizerTest {
 				0.5, 
 				10);
 		
-		ITileSizeProvider tileSizeProvider = new SameTileSizeProvider();
-		
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> averageVisualizer =
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates,WeightedSumPixel>, WeightedSumPixel>(
-						tileSizeProvider,
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(), 
 						new QuadraticRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToAverageMapper(), 
@@ -140,7 +137,6 @@ public class VisualizerTest {
 		
 		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, WeightedSumPixel>, WeightedSumPixel> alphaVisualizer =
 				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates,WeightedSumPixel>, WeightedSumPixel>(
-						tileSizeProvider,
 						new MapKeyValueIteratorFactory<RelativeCoordinates, WeightedSumPixel>(), 
 						new MaxRbfAggregator.Factory<WeightedSumPixel>(
 								new WeightedSumToOnOffSizeMapper(), 
@@ -154,13 +150,13 @@ public class VisualizerTest {
 		
 		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSumPixel>> maskVisualizer =
 				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates, WeightedSumPixel>>(
-						tileSizeProvider,
 						averageVisualizer, 
 						alphaVisualizer);
 		
 //		BufferedImage image = 
 				maskVisualizer.visualize(
 					tile, 
+					new TileSize(),
 					new TileCoordinates(0,0,0));
 		
 //		ImageUtil.displayImage(image);

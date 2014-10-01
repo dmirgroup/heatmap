@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor.IFileWriterProcessorFactory;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.iterator.IKeyValueIteratorFactory;
@@ -61,12 +61,9 @@ extends AbstractProcessor<TGroupContainer> {
 	private IMapper<String, String> groupIdMapper;
 	
 	public ProxyGroupFileWriterProcessor(
-			ITileSizeProvider tileSizeProvider,
 			IKeyValueIteratorFactory<TGroupContainer, String, TGroupData> groupIteratorFactory,
 			IFileWriterProcessorFactory<TGroupData> fileWriter,
 			String parentFolder) {
-		
-		super(tileSizeProvider);
 		
 		this.groupIteratorFactory = groupIteratorFactory;
 		this.parentFolder = parentFolder;
@@ -77,6 +74,7 @@ extends AbstractProcessor<TGroupContainer> {
 	@Override
 	public void process(
 			TGroupContainer tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		if (tile == null) {
@@ -110,7 +108,7 @@ extends AbstractProcessor<TGroupContainer> {
 			ITileProcessor<TGroupData> fileWriter = 
 					this.fileWriter.getInstance(parentFolder.toString());
 			
-			fileWriter.process(groupData, tileCoordinates);
+			fileWriter.process(groupData, tileSize, tileCoordinates);
 			fileWriter.close();
 		}
 	}

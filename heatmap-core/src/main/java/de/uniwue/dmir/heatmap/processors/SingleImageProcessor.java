@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
 import de.uniwue.dmir.heatmap.TileSize;
-import de.uniwue.dmir.heatmap.filters.NoFilter;
+import de.uniwue.dmir.heatmap.filters.NullFilter;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
@@ -43,6 +42,8 @@ import de.uniwue.dmir.heatmap.util.ImageUtil;
 public class SingleImageProcessor<TTile> 
 extends AbstractProcessor<TTile> {
 
+	private TileSize tileSize;
+	
 	private GeoBoundingBox boundingBox;
 	private IMapProjection mapProjection;
 	
@@ -52,14 +53,27 @@ extends AbstractProcessor<TTile> {
 	private Map<Integer, Map<TileCoordinates, BufferedImage>> tiles;
 	
 	public SingleImageProcessor(
-			ITileSizeProvider tileSizeProvider,
 			GeoBoundingBox geoBoundingBox,
 			IMapProjection mapProjection,
 			IBackgroundVisualizer<TTile> backgroundVisualizer,
 			IVisualizer<TTile> visualizer) {
 		
-		super(tileSizeProvider);
+		this(
+				new TileSize(), 
+				geoBoundingBox, 
+				mapProjection, 
+				backgroundVisualizer, 
+				visualizer);
+	}
+	
+	public SingleImageProcessor(
+			TileSize tileSize,
+			GeoBoundingBox geoBoundingBox,
+			IMapProjection mapProjection,
+			IBackgroundVisualizer<TTile> backgroundVisualizer,
+			IVisualizer<TTile> visualizer) {
 		
+		this.tileSize = tileSize;
 		this.boundingBox = geoBoundingBox;
 		this.mapProjection = mapProjection;
 		this.backgroundVisualizer = backgroundVisualizer;
@@ -71,6 +85,7 @@ extends AbstractProcessor<TTile> {
 	@Override
 	public void process(
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		Map<TileCoordinates, BufferedImage> tiles = this.tiles.get(tileCoordinates.getZoom());
@@ -79,7 +94,7 @@ extends AbstractProcessor<TTile> {
 			this.tiles.put(tileCoordinates.getZoom(), tiles);
 		}
 		
-		BufferedImage image = this.visualizer.visualize(tile, tileCoordinates);
+		BufferedImage image = this.visualizer.visualize(tile, tileSize, tileCoordinates);
 		
 		tiles.put(tileCoordinates, image);
 		
@@ -88,12 +103,9 @@ extends AbstractProcessor<TTile> {
 	@Override
 	public void close() {
 		
-		IFilter<?, ?> filter = new NoFilter<Object, Object>(this.tileSizeProvider);
+		IFilter<?, ?> filter = new NullFilter<Object, Object>();
 		
 		for (int zoom : this.tiles.keySet()) {
-			
-			TileSize tileSize =
-					super.tileSizeProvider.getTileSize(zoom);
 			
 			Map<TileCoordinates, BufferedImage> tiles = this.tiles.get(zoom);
 			
@@ -124,13 +136,14 @@ extends AbstractProcessor<TTile> {
 					
 					BufferedImage tileBackground = 
 							this.backgroundVisualizer.visualize(
-									null, 
+									null,
+									this.tileSize,
 									tileCoordinates);
 					
 					g.drawImage(
 							tileBackground, 
-							(int) (x - bottomLeft.getX()) * tileSize.getWidth(), 
-							(int) (y - topRight.getY()) * tileSize.getHeight(), 
+							(int) (x - bottomLeft.getX()) * this.tileSize.getWidth(), 
+							(int) (y - topRight.getY()) * this.tileSize.getHeight(), 
 							null);
 					
 					BufferedImage overlay = null;
@@ -138,8 +151,8 @@ extends AbstractProcessor<TTile> {
 						
 						overlay = tiles.get(tileCoordinates);
 						
-						int pixelX = (int) (x - bottomLeft.getX()) * tileSize.getWidth();
-						int pixelY = (int) (y - topRight.getY()) * tileSize.getHeight();
+						int pixelX = (int) (x - bottomLeft.getX()) * this.tileSize.getWidth();
+						int pixelY = (int) (y - topRight.getY()) * this.tileSize.getHeight();
 						
 						if (overlay != null) {
 							g.drawImage(
@@ -178,11 +191,11 @@ extends AbstractProcessor<TTile> {
 			int width = 
 					image.getWidth() 
 					- topLeftRelative.getX() 
-					- (tileSize.getWidth() - bottomRightRelative.getX());
+					- (this.tileSize.getWidth() - bottomRightRelative.getX());
 			int height = 
 					image.getHeight() 
 					- topLeftRelative.getY() 
-					- (tileSize.getHeight() - bottomRightRelative.getY());
+					- (this.tileSize.getHeight() - bottomRightRelative.getY());
 			
 //			System.out.println(topLeftX);
 //			System.out.println(topLeftY);

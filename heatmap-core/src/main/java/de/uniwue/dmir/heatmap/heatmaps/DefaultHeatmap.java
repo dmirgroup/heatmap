@@ -36,7 +36,7 @@ import de.uniwue.dmir.heatmap.ITileFactory;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.ITileRangeProvider;
 import de.uniwue.dmir.heatmap.ITileSizeProvider;
-import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.ZoomLevelRange;
 import de.uniwue.dmir.heatmap.point.sources.geo.IMapProjection;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -69,9 +69,6 @@ implements IHeatmap<TTile, TParameters> {
 	private IHeatmap<TTile, TParameters> seed;
 	
 	@Getter
-	private IZoomLevelSizeProvider zoomLevelSizeProvider;
-	
-	@Getter
 	private ITileSizeProvider tileSizeProvider;
 	
 	@Getter
@@ -85,7 +82,6 @@ implements IHeatmap<TTile, TParameters> {
 			ITileFactory<TTile> tileFactory,
 			IPointsource<TPoint, TParameters> pointsource,
 			IFilter<TPoint, TTile> filter,
-			IZoomLevelSizeProvider zoomLevelSizeProvider,
 			ITileSizeProvider tileSizeProvider,
 			IMapProjection mapProjection) {
 		
@@ -93,7 +89,6 @@ implements IHeatmap<TTile, TParameters> {
 				tileFactory, 
 				pointsource,
 				filter, 
-				zoomLevelSizeProvider, 
 				tileSizeProvider, 
 				mapProjection,
 				null);
@@ -103,30 +98,19 @@ implements IHeatmap<TTile, TParameters> {
 			ITileFactory<TTile> tileFactory,
 			IPointsource<TPoint, TParameters> pointsource,
 			IFilter<TPoint, TTile> filter,
-			IZoomLevelSizeProvider zoomLevelSizeProvider,
 			ITileSizeProvider tileSizeProvider,
 			IMapProjection mapProjection,
 			IHeatmap<TTile, TParameters> seed) {
 		
-		if (!filter.getTileSizeProvider().equals(tileSizeProvider)) {
-			throw new IllegalArgumentException(
-					"Tile size provider of the given filter does not match.");
-		}
-		
 		if (seed == null) {
 			this.seed = new EmptyHeatmap<TTile, TParameters>();
 		} else {
-			if (!seed.getTileSizeProvider().equals(tileSizeProvider)) {
-				throw new IllegalArgumentException(
-						"Tile size provider of the given seed does not match.");
-			}
 			this.seed = seed;
 		}
 		
 		this.tileFactory = tileFactory;
 		this.pointsource = pointsource;
 		this.filter = filter;
-		this.zoomLevelSizeProvider = zoomLevelSizeProvider;
 		this.tileSizeProvider = tileSizeProvider;
 		this.mapProjection = mapProjection;
 		this.returnSeedTilesWithNoExternalData = false;
@@ -201,12 +185,16 @@ implements IHeatmap<TTile, TParameters> {
 		
 		stopWatch.start("adding data points to tile");
 		
+		TileSize tileSize = 
+				this.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
+		
 		int externalDataPointCount = 0;
 		while(externalData.hasNext()) {
 			TPoint externalDataPoint = externalData.next();
 			this.filter.filter(
 					externalDataPoint, 
 					tile, 
+					tileSize,
 					tileCoordinates);
 			externalDataPointCount ++;
 		}
@@ -249,13 +237,14 @@ implements IHeatmap<TTile, TParameters> {
 			
 			this.logger.debug("Processing tiles on zoom level {}.", zoomLevel);
 			
-			
+			TileSize tileSize = 
+					this.tileSizeProvider.getTileSize(zoomLevel);
 			
 			int tileCount = 0;
 			while (iterator.hasNext()) {
 				TileCoordinates coordinates = iterator.next();
 				TTile tile = this.getTile(coordinates, parameters);
-				processor.process(tile, coordinates);
+				processor.process(tile, tileSize, coordinates);
 				tileCount ++;
 			}
 

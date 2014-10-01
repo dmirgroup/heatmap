@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.uniwue.dmir.heatmap.IFilter;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -153,8 +154,6 @@ public class FilterDimensionsTest {
 				int centerX, 
 				int centerY) {
 			
-			super(null);
-			
 			this.width = width;
 			this.height = height;
 			this.centerX = centerX;
@@ -165,6 +164,7 @@ public class FilterDimensionsTest {
 		public void filter(
 				Object dataPoint, 
 				Object tile, 
+				TileSize tileSize,
 				TileCoordinates tileCoordinates) {
 		}
 		

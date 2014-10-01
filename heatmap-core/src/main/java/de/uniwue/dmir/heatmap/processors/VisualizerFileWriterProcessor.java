@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -46,24 +47,27 @@ extends AbstractFileWriterProcessor<TTile> {
 	private IVisualizer<TTile> visualizer;
 	
 	public VisualizerFileWriterProcessor(
-			ITileSizeProvider tileSizeProvider,
 			String parentFolder,
 			IFileStrategy fileStrategy, 
 			String fileFormat, 
 			IVisualizer<TTile> visualizer) {
 		
-		super(tileSizeProvider, parentFolder, fileStrategy, fileFormat, false);
+		super(parentFolder, fileStrategy, fileFormat, false);
 		this.visualizer = visualizer;
 	}
 	
 	@Override
-	public void process(TTile tile, TileCoordinates coordinates) {
+	public void process(
+			TTile tile, 
+			TileSize tileSize,
+			TileCoordinates coordinates) {
 		
 		if (tile == null) {
 			return;
 		}
 		
-		BufferedImage image = this.visualizer.visualize(tile, coordinates);
+		BufferedImage image = 
+				this.visualizer.visualize(tile, tileSize, coordinates);
 		try {
 			OutputStream outputStream = this.getOutputStream(coordinates);
 			ImageIO.write(image, super.fileFormat, outputStream);
@@ -98,8 +102,7 @@ extends AbstractFileWriterProcessor<TTile> {
 		@Override
 		public ITileProcessor<TTile> getInstance(String parentFolder) {
 			return new VisualizerFileWriterProcessor<TTile>(
-					this.tileSizeProvider,
-					parentFolder, 
+					parentFolder,
 					this.fileStrategy, 
 					this.fileFormat, 
 					this.visualizer);

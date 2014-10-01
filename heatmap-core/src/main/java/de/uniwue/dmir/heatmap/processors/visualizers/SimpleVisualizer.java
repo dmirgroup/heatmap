@@ -42,7 +42,7 @@ implements IVisualizer<TTile> {
 			TPixel> pixelIteratorFactory,
 			CombinedColorPipe<TPixel> colorPipe) {
 		
-		super(tileSizeProvider, pixelIteratorFactory);
+		super(pixelIteratorFactory);
 		this.colorPipe = colorPipe;
 	}
 
@@ -51,11 +51,9 @@ implements IVisualizer<TTile> {
 	@Override
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates coordinates) {
 
-		TileSize tileSize = 
-				super.tileSizeProvider.getTileSize(coordinates.getZoom());
-		
 		BufferedImage bufferedImage = 
 				new BufferedImage(
 						tileSize.getWidth(), 

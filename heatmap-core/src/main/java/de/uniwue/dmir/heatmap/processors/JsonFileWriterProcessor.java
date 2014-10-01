@@ -32,6 +32,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -45,12 +46,12 @@ extends AbstractFileWriterProcessor<TTile> {
 			String parentFolder,
 			IFileStrategy fileStrategy, 
 			boolean gzip) {
-		super(tileSizeProvider, parentFolder, fileStrategy, "json", gzip);
+		super(parentFolder, fileStrategy, "json", gzip);
 		this.mapper = new ObjectMapper();
 	}
 
 	@Override
-	public void process(TTile tile, TileCoordinates coordinates) {
+	public void process(TTile tile, TileSize tileSize, TileCoordinates coordinates) {
 		
 		try {
 			

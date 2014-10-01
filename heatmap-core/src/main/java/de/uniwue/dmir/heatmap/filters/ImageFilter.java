@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.filters;
 import java.awt.image.BufferedImage;
 
 import lombok.Getter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
 import de.uniwue.dmir.heatmap.filters.operators.IScalarMultiplier;
@@ -64,7 +63,6 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 	private Double[] array;
 
 	public ImageFilter(
-			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<TPoint> dataToRelativeCoordinatesMapper,
 			IMapper<TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
@@ -72,11 +70,10 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 			IScalarMultiplier<TPixel> multiplier,
 			BufferedImage image) {
 		
-		this(tileSizeProvider, dataToRelativeCoordinatesMapper, dataToPixelMapper, pixelAccess, adder, multiplier, false);
+		this(dataToRelativeCoordinatesMapper, dataToPixelMapper, pixelAccess, adder, multiplier, false);
 	}
 	
 	public ImageFilter(
-			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<TPoint> dataToRelativeCoordinatesMapper,
 			IMapper<TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
@@ -85,12 +82,11 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 			BufferedImage image,
 			boolean useAlpha) {
 		
-		this(tileSizeProvider, dataToRelativeCoordinatesMapper, dataToPixelMapper, pixelAccess, adder, multiplier, useAlpha);
+		this(dataToRelativeCoordinatesMapper, dataToPixelMapper, pixelAccess, adder, multiplier, useAlpha);
 		initialize(image);
 	}
 	
 	private ImageFilter(
-			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<TPoint> dataToRelativeCoordinatesMapper,
 			IMapper<TPoint, TPixel> dataToPixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
@@ -98,7 +94,7 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 			IScalarMultiplier<TPixel> multiplier,
 			boolean useAlpha) {
 
-		super(tileSizeProvider, dataToRelativeCoordinatesMapper, pixelAccess);
+		super(dataToRelativeCoordinatesMapper, pixelAccess);
 
 		this.dataToPixelMapper = dataToPixelMapper;
 		this.adder = adder;
@@ -155,15 +151,13 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 			TDerived dataTPixeloint, 
 			RelativeCoordinates relativeCoordinates,
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		int startX = relativeCoordinates.getX();
 		int startY = relativeCoordinates.getY();
 		startX -= this.centerX;
 		startY -= this.centerY;
-		
-		TileSize tileSize = 
-				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		for (int i = 0; i < this.width; i++) {
 			for (int j = 0; j < this.height; j ++) {

@@ -25,7 +25,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import de.uniwue.dmir.heatmap.IFilter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 import de.uniwue.dmir.heatmap.util.mapper.IMapper;
 
@@ -61,12 +61,9 @@ implements IConfigurableFilter<TPoint, TTile> {
 	private Map<String, IFilter<TPoint, TTile>> filters;
 	
 	public ProxySplitFilter(
-			ITileSizeProvider tileSizeProvider,
 			IMapper<? super TPoint, String> filterIdMapper,
 			Map<String, IFilter<TPoint, TTile>> filters) {
 
-		super(tileSizeProvider);
-		
 		this.filterIdMapper = filterIdMapper;
 		this.filters = filters;
 		
@@ -80,6 +77,7 @@ implements IConfigurableFilter<TPoint, TTile> {
 	public <TDerived extends TPoint> void filter(
 			TDerived dataPoint, 
 			TTile tile,
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		// ger filter id
@@ -97,6 +95,7 @@ implements IConfigurableFilter<TPoint, TTile> {
 			filter.filter(
 					dataPoint, 
 					tile, 
+					tileSize,
 					tileCoordinates);
 		}
 		

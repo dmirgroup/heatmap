@@ -24,8 +24,8 @@ import java.awt.image.BufferedImage;
 
 import lombok.Getter;
 import lombok.Setter;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IVisualizer;
+import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
 /**
@@ -48,21 +48,8 @@ extends AbstractDebuggingVisualizer<TTile> {
 	private Channel alphaChannel = DEFAULT_ALPHA_CHANNEL;
 	
 	public AlphaMaskProxyVisualizer(
-			ITileSizeProvider tileSizeProvider,
 			IVisualizer<TTile> color,
 			IVisualizer<TTile> alpha) {
-		
-		super(tileSizeProvider);
-		
-		if (!color.getTileSizeProvider().equals(super.tileSizeProvider)) {
-			throw new IllegalArgumentException(
-					"Color visualizer's tile provider does not match.");
-		}
-
-		if (!alpha.getTileSizeProvider().equals(super.tileSizeProvider)) {
-			throw new IllegalArgumentException(
-					"Alpha visualizer's tile provider does not match.");
-		}
 		
 		this.color = color;
 		this.alpha = alpha;
@@ -71,10 +58,11 @@ extends AbstractDebuggingVisualizer<TTile> {
 	@Override
 	public BufferedImage visualizeWithDebuggingInformation(
 			TTile tile,
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
-		BufferedImage colorImage = this.color.visualize(tile, tileCoordinates);
-		BufferedImage alphaImage = this.alpha.visualize(tile, tileCoordinates);
+		BufferedImage colorImage = this.color.visualize(tile, tileSize, tileCoordinates);
+		BufferedImage alphaImage = this.alpha.visualize(tile, tileSize, tileCoordinates);
 		
 		applyGrayscaleMaskToAlpha(colorImage, alphaImage, this.alphaChannel);
 		

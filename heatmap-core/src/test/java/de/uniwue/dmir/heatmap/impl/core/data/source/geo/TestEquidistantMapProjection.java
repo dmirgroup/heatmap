@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.TileSize;
-import de.uniwue.dmir.heatmap.filters.NoFilter;
+import de.uniwue.dmir.heatmap.filters.NullFilter;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoBoundingBox;
 import de.uniwue.dmir.heatmap.point.sources.geo.GeoCoordinates;
 import de.uniwue.dmir.heatmap.point.sources.geo.projections.EquidistantProjection;
@@ -90,7 +90,7 @@ public class TestEquidistantMapProjection {
 						new GeoCoordinates(10 + offset, 10 + offset)), 
 				new TileSize(10, 10));
 		
-		IFilter<?, ?> filter = new NoFilter<Object, Object>(null);
+		IFilter<?, ?> filter = new NullFilter<Object, Object>();
 		
 		List<TileCoordinates> tileCoordinates = 
 				equidistantProjection.overlappingTiles(

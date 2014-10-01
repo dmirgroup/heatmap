@@ -23,7 +23,6 @@ package de.uniwue.dmir.heatmap.filters;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.TileSize;
 import de.uniwue.dmir.heatmap.filters.operators.IAdder;
 import de.uniwue.dmir.heatmap.filters.pixelaccess.IPixelAccess;
@@ -50,7 +49,6 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 	private boolean skipOutOfBoundsPoints;
 	
 	public ErodingFilter(
-			ITileSizeProvider tileSizeProvider,
 			IToRelativeCoordinatesMapper<? super TPoint> dataToRelativeCoordinatesMapper,
 			IMapper<? super TPoint, TPixel> dataToTPixelixelMapper,
 			IPixelAccess<TPixel, TTile> pixelAccess, 
@@ -61,7 +59,7 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 			int centerX, 
 			int centerY) {
 
-		super(tileSizeProvider, dataToRelativeCoordinatesMapper, pixelAccess);
+		super(dataToRelativeCoordinatesMapper, pixelAccess);
 		
 		this.dataToTPixelixelMapper = dataToTPixelixelMapper;
 		this.adder = pixelAdder;
@@ -78,6 +76,7 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 			TDerived dataTPixeloint, 
 			RelativeCoordinates relativeCoordinates,
 			TTile tile, 
+			TileSize tileSize,
 			TileCoordinates tileCoordinates) {
 		
 		int startX = relativeCoordinates.getX();
@@ -87,9 +86,6 @@ extends AbstractPixelAccessFilter<TPoint, TPixel, TTile> {
 		
 		int stopX = startX + this.erodingWidth;
 		int stopY = startY + this.erodingHeight;
-		
-		TileSize tileSize = 
-				super.tileSizeProvider.getTileSize(tileCoordinates.getZoom());
 		
 		for (int x = startX; x < stopX; x++) {
 			for (int y = startY; y < stopY; y ++) {
