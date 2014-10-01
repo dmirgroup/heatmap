@@ -25,6 +25,8 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import de.uniwue.dmir.heatmap.DefaultTileSizeProvider;
+import de.uniwue.dmir.heatmap.DefaultZoomLevelSizeProvider;
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.ITileSizeProvider;
 import de.uniwue.dmir.heatmap.IZoomLevelSizeProvider;
@@ -54,7 +56,11 @@ public class MercatorMapProjection implements IMapProjection {
 	public static final double MAX_LON = +180;
 	
 	private ITileSizeProvider tileSizeProvider;
-	private IZoomLevelSizeProvider zoomLevelMapper;
+	private IZoomLevelSizeProvider zoomLevelSizeProvider;
+	
+	public MercatorMapProjection() {
+		this(new DefaultTileSizeProvider(), new DefaultZoomLevelSizeProvider());
+	}
 	
 	@Override
 	public RelativeCoordinates fromGeoToRelativeCoordinates(
@@ -137,7 +143,7 @@ public class MercatorMapProjection implements IMapProjection {
 						tileCoordinates, 
 						filter, 
 						tileSize,
-						this.zoomLevelMapper);
+						this.zoomLevelSizeProvider);
 		
 		coordinates.addAll(overlappingCoordinates);
 		
@@ -224,7 +230,7 @@ public class MercatorMapProjection implements IMapProjection {
 		TileSize tileSize =
 				this.tileSizeProvider.getTileSize(zoom);
 		
-		ZoomLevelSize zoomLevelSize = this.zoomLevelMapper.getZoomLevelSize(zoom);
+		ZoomLevelSize zoomLevelSize = this.zoomLevelSizeProvider.getZoomLevelSize(zoom);
 		
 		return new PixelDimensions(
 				zoomLevelSize.getWidth() * tileSize.getWidth(),
