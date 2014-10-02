@@ -21,11 +21,14 @@
 package de.uniwue.dmir.heatmap.run;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import lombok.Data;
 
@@ -64,12 +67,18 @@ import de.uniwue.dmir.heatmap.point.types.geo.SimpleGeoPoint;
 import de.uniwue.dmir.heatmap.processors.SingleImageProcessor;
 import de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor;
 import de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy;
+import de.uniwue.dmir.heatmap.processors.visualizers.AlphaMaskProxyVisualizer;
+import de.uniwue.dmir.heatmap.processors.visualizers.GenericSimpleRbfVisualizer;
 import de.uniwue.dmir.heatmap.processors.visualizers.MapTileVisualizer;
 import de.uniwue.dmir.heatmap.processors.visualizers.PipeProxyVisualizer;
 import de.uniwue.dmir.heatmap.processors.visualizers.SimpleVisualizer;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.CombinedColorPipe;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.CutpointColorScheme;
+import de.uniwue.dmir.heatmap.processors.visualizers.color.ImageColorScheme;
+import de.uniwue.dmir.heatmap.processors.visualizers.color.SimpleAlphaColorScheme;
 import de.uniwue.dmir.heatmap.processors.visualizers.color.SimpleColorPipe;
+import de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.MaxRbfAggregator;
+import de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator;
 import de.uniwue.dmir.heatmap.tiles.coordinates.IToRelativeCoordinatesMapper;
 import de.uniwue.dmir.heatmap.tiles.coordinates.RelativeCoordinates;
 import de.uniwue.dmir.heatmap.tiles.coordinates.geo.GeoPointToRelativeCoordinatesMapper;
@@ -211,14 +220,18 @@ public class DefaultSetup {
 				new MapPixelAccess<SumPixel>();
 		IAdder<SumPixel> pixelAdder = new SumAdder();
 				
-		IFilter<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>> filter = 
+		AddingFilter<SimpleGeoPoint<String>, SumPixel, Map<RelativeCoordinates, SumPixel>> addingFilter = 
 				new AddingFilter<SimpleGeoPoint<String>, SumPixel, Map<RelativeCoordinates, SumPixel>>(
-						dataToRelativeCoordinatesMapper, 
-						dataToPixelMapper, 
+						dataToRelativeCoordinatesMapper,
+						dataToPixelMapper,
 						pixelAccess, 
 						pixelAdder);
+		addingFilter.setWidth(220);
+		addingFilter.setHeight(220);
+		addingFilter.setCenterX(110);
+		addingFilter.setCenterY(110);
 		
-		
+		IFilter<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>> filter = addingFilter;
 		
 		// the heatmap putting things together
 		
@@ -233,6 +246,8 @@ public class DefaultSetup {
 		
 		
 		// the processor processing each tile
+		
+		// simple visualizer
 		
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> simpleVisualizer = 
 				new SimpleVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel>(
@@ -264,12 +279,52 @@ public class DefaultSetup {
 												true)), 
 						null));
 		
+		// rbf visualizer
 		
+		BufferedImage colorImage = ImageIO.read(new File("src/main/resources/color-schemes/everyaware.png"));
+		double[] ranges = ImageColorScheme.equdistantRanges(0, 50, colorImage.getHeight());
+		ImageColorScheme colorScheme = new ImageColorScheme(colorImage, ranges);
+		
+		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel> visualizerColor = 
+				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, SumPixel>(),
+						new QuadraticRbfAggregator.Factory<SumPixel>(
+								new IMapper<SumPixel, Double>() {
+									@Override
+									public <TDerived extends SumPixel> Double map(
+											TDerived object) {
+										return object.getSize();
+									}
+								}, 
+								10),
+						colorScheme);
+//		visualizerColor.setUseRtree(true);
+		
+		GenericSimpleRbfVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel> visualizerAlpha = 
+				new GenericSimpleRbfVisualizer<Map<RelativeCoordinates, SumPixel>, SumPixel>(
+						new MapKeyValueIteratorFactory<RelativeCoordinates, SumPixel>(),
+						new MaxRbfAggregator.Factory<SumPixel>(
+								new IMapper<SumPixel, Double>() {
+									@Override
+									public <TDerived extends SumPixel> Double map(
+											TDerived object) {
+										return object.getSize() > 0 ? 1. : 0.;
+									}
+								}, 
+								10),
+						new SimpleAlphaColorScheme());
+//		visualizerColor.setUseRtree(true);
+		
+		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, SumPixel>> proxyVisualizer =
+				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates,SumPixel>>(
+						visualizerColor,
+						visualizerAlpha);
 		
 		// pipe visualizer
 		
 		List<IVisualizer<Map<RelativeCoordinates, SumPixel>>> visualizers =
 				new ArrayList<IVisualizer<Map<RelativeCoordinates,SumPixel>>>();
+		visualizers.add(proxyVisualizer);
 		visualizers.add(simpleVisualizer);
 		
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> pipeVisualizer =
@@ -293,7 +348,7 @@ public class DefaultSetup {
 								"http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg"), 
 						visualizer);
 		
-		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor = visualizerProcessor;
+		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor = singleProcessor;
 		heatmap.processTiles(
 				processor,
 				zoomLevelRange,

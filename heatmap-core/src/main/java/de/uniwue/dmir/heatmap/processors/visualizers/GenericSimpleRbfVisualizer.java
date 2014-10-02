@@ -261,7 +261,7 @@ extends AbstractGenericVisualizer<TTile, TPixel> {
 						visualizerColor, 
 						visualizerAlpha);
 		
-		BufferedImage result = visualizerAlpha.visualize(
+		BufferedImage result = proxyVisualizer.visualize(
 				map, 
 				new TileSize(),
 				new TileCoordinates(0, 0, 0));
