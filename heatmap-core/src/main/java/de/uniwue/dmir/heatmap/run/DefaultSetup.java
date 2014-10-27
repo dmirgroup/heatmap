@@ -315,7 +315,7 @@ public class DefaultSetup {
 						new SimpleAlphaColorScheme());
 //		visualizerColor.setUseRtree(true);
 		
-		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, SumPixel>> proxyVisualizer =
+		AlphaMaskProxyVisualizer<Map<RelativeCoordinates, SumPixel>> alphaMaskVisualizer =
 				new AlphaMaskProxyVisualizer<Map<RelativeCoordinates,SumPixel>>(
 						visualizerColor,
 						visualizerAlpha);
@@ -324,14 +324,14 @@ public class DefaultSetup {
 		
 		List<IVisualizer<Map<RelativeCoordinates, SumPixel>>> visualizers =
 				new ArrayList<IVisualizer<Map<RelativeCoordinates,SumPixel>>>();
-		visualizers.add(proxyVisualizer);
+		visualizers.add(alphaMaskVisualizer);
 		visualizers.add(simpleVisualizer);
 		
 		IVisualizer<Map<RelativeCoordinates, SumPixel>> pipeVisualizer =
 				new PipeProxyVisualizer<Map<RelativeCoordinates,SumPixel>>(
 						visualizers);
 
-		IVisualizer<Map<RelativeCoordinates, SumPixel>> visualizer = pipeVisualizer;
+		IVisualizer<Map<RelativeCoordinates, SumPixel>> visualizer = simpleVisualizer;
 		
 		ITileProcessor<Map<RelativeCoordinates, SumPixel>> visualizerProcessor =
 				new VisualizerFileWriterProcessor<Map<RelativeCoordinates,SumPixel>>(
@@ -348,7 +348,7 @@ public class DefaultSetup {
 								"http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg"), 
 						visualizer);
 		
-		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor = singleProcessor;
+		ITileProcessor<Map<RelativeCoordinates, SumPixel>> processor = visualizerProcessor;
 		heatmap.processTiles(
 				processor,
 				zoomLevelRange,
