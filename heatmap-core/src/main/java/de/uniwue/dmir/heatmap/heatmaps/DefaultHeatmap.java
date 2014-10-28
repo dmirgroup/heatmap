@@ -217,6 +217,11 @@ implements IHeatmap<TTile, TParameters> {
 		
 		this.logger.debug("Processing tiles.");
 		
+		if (zoomLevelRange == null) {
+			zoomLevelRange = new ZoomLevelRange();
+			this.logger.debug("Using default zoom level range: {}", zoomLevelRange);
+		}
+		
 		int min = zoomLevelRange.getMin();
 		int max = zoomLevelRange.getMax();
 		
