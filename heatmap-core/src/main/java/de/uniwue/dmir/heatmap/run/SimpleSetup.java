@@ -223,10 +223,6 @@ public class SimpleSetup {
 						dataToPixelMapper,
 						pixelAccess, 
 						pixelAdder);
-		addingFilter.setWidth(220);
-		addingFilter.setHeight(220);
-		addingFilter.setCenterX(110);
-		addingFilter.setCenterY(110);
 		
 		IFilter<SimpleGeoPoint<String>, Map<RelativeCoordinates, SumPixel>> filter = addingFilter;
 		
