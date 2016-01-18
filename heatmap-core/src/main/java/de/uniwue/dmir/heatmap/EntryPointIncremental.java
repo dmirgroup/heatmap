@@ -89,8 +89,8 @@ public class EntryPointIncremental {
 				: new SimpleDateFormat(DATE_FORMAT).parse(absoluteMaxTimeString);
 		LOGGER.debug("Absolute maximal time: {}", df.format(absoluteMaxTime));
 		
-		String incrementalFile = new File("file:" + configDir, INCREMENTAL_FILE).getPath();
-		String settingsFile = new File("file:" + configDir, HEATMAP_PROCESSOR__FILE).getPath();
+		String incrementalFile = new File("file:/" + configDir, INCREMENTAL_FILE).getPath();
+		String settingsFile = new File("file:/" + configDir, HEATMAP_PROCESSOR__FILE).getPath();
 		
 		LOGGER.debug("Initializing incremental control file: {}", incrementalFile);
 		FileSystemXmlApplicationContext incrementalContext = 
