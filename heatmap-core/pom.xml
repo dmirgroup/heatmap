@@ -13,7 +13,7 @@
 	
 	<name>Heatmap Framework - Core</name>
 	<description>The core component of a general framework for generating heatmaps.</description>
-	<url>https://github.com/uniwue-dmir/de.uniwue.dmir.heatmap</url>
+	<url>https://github.com/dmirwue/de.uniwue.dmir.heatmap</url>
 	<inceptionYear>2013</inceptionYear>
 	
 	<licenses>
