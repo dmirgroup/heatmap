@@ -50,7 +50,7 @@
 	<repositories>
 		<!-- GitHub repository. -->
 		<repository>
-			<id>uniwue-dmir-repository</id>
+			<id>dmirwue-repository</id>
 			<releases>
 				<enabled>true</enabled>
 				<checksumPolicy>ignore</checksumPolicy>
@@ -58,7 +58,7 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
-			<url>http://uniwue-dmir.github.io/maven-repository/releases</url>
+			<url>http://dmirwue.github.io/maven-repository/releases</url>
 		</repository>
 	</repositories>
 
