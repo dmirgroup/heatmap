@@ -190,7 +190,7 @@ public class EntryPointIncremental {
 			if (backupsToKeep > 0) {
 				FileUtils.moveDirectory(
 					seedDir, 
-					new File(backupDir, backupDf.format(maxTime)));
+					new File(backupDir, backupDf.format(minTime))); // minTime is the maxTime of the seed
 				
 				// cleanup backups
 				String[] backups = 
