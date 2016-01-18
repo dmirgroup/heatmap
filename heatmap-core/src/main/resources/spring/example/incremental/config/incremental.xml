@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!--Loading properties. -->
+	
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:#{systemProperties.configDir}/config.default.properties</value>
+				<value>file:#{systemProperties.configDir}/config.properties</value>
+			</list>
+		</property>
+		<property name="order" value="150" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+
+
+	<!-- ############# Datasource. ############# -->
+	
+	<bean id="dataSource"
+			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName"	value="${db.core.driver}" />
+		<property name="url"				value="${db.core.url}" />
+		<property name="username"			value="${db.core.user}" />
+		<property name="password"			value="${db.core.password}" />
+	</bean>
+
+	<!-- ############# Transaction management access. ############# -->
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- <tx:annotation-driven /> -->
+
+	<!-- ############# MyBatis. ############# -->
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations" >
+			<list>
+				<value>file:#{systemProperties.configDir}/incremental.mybatis.processlimiter.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+		<property name="basePackage" value="
+			de.uniwue.dmir.heatmap.mybatis" />
+	</bean>
+	
+	
+	<!-- ############# Incremental. ############# -->
+
+	<bean id="processManager" class="de.uniwue.dmir.heatmap.incremental.FileProcessManager">
+		<constructor-arg name="filename" value="#{systemProperties.workDir}/current/process.txt" />
+	</bean>
+	
+</beans>

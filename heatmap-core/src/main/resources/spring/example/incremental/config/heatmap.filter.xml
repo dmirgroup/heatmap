@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Defining filter. -->
+	
+	<bean id="dataToPixelMapper"
+			class="de.uniwue.dmir.heatmap.filters.pointmappers.geo.SimpleGeoPointToWeightedSquaredSumPixelMapper" />
+			
+	<bean id="dataToRelativeCoordinatesMapper"
+			class="de.uniwue.dmir.heatmap.tiles.coordinates.geo.GeoPointToRelativeCoordinatesMapper">
+		
+		<constructor-arg name="mapProjection" ref="projection" />
+	</bean>
+			
+	<bean id="pixelAdder"
+			class="de.uniwue.dmir.heatmap.filters.operators.WeightedSquaredSumAdder" />
+			
+	<bean id="pixelAccess"
+			class="de.uniwue.dmir.heatmap.filters.pixelaccess.MapPixelAccess" />
+	
+	<bean id="proxiedFilter"
+			class="de.uniwue.dmir.heatmap.filters.AddingFilter">
+	
+		<constructor-arg name="dataToPixelMapper" ref="dataToPixelMapper" />
+		<constructor-arg name="dataToRelativeCoordinatesMapper" ref="dataToRelativeCoordinatesMapper" />
+		<constructor-arg name="pixelAccess" ref="pixelAccess" />
+		<constructor-arg name="pixelAdder" ref="pixelAdder" />
+		
+		<property name="width" value="${filter.width}" />
+		<property name="height" value="${filter.height}" />
+		
+		<property name="centerX" value="${filter.center.x}" />
+		<property name="centerY" value="${filter.center.y}" />
+	</bean>
+	
+	
+	<bean id="filter"
+			class="de.uniwue.dmir.heatmap.filters.ProxyGroupFilter">
+	
+		<constructor-arg name="filter" ref="proxiedFilter"/>
+		<constructor-arg name="groupAccess">
+			<bean class="de.uniwue.dmir.heatmap.filters.groupaccess.MapGroupAccess">
+				<constructor-arg name="tileFactory">
+					<bean class="de.uniwue.dmir.heatmap.tiles.factories.MapTileFactory" />
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg name="groupIdMapper">
+			<bean class="de.uniwue.dmir.heatmap.filters.groupaccess.SimpleGeoPointToGroupIdMapper">
+				<property name="overallGroupId" value="OVERALL" />
+			</bean>
+		</constructor-arg>
+			
+	</bean>
+	
+</beans>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="colorImage"
+			class="de.uniwue.dmir.heatmap.util.beans.BufferedImageFactoryBean">
+
+		<constructor-arg name="resource" value="${visualizer.colorscheme}" />
+	</bean>
+	
+	<bean id="colorScheme"
+			class="de.uniwue.dmir.heatmap.processors.visualizers.color.ImageColorScheme">
+
+		<constructor-arg name="image" ref="colorImage" />
+		<constructor-arg name="min" value="${visualizer.range.min}" />
+		<constructor-arg name="max" value="${visualizer.range.max}" />
+	</bean>
+	
+	
+	<bean id="averageVisualizer"
+			class="de.uniwue.dmir.heatmap.processors.visualizers.GenericSimpleRbfVisualizer">
+
+		<constructor-arg name="pixelIteratorFactory">
+			<bean class="de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory" />
+		</constructor-arg>
+		
+		<constructor-arg name="aggregator">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.QuadraticRbfAggregator.Factory">
+				<constructor-arg name="pixelToValueMapper">
+					<bean class="de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToAverageMapper" />
+				</constructor-arg>
+				<constructor-arg name="pointRadius" value="10" />
+			</bean>
+		</constructor-arg>
+		
+		<constructor-arg name="colorScheme" ref="colorScheme" />
+		
+		<property name="useRtree" value="true" />
+		<property name="width" value="60" />
+		<property name="height" value="60" />
+		<property name="centerX" value="30" />
+		<property name="centerY" value="30" />
+		
+		<property name="debug" value="false" />
+	</bean>
+
+	<bean id="alphaVisualizer"
+			class="de.uniwue.dmir.heatmap.processors.visualizers.GenericSimpleRbfVisualizer">
+
+		<constructor-arg name="pixelIteratorFactory">
+			<bean class="de.uniwue.dmir.heatmap.util.iterator.MapKeyValueIteratorFactory" />
+		</constructor-arg>
+		
+		<constructor-arg name="aggregator">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.rbf.aggregators.MaxRbfAggregator.Factory">
+				<constructor-arg name="pixelToValueMapper">
+					<bean class="de.uniwue.dmir.heatmap.processors.pixelmappers.WeightedSumToOnOffSizeMapper" />
+				</constructor-arg>
+				<constructor-arg name="pointRadius" value="10" />
+			</bean>
+		</constructor-arg>
+		
+		<constructor-arg name="colorScheme">
+			<bean class="de.uniwue.dmir.heatmap.processors.visualizers.color.SimpleAlphaColorScheme" />
+		</constructor-arg>
+		
+		<property name="useRtree" value="true" />
+		<property name="width" value="60" />
+		<property name="height" value="60" />
+		<property name="centerX" value="30" />
+		<property name="centerY" value="30" />
+		
+		<property name="debug" value="false" />
+	</bean>
+	
+	<bean name="visualizer" class="de.uniwue.dmir.heatmap.processors.visualizers.AlphaMaskProxyVisualizer">
+		<constructor-arg name="color" ref="averageVisualizer" />
+		<constructor-arg name="alpha" ref="alphaVisualizer" />
+		<property name="debug" value="true" />
+	</bean>
+	
+</beans>

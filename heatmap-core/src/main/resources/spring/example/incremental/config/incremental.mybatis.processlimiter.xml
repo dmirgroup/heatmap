@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="de.uniwue.dmir.heatmap.mybatis.MyBatisProcessLimiter">
+	<select 
+			id="getMaxTime" 
+			parameterType="map" 
+			resultType="java.util.Date">
+
+		SELECT MAX(meta_timestamp_received) 
+		FROM (
+			SELECT meta_timestamp_received 
+			FROM data_airprobe 
+			WHERE meta_timestamp_received > #{start} 
+			ORDER BY meta_timestamp_received ASC
+			LIMIT #{limit}
+		) D;
+	</select>
+</mapper>
+
+<!-- <resultMap id="userResultMap" type="User">
+	<id property="id" column="user_id" />
+	<result property="username" column="user_name" />
+	<result property="password" column="hashed_password" />
+</resultMap> -->

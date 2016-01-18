@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Defining heat map seed. -->
+	<bean id="seed"
+			class="de.uniwue.dmir.heatmap.heatmaps.FilesystemHeatmap">
+	
+		<constructor-arg name="settings" ref="heatmapSettings" />
+		<constructor-arg name="clazz" value="java.util.Map" />
+		<constructor-arg name="parentFolder" value="#{systemProperties.workDir}/current/data" />
+		<constructor-arg name="gzip" value="true" />
+	</bean>
+
+</beans>

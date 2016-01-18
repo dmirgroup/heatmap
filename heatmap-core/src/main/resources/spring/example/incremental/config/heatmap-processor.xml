@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!--Loading properties. -->
+	
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:#{systemProperties.configDir}/config.default.properties</value>
+				<value>file:#{systemProperties.configDir}/config.properties</value>
+			</list>
+		</property>
+		<property name="order" value="150" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true" />
+	</bean>
+	
+	<!-- general -->
+
+	<bean id="dateFactory" class="java.text.SimpleDateFormat">
+			<constructor-arg name="pattern" value="yyyy-MM-dd HH:mm:ss" />
+	</bean>
+
+	<bean id="zoomLevelRange"
+			class="de.uniwue.dmir.heatmap.ZoomLevelRange">
+		<constructor-arg name="min" value="${zoom.min}" />
+		<constructor-arg name="max" value="${zoom.max}" />
+	</bean>
+
+	<bean id="heatmapSettings"
+			class="de.uniwue.dmir.heatmap.HeatmapSettings" >
+		<property name="zoomLevelRange" ref="zoomLevelRange" />
+	</bean>
+	
+	<import resource="heatmap.pointsource.geo.db.xml"/>
+	<import resource="heatmap.pointsource.xml"/>
+	
+	<import resource="heatmap.filter.xml"/>
+	<import resource="heatmap.seed.xml"/>
+	<import resource="heatmap.xml"/>
+	
+	<import resource="processor.writer.data.xml"/>
+	<import resource="processor.writer.tiles.visualizer.xml"/>
+	<import resource="processor.writer.tiles.xml"/>
+	<import resource="processor.xml"/>
+
+</beans>
