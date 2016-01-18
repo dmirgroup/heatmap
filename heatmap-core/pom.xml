@@ -24,9 +24,9 @@
 	</licenses>
 	
 	<scm>
-		<url>git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git</url>
-		<connection>scm:git:git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git</connection>
-		<developerConnection>scm:git:git@github.com:uniwue-dmir/de.uniwue.dmir.heatmap.git</developerConnection>
+		<url>git@github.com:dmirwue/de.uniwue.dmir.heatmap.git</url>
+		<connection>scm:git:git@github.com:dmirwue/de.uniwue.dmir.heatmap.git</connection>
+		<developerConnection>scm:git:git@github.com:dmirwue/de.uniwue.dmir.heatmap.git</developerConnection>
 	</scm>
 
 	<developers>
