@@ -35,6 +35,8 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IHeatmap;
@@ -48,6 +50,8 @@ public class MapGroupTileFilesystemHeatmap<I>
 implements IHeatmap<Map<String, I>> {
 
 	public static final String FILE_EXTENSION = "json";
+	
+	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private HeatmapSettings settings;
 	private Class<I> clazz;
@@ -86,7 +90,16 @@ implements IHeatmap<Map<String, I>> {
 				+ (this.gzip ? AbstractFileWriterProcessor.GZIP_EXTENSION : "");
 		
 		File parentFolder = new File(this.parentFolder);
+		
+		this.logger.debug("Reading groups from: {}", parentFolder);
 		String[] groups = parentFolder.list(DirectoryFileFilter.DIRECTORY);
+		if (groups == null) {
+			this.logger.debug("No groups found");
+			return null;
+		} else {
+			this.logger.debug("Found groups: {}", groups.length);
+		}
+		
 		Map<String, I> groupTile = new HashMap<String, I>();
 		String tileName = this.fileStrategy.getFileName(coordinates, extension);
 		for (String group: groups){
@@ -124,7 +137,9 @@ implements IHeatmap<Map<String, I>> {
 		TileCoordinates coordinates = new TileCoordinates(0, 0, 0);
 		File parentFolder = new File(this.parentFolder);
 		
+		// get groups
 		String[] groups = parentFolder.list(DirectoryFileFilter.DIRECTORY);
+		if (groups == null) return;
 		
 		// collect zoom folders
 		Set<String> zoomFolders = new HashSet<String>();

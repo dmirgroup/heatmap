@@ -30,7 +30,7 @@
 		<constructor-arg name="filter" ref="filter" />
 		<constructor-arg name="settings" ref="heatmapSettings" />
 		
- 		<!-- <property name="seed" ref="seed" /> -->
+ 		<property name="seed" ref="seed" />
 	</bean>
 
 </beans>
