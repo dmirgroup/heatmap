@@ -22,9 +22,6 @@ package de.uniwue.dmir.heatmap.heatmaps;
 
 import java.util.Iterator;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
@@ -36,6 +33,8 @@ import de.uniwue.dmir.heatmap.IPointsource;
 import de.uniwue.dmir.heatmap.ITileFactory;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
+import lombok.Getter;
+import lombok.Setter;
 
 public class DefaultHeatmap<TPoint, TTile> 
 implements IHeatmap<TTile> {

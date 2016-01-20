@@ -26,6 +26,7 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import de.uniwue.dmir.heatmap.IFilter;
 import de.uniwue.dmir.heatmap.IZoomLevelMapper;
 import de.uniwue.dmir.heatmap.TileSize;
@@ -46,6 +47,7 @@ import de.uniwue.dmir.heatmap.util.Arrays2d;
  * @author Martin Becker
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class RelativeCoordinates {
 	

@@ -21,27 +21,20 @@
 package de.uniwue.dmir.heatmap.heatmaps;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -53,30 +46,22 @@ implements IHeatmap<Map<String, I>> {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private HeatmapSettings settings;
-	private Class<I> clazz;
 	
 	private String parentFolder;
 	
 	private IFileStrategy fileStrategy;
+	private IFileReader<I> fileReader;
 	
-	private boolean gzip;
-
-	private ObjectMapper mapper;
-
 	public MapGroupTileFilesystemHeatmap(
 			HeatmapSettings settings,
-			Class<I> clazz,
 			String parentFolder,
 			IFileStrategy fileStrategy,
-			boolean gzip) {
+			IFileReader<I> fileReader) {
 
 		this.settings = settings;
-		this.clazz = clazz;
 		this.parentFolder = parentFolder;
 		this.fileStrategy = fileStrategy;
-		this.gzip = gzip;
-		
-		this.mapper = new ObjectMapper();
+		this.fileReader = fileReader;
 	}
 
 	@Override
@@ -86,10 +71,6 @@ implements IHeatmap<Map<String, I>> {
 
 	@Override
 	public Map<String, I> getTile(TileCoordinates coordinates) {
-		
-		String extension = 
-				FILE_EXTENSION 
-				+ (this.gzip ? AbstractFileWriterProcessor.GZIP_EXTENSION : "");
 		
 		File parentFolder = new File(this.parentFolder);
 		
@@ -103,30 +84,24 @@ implements IHeatmap<Map<String, I>> {
 		}
 		
 		Map<String, I> groupTile = new HashMap<String, I>();
-		String tileName = this.fileStrategy.getFileName(coordinates, extension);
+		String tileName = this.fileStrategy.getFileName(coordinates, this.fileReader.getExtension());
 		for (String group: groups){
 			File tileFile = new File(new File(this.parentFolder, group), tileName);
 			this.logger.debug("Trying to read group data from: {}", tileFile.getAbsolutePath());
-			try {
-				if (tileFile.exists()) {
-					InputStream inputStream = new FileInputStream(tileFile);
+			
+			if (tileFile.exists()) {
+				
+				try {
 					
-					if (this.gzip) {
-						inputStream = new GZIPInputStream(inputStream);
-					}
-					
-					I tile = this.mapper.readValue(inputStream, this.clazz);
+					I tile = this.fileReader.readFile(tileFile);
 					groupTile.put(group, tile);
-					this.logger.debug("Adding group data to tile: {}", tileFile.getAbsolutePath());
-				} else {
-					this.logger.debug("Group data file does not exist: {}", tileFile.getAbsolutePath());
+					this.logger.debug("Added group data to tile: {}", tileFile.getAbsolutePath());
+					
+				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
-			} catch (JsonParseException e) {
-				throw new IllegalArgumentException(e);
-			} catch (JsonMappingException e) {
-				throw new IllegalArgumentException(e);
-			} catch (IOException e) {
-				throw new IllegalArgumentException(e);
+			} else {
+				this.logger.debug("Group data file does not exist: {}", tileFile.getAbsolutePath());
 			}
 		}
 		

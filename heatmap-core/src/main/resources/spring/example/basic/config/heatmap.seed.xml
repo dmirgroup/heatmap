@@ -7,13 +7,17 @@
 		http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- Defining heat map seed. -->
+	<bean id="seedFileReader"
+			class="de.uniwue.dmir.heatmap.heatmaps.KryoFileReader">
+	</bean>
+	
 	<bean id="seed"
-			class="de.uniwue.dmir.heatmap.heatmaps.FilesystemHeatmap">
+			class="de.uniwue.dmir.heatmap.heatmaps.MapGroupTileFilesystemHeatmap">
 	
 		<constructor-arg name="settings" ref="heatmapSettings" />
-		<constructor-arg name="clazz" value="java.util.Map" />
-		<constructor-arg name="parentFolder" value="${out.tiles}" />
-		<constructor-arg name="gzip" value="true" />
+		<constructor-arg name="parentFolder" value="${out.data}" />
+		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
+		<constructor-arg name="fileReader" ref="seedFileReader"/>
+		
 	</bean>
-
 </beans>

@@ -12,7 +12,7 @@
 	</bean>
 
 	<bean id="proxiedTileWriter"
-			class="de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor.Factory">
+			class="de.uniwue.dmir.heatmap.processors.VisualizerFileWriterProcessor$Factory">
 			
 		<constructor-arg name="visualizer" ref="visualizer" />
 		<constructor-arg name="fileStrategy" ref="tileFileStrategy" />

@@ -12,9 +12,8 @@
 	</bean>
 
 	<bean id="proxiedDataWriter"
-			class="de.uniwue.dmir.heatmap.processors.JsonFileWriterProcessor.Factory">
+			class="de.uniwue.dmir.heatmap.processors.KryoFileWriterProcessor$Factory">
 		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
-		<property name="gzip" value="true" />
 	</bean>
 	
 	<bean id="dataWriter"

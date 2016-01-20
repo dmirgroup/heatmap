@@ -21,19 +21,11 @@
 package de.uniwue.dmir.heatmap.heatmaps;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
-import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor;
 import de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
@@ -44,27 +36,21 @@ implements IHeatmap<I> {
 	public static final String FILE_EXTENSION = "json";
 	
 	private HeatmapSettings settings;
-	private Class<I> clazz;
 	
 	private String parentFolder;
 	private IFileStrategy fileStrategy;
-	private boolean gzip;
-
-	private ObjectMapper mapper;
+	
+	private IFileReader<I> fileReader;
 
 	public FilesystemHeatmap(
 			HeatmapSettings settings,
-			Class<I> clazz,
 			String parentFolder,
-			boolean gzip) {
+			IFileReader<I> fileReader) {
 
 		this.settings = settings;
-		this.clazz = clazz;
 		this.parentFolder = parentFolder;
 		this.fileStrategy = new DefaultFileStrategy();
-		this.gzip = gzip;
-		
-		this.mapper = new ObjectMapper();
+		this.fileReader = fileReader;
 	}
 
 	@Override
@@ -75,32 +61,17 @@ implements IHeatmap<I> {
 	@Override
 	public I getTile(TileCoordinates coordinates) {
 		
-		String extension = 
-				FILE_EXTENSION 
-				+ (this.gzip ? AbstractFileWriterProcessor.GZIP_EXTENSION : "");
-		
-		String fileName = this.fileStrategy.getFileName(coordinates, extension);
+		String fileName = this.fileStrategy.getFileName(coordinates, this.fileReader.getExtension());
 		File file = new File(this.parentFolder, fileName);
 		
-		try {
-			
-			if (!file.exists()) {
-				return null;
-			} else {
-				InputStream inputStream = new FileInputStream(file);
-				
-				if (this.gzip) {
-					inputStream = new GZIPInputStream(inputStream);
-				}
-				
-				return this.mapper.readValue(inputStream, this.clazz);
+		if (!file.exists()) {
+			return null;
+		} else {
+			try {
+				return this.fileReader.readFile(file);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
-		} catch (JsonParseException e) {
-			throw new IllegalArgumentException(e);
-		} catch (JsonMappingException e) {
-			throw new IllegalArgumentException(e);
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -144,30 +115,8 @@ implements IHeatmap<I> {
 		
 	}
 	
-//	public static void main(String[] args) throws IOException {
-//		FilesystemHeatmap<SumAndSize[]> heatmap = 
-//				new FilesystemHeatmap<SumAndSize[]>(
-//						new HeatmapSettings(), 
-//						SumAndSize[].class, 
-//						"out/data");
-//				
-//				BufferedImage colorScheme = ImageIO.read(
-//						new File("src/main/resources/color-schemes/classic_70.png"));
-//				double[] ranges = SumAndSizeAlphaVisualizer.ranges(1, 500, colorScheme.getHeight());
-//				SumAndSizeAlphaVisualizer visualizer = new SumAndSizeAlphaVisualizer(
-//						colorScheme, ranges);
-//				visualizer.setAlphaValue(0.5f);
-//				visualizer.setBackgroundColor(
-//						new Color(colorScheme.getRGB(0, colorScheme.getHeight() - 1), true));
-//				visualizer.setForceAlphaValue(true);
-//
-//				VisualizationFileWriter<SumAndSize[]> heatmapFileWriter =
-//						new VisualizationFileWriter<SumAndSize[]>(
-//								new DefaultFileStrategy("out/tiles"), 
-//								"png",
-//								visualizer);
-//				
-//		heatmap.processTiles(heatmapFileWriter);
-//	}
+	public static interface IFileParser {
+		
+	}
 	
 }
