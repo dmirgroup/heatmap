@@ -8,11 +8,11 @@
 
 	<!-- Defining heat map seed. -->
 	<bean id="seed"
-			class="de.uniwue.dmir.heatmap.heatmaps.FilesystemHeatmap">
+			class="de.uniwue.dmir.heatmap.heatmaps.MapGroupTileFilesystemHeatmap">
 	
 		<constructor-arg name="settings" ref="heatmapSettings" />
 		<constructor-arg name="clazz" value="java.util.Map" />
-		<constructor-arg name="parentFolder" value="#{systemProperties.workDir}/current/data" />
+		<constructor-arg name="parentFolder" value="#{systemProperties.workDir}/current/data/${inner.group.path.data}" />
 		<constructor-arg name="gzip" value="true" />
 	</bean>
 
