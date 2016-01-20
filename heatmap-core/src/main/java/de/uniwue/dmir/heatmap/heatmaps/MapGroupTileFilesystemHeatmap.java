@@ -42,7 +42,6 @@ import de.uniwue.dmir.heatmap.HeatmapSettings;
 import de.uniwue.dmir.heatmap.IHeatmap;
 import de.uniwue.dmir.heatmap.ITileProcessor;
 import de.uniwue.dmir.heatmap.processors.AbstractFileWriterProcessor;
-import de.uniwue.dmir.heatmap.processors.filestrategies.DefaultFileStrategy;
 import de.uniwue.dmir.heatmap.processors.filestrategies.IFileStrategy;
 import de.uniwue.dmir.heatmap.tiles.coordinates.TileCoordinates;
 
@@ -57,7 +56,9 @@ implements IHeatmap<Map<String, I>> {
 	private Class<I> clazz;
 	
 	private String parentFolder;
+	
 	private IFileStrategy fileStrategy;
+	
 	private boolean gzip;
 
 	private ObjectMapper mapper;
@@ -66,12 +67,13 @@ implements IHeatmap<Map<String, I>> {
 			HeatmapSettings settings,
 			Class<I> clazz,
 			String parentFolder,
+			IFileStrategy fileStrategy,
 			boolean gzip) {
 
 		this.settings = settings;
 		this.clazz = clazz;
 		this.parentFolder = parentFolder;
-		this.fileStrategy = new DefaultFileStrategy();
+		this.fileStrategy = fileStrategy;
 		this.gzip = gzip;
 		
 		this.mapper = new ObjectMapper();
@@ -104,6 +106,7 @@ implements IHeatmap<Map<String, I>> {
 		String tileName = this.fileStrategy.getFileName(coordinates, extension);
 		for (String group: groups){
 			File tileFile = new File(new File(this.parentFolder, group), tileName);
+			this.logger.debug("Trying to read group data from: {}", tileFile.getAbsolutePath());
 			try {
 				if (tileFile.exists()) {
 					InputStream inputStream = new FileInputStream(tileFile);
@@ -114,6 +117,9 @@ implements IHeatmap<Map<String, I>> {
 					
 					I tile = this.mapper.readValue(inputStream, this.clazz);
 					groupTile.put(group, tile);
+					this.logger.debug("Adding group data to tile: {}", tileFile.getAbsolutePath());
+				} else {
+					this.logger.debug("Group data file does not exist: {}", tileFile.getAbsolutePath());
 				}
 			} catch (JsonParseException e) {
 				throw new IllegalArgumentException(e);

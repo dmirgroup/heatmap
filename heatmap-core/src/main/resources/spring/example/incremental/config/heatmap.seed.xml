@@ -12,8 +12,10 @@
 	
 		<constructor-arg name="settings" ref="heatmapSettings" />
 		<constructor-arg name="clazz" value="java.util.Map" />
-		<constructor-arg name="parentFolder" value="#{systemProperties.workDir}/seed/data/${inner.group.path.data}" />
+		<constructor-arg name="parentFolder" value="#{systemProperties.workDir}/seed/data" />
+		<constructor-arg name="fileStrategy" ref="dataFileStrategy" />
 		<constructor-arg name="gzip" value="true" />
+		
 	</bean>
 
 </beans>
