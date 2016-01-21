@@ -184,7 +184,7 @@ public class EntryPointIncremental {
 			heatmapContext.close();
 			
 			// finish process
-			processManager.finish(pointMaxTime);
+			processManager.finish(maxTime);
 			
 			// move old seed
 			if (backupsToKeep > 0) {
