@@ -1,2 +1,2 @@
-de.uniwue.dmir.heatmap
+heatmap-core
 ======================
